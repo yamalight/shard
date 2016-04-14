@@ -33,6 +33,8 @@
     "bulma": "0.0.20",
     "express": "^4.13.4",
     "font-awesome": "^4.6.1",
+    "highlight.js": "^9.3.0",
+    "marked": "^0.3.5",
     "morgan": "^1.7.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",

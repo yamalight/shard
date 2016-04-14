@@ -1,0 +1,41 @@
+.navbar {
+    margin-bottom: 10px !important;
+    min-height: 47px;
+    height: 47px;
+    border-bottom: 1px solid #eceeef;
+    box-shadow: 0 2px 0 hsla(200,9%,93%,.25);
+    padding: 6px 20px;
+    background-color: #fff;
+    margin-left: -10px;
+    margin-right: -20px;
+}
+
+.navbar :global(.is-disabled) {
+    color: #000;
+}
+
+.title {
+    margin-bottom: 10px !important;
+    font-weight: 600;
+}
+
+.separator::after {
+    content: " | ";
+    color: #ccc;
+}
+
+.section {
+    flex: 1;
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.footer {
+    height: 34px;
+    min-height: 34px;
+}
+
+.mainarea {
+    flex-direction: column;
+    justify-content: flex-end;
+}

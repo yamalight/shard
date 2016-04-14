@@ -1,0 +1,22 @@
+.header {
+    display: flex;
+    margin-bottom: 0.5em !important;
+    align-items: center;
+}
+
+.headerSeparator {
+    flex-grow: 1;
+}
+
+.header :global(.navbar) {
+    float: right;
+}
+
+.header :global(.navbar-item) {
+    align-items: center;
+    display: flex;
+}
+
+.content {
+    min-height: 67px;
+}

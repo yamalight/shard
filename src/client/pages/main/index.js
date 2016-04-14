@@ -3,6 +3,7 @@ import styles from './main.css';
 
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
+import Chat from '../../components/chat';
 
 const Main = React.createClass({
     render() {
@@ -10,7 +11,7 @@ const Main = React.createClass({
             <div className={`columns ${styles.columns}`}>
                 <Teambar />
                 <Sidebar />
-                Main thing
+                <Chat />
             </div>
         );
     },

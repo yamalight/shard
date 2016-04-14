@@ -1,0 +1,18 @@
+.content {
+    box-shadow: 0px 1px 0 0 rgba(0,0,0,0.04);
+}
+
+.title {
+    box-shadow: 0px 1px 0 0 rgba(0,0,0,0.04);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.description h1,
+.description h2,
+.description h3,
+.description h4,
+.description h5,
+.description h6 {
+    color: rgba(0,0,0,.44);
+}

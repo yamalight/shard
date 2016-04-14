@@ -29,13 +29,6 @@
         flex-grow: 1;
     }
 
-    li a:before {
-        content: '#';
-        color: #8a8e94 !important;
-        margin-right: 3px;
-        font-weight: 600;
-    }
-
     a.is-active {
         background: linear-gradient(90deg,#282b30 85%,#2e3136);
         color: #fff;
@@ -66,4 +59,11 @@
     .menu-label {
         padding-left: 10px;
     }
+}
+
+.channel-name:before {
+    content: '#';
+    color: #8a8e94 !important;
+    margin-right: 3px;
+    font-weight: 600;
 }

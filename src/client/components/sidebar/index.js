@@ -21,11 +21,17 @@ const Sidebar = React.createClass({
                     </p>
                     <ul className="menu-list">
                         <li>
-                            <a href="#" className="is-active">Channel 1</a>
+                            <a href="#" className="is-active channel-name">Channel 1</a>
                             <ul>
-                                <li><a href="#">Subchannel 1</a></li>
-                                <li><a href="#">Subchannel with a super really long name</a></li>
-                                <li><a href="#">Subchannel 3</a></li>
+                                <li>
+                                    <a href="#" className="channel-name">Subchannel 1</a>
+                                </li>
+                                <li>
+                                    <a href="#" className="channel-name">Subchannel with a super really long name</a>
+                                </li>
+                                <li>
+                                    <a href="#" className="channel-name">Subchannel 3</a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
