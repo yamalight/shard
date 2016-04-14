@@ -1,0 +1,17 @@
+// hint.css
+@import "~hint.css/src/hint-variables";
+$hintFontSize: 13px;
+
+@import "~hint.css/src/hint-mixins";
+@import "~hint.css/src/hint-core";
+@import "~hint.css/src/hint-position";
+@import "~hint.css/src/hint-sizes";
+@import "~hint.css/src/hint-theme";
+@import "~hint.css/src/hint-color-types";
+@import "~hint.css/src/hint-always";
+@import "~hint.css/src/hint-rounded";
+@import "~hint.css/src/hint-effects";
+
+[data-hint]:after {
+    font-weight: 500;
+}

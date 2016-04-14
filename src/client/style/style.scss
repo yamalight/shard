@@ -1,20 +1,5 @@
-@import "~bulma/bulma/utilities/utilities";
-@import "~bulma/bulma/config/variables";
-// Override variables here
-// You can add new ones or update existing ones:
-
-
-@import "~bulma/bulma/config/generated-variables";
-// Override generated variables here
-// For example, by default, the $danger color is $red and the font is sans-serif
-// You can change these values:
-
-
-// Rest bulma imports
-@import "~bulma/bulma/base/base";
-@import "~bulma/bulma/elements/elements";
-@import "~bulma/bulma/components/components";
-@import "~bulma/bulma/layout/layout";
+@import 'hint';
+@import 'bulma';
 
 // dark menu
 .dark-menu {
