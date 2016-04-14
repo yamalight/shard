@@ -3,7 +3,8 @@ import {render} from 'react-dom';
 import {Router, Route, browserHistory} from 'react-router';
 
 // global styles
-// import './styles.less';
+import 'font-awesome/css/font-awesome.min.css';
+import './style.scss';
 
 // app wrapper
 import App from './app';

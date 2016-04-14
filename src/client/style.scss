@@ -1,0 +1,69 @@
+@import "~bulma/bulma/utilities/utilities";
+@import "~bulma/bulma/config/variables";
+// Override variables here
+// You can add new ones or update existing ones:
+
+
+@import "~bulma/bulma/config/generated-variables";
+// Override generated variables here
+// For example, by default, the $danger color is $red and the font is sans-serif
+// You can change these values:
+
+
+// Rest bulma imports
+@import "~bulma/bulma/base/base";
+@import "~bulma/bulma/elements/elements";
+@import "~bulma/bulma/components/components";
+@import "~bulma/bulma/layout/layout";
+
+// dark menu
+.dark-menu {
+    li ul {
+        border-left: 2px solid #738bd7;
+    }
+
+    li a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+    }
+
+    li a:before {
+        content: '#';
+        color: #8a8e94 !important;
+        margin-right: 3px;
+        font-weight: 600;
+    }
+
+    a.is-active {
+        background: linear-gradient(90deg,#282b30 85%,#2e3136);
+        color: #fff;
+        opacity: 1;
+        font-weight: 500;
+    }
+
+    a.is-active:hover {
+        background: linear-gradient(90deg,#282b30 85%,#2e3136);
+        color: #fff;
+        opacity: 1;
+        font-weight: 500;
+    }
+
+    a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        opacity: .3;
+    }
+
+    a:hover {
+        opacity: 1;
+        background: transparent;
+        color: #fff;
+    }
+
+    .menu-label {
+        padding-left: 10px;
+    }
+}

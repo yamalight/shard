@@ -1,7 +1,10 @@
 import React from 'react';
+import styles from './app.css';
 
 export default ({children}) => (
-    <div className="container-fluid">
-        {children}
-    </div>
+    <section className={`hero is-fullheight ${styles.hero}`}>
+        <div className={`hero-content ${styles.customHero}`}>
+            {children}
+        </div>
+    </section>
 );

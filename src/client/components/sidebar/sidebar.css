@@ -1,0 +1,24 @@
+.header header {
+    background-color: #2e3136;
+    color: #fff;
+    font-weight: 600;
+    padding: 28px 24px;
+    height: 56px;
+    box-shadow: 0 1px 0 #24272b,inset 0 -1px 0 rgba(0,0,0,.1);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.menu {
+}
+
+.channels {
+    padding-top: 20px;
+}
+
+.channels :global(.menu-label) {
+    color: #fff;
+    opacity: .3;
+    font-weight: 600;
+}
