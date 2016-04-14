@@ -8,10 +8,18 @@ const Teambar = React.createClass({
 
     render() {
         return (
-            <div className={`${styles.teambar}`}>
-                <span className="icon is-large">
-                    <i className="fa fa-users"></i>
-                </span>
+            <div className={styles.teambar}>
+                <a href="#" className={styles.iconButton}>
+                    <span className="icon is-large">
+                        <i className="fa fa-users"></i>
+                    </span>
+                </a>
+                <div className={styles.separator} />
+                <a href="#" className={`${styles.iconButton} ${styles.iconButtonFaded}`}>
+                    <span className="icon is-large">
+                        <i className="fa fa-plus-circle"></i>
+                    </span>
+                </a>
             </div>
         );
     },

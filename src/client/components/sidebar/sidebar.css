@@ -19,8 +19,20 @@
     padding-top: 20px;
 }
 
-.channels :global(.menu-label) {
+.channels a {
     color: #fff;
     opacity: .3;
     font-weight: 600;
+    font-size: 14px;
+}
+
+.channelsHeader {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    padding-right: 6px;
+}
+
+.channelsHeader .separator {
+    flex-grow: 1;
 }

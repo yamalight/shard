@@ -17,7 +17,13 @@ const Sidebar = React.createClass({
 
                 <div className={`menu dark-menu ${styles.channels}`}>
                     <p className="menu-label">
-                        Channels
+                        <a href="#" className={styles.channelsHeader}>
+                            Channels
+                            <span className={styles.separator} />
+                            <span className="icon is-small">
+                                <i className="fa fa-plus" />
+                            </span>
+                        </a>
                     </p>
                     <ul className="menu-list">
                         <li>
