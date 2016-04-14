@@ -8,7 +8,7 @@ const Sidebar = React.createClass({
 
     render() {
         return (
-            <aside className={styles.menu}>
+            <aside className={styles.sidebar}>
                 <div className={styles.header}>
                     <header>
                         Team name

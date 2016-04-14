@@ -1,20 +1,15 @@
 import React from 'react';
 import styles from './main.css';
 
+import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
 
 const Main = React.createClass({
     render() {
         return (
             <div className={`columns ${styles.columns}`}>
-                <div className={`${styles.teambar}`}>
-                    <span className="icon is-large">
-                        <i className="fa fa-users"></i>
-                    </span>
-                </div>
-                <div className={`${styles.sidebar}`}>
-                    <Sidebar />
-                </div>
+                <Teambar />
+                <Sidebar />
                 Main thing
             </div>
         );
