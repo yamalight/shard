@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --ignore ./src/client index.js",
-    "start-db": "docker run -d -p 28015:28015 -p 8080:8080 --name sharddb rethinkdb",
+    "start-db": "docker run -d -p 27017:27017 --name sharddb mongo",
     "stop-db": "docker stop sharddb"
   },
   "babel": {

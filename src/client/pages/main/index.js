@@ -8,7 +8,7 @@ import Chat from '../../components/chat';
 const Main = React.createClass({
     render() {
         return (
-            <div className={`columns ${styles.columns}`}>
+            <div className={styles.app}>
                 <Teambar />
                 <Sidebar />
                 <Chat />

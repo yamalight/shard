@@ -1,6 +1,8 @@
 .sidebar {
     background: #2E3136;
     width: 240px;
+    display: flex;
+    flex-direction: column;
 }
 
 .header header {

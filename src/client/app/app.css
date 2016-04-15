@@ -1,8 +1,0 @@
-.customHero {
-    padding: 10px;
-}
-
-.hero, :global(html), :global(body), :global(#container) {
-    width: 100%;
-    height: 100%;
-}

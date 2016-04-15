@@ -32,6 +32,7 @@ const Chat = React.createClass({
                         </p>
                     </div>
                 </nav>
+
                 <div ref="chatContainer" className={styles.section}>
                     <Description text={desc} />
                     <Message

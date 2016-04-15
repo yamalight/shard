@@ -1,13 +1,19 @@
+.mainarea {
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+}
+
 .navbar {
-    margin-bottom: 10px !important;
-    min-height: 47px;
-    height: 47px;
+    margin-bottom: 5px !important;
+    min-height: 57px;
+    max-height: 57px;
     border-bottom: 1px solid #eceeef;
     box-shadow: 0 2px 0 hsla(200,9%,93%,.25);
-    padding: 6px 20px;
+    padding-left: 20px;
+    padding-top: 10px;
     background-color: #fff;
-    margin-left: -10px;
-    margin-right: -20px;
 }
 
 .navbar :global(.is-disabled) {
@@ -28,14 +34,11 @@
     flex: 1;
     overflow: auto;
     margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .footer {
     height: 34px;
     min-height: 34px;
-}
-
-.mainarea {
-    flex-direction: column;
-    justify-content: flex-end;
 }
