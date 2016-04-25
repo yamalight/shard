@@ -4,6 +4,7 @@ import {Router, Route, browserHistory} from 'react-router';
 
 // global styles
 import 'font-awesome/css/font-awesome.min.css';
+import 'bulma/css/bulma.min.css';
 import './style/style.scss';
 
 // app wrapper

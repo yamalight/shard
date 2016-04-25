@@ -1,12 +1,13 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
 import styles from './home.css';
-import store$, {registerUser} from '../../store';
+import store$, {registerUser, loginUser} from '../../store';
 
 const Home = React.createClass({
     getInitialState() {
         return {
-            showInput: false,
+            showLogin: false,
+            showRegister: false,
         };
     },
 
@@ -15,6 +16,7 @@ const Home = React.createClass({
             store$
             .map(state => state.filter((_, key) => ['authStatus', 'registerError'].includes(key)))
             .map(auth => auth.toJS())
+            .do(auth => this.checkAuth(auth))
             .subscribe(auth => this.setState(auth)),
         ];
     },
@@ -23,6 +25,10 @@ const Home = React.createClass({
     },
 
     validatePasswords() {
+        if (!this.state.showRegister) {
+            return;
+        }
+
         const password = this.password.value;
         const passwordRepeat = this.passwordRepeat.value;
         if (password !== passwordRepeat) {
@@ -32,28 +38,47 @@ const Home = React.createClass({
         }
     },
 
-    register() {
+    doAuth() {
         const username = this.username.value;
         const password = this.password.value;
-        const passwordRepeat = this.passwordRepeat.value;
-        if (password !== passwordRepeat) {
-            this.setState({error: 'Passwords must match!'});
+        if (this.state.showRegister) {
+            const passwordRepeat = this.passwordRepeat.value;
+            if (password !== passwordRepeat) {
+                this.setState({error: 'Passwords must match!'});
+                return;
+            }
+
+            registerUser({username, password});
+            return;
         }
-        registerUser({username, password});
-        // browserHistory.push({
-            // pathname: '/channel/home',
-        // });
+
+        loginUser({username, password});
+    },
+
+    checkAuth(auth) {
+        if (auth.authStatus === 'loggedin') {
+            browserHistory.push('/channel/home');
+        }
     },
 
     renderInput() {
-        if (!this.state.showInput) {
+        if (!this.state.showRegister && !this.state.showLogin) {
             return (
-                <a
-                    className="button is-success is-large"
-                    onClick={() => this.setState({showInput: true})}
-                >
-                    Try it now
-                </a>
+                <div className="has-text-centered">
+                    <a
+                        className="button is-success is-large"
+                        onClick={() => this.setState({showRegister: true})}
+                    >
+                        Try it now
+                    </a>
+                    <br />
+                    <a
+                        className="button is-link"
+                        onClick={() => this.setState({showLogin: true})}
+                    >
+                        I already have an account..
+                    </a>
+                </div>
             );
         }
 
@@ -72,14 +97,16 @@ const Home = React.createClass({
                     ref={(i) => { this.password = i; }}
                     onKeyUp={() => this.validatePasswords()}
                 />
-                <input
-                    className="input"
-                    type="password"
-                    placeholder="Repeat your password"
-                    ref={(i) => { this.passwordRepeat = i; }}
-                    onKeyUp={() => this.validatePasswords()}
-                />
-                {this.state.registerError && (
+                {this.state.showRegister && (
+                    <input
+                        className="input"
+                        type="password"
+                        placeholder="Repeat your password"
+                        ref={(i) => { this.passwordRepeat = i; }}
+                        onKeyUp={() => this.validatePasswords()}
+                    />
+                )}
+                {this.state.showRegister && this.state.registerError && (
                     <div className="notification is-danger">
                         Error during registration!
                         <br />
@@ -91,7 +118,9 @@ const Home = React.createClass({
                         {this.state.error}
                     </div>
                 ) : (
-                    <a className="button is-success" onClick={this.register}>Register</a>
+                    <a className="button is-success" onClick={this.doAuth}>
+                        {this.state.showRegister ? 'Register' : 'Login'}
+                    </a>
                 )}
             </div>
         );
@@ -105,7 +134,7 @@ const Home = React.createClass({
                         <div className="columns">
                             <div className="column is-one-third">
                                 <h1 className="title">
-                                    Shard. {this.state.authStatus}
+                                    Shard.
                                 </h1>
                                 <h2 className={`subtitle ${styles.subtitle}`}>
                                     All-in-one community platform that's free, secure,

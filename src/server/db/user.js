@@ -9,6 +9,8 @@ const UserSchema = new Schema({
 });
 
 // password validation method
-UserSchema.methods.validPassword = (password) => this.password === hash(password);
+UserSchema.methods.validPassword = function(password) {
+    return this.password === hash(password);
+};
 
 export const User = mongoose.model('User', UserSchema);

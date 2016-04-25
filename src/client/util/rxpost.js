@@ -12,9 +12,9 @@ DOM.post({
         'content-type': 'application/json',
     },
 })
+.map(res => JSON.parse(res.response))
 .catch(err => (
     err.xhr && err.xhr.response ?
     just(JSON.parse(err.xhr.response)) :
     just({registerError: err})
-))
-.do(s => console.log(s));
+));

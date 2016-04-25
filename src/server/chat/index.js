@@ -1,12 +1,17 @@
+import isLoggedIn from '../auth/isLoggedIn';
 import {Message} from '../db';
 
 export default (app) => {
-    app.get('/chat', async (req, res) => {
+    app.get('/api/test', isLoggedIn, (req, res) => {
+        res.send(`You are in: ${JSON.stringify(req.user)}`);
+    });
+
+    app.get('/api/chat', async (req, res) => {
         const messages = await Message.find({});
         res.send(messages);
     });
 
-    app.ws('/chat', (ws, req) => {
+    app.ws('/api/chat', (ws, req) => {
         ws.on('message', async (data) => {
             const msg = JSON.parse(data);
             const m = new Message(msg);
