@@ -5,6 +5,8 @@ import Description from '../description';
 import Message from '../message/';
 import MessageShort from '../message-short';
 
+import {sendMessage} from '../../store';
+
 const desc = `This is some __markdown__ description of our awesome chat theme here.
 
 Tasks for nearest future:
@@ -22,6 +24,11 @@ Even images.
 `;
 
 const Chat = React.createClass({
+    sendMessage() {
+        const message = this._text.value;
+        sendMessage({user: 'test', message});
+    },
+
     render() {
         return (
             <div className={`column is-flex ${styles.mainarea}`}>
@@ -107,8 +114,13 @@ const Chat = React.createClass({
                         <a className="button">
                             <i className="fa fa-paperclip" />
                         </a>
-                        <input className="input" type="text" placeholder="Write a message..." />
-                        <a className="button">
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Write a message..."
+                            ref={(t) => {this._text = t;}}
+                        />
+                        <a className="button" onClick={this.sendMessage}>
                             <i className="fa fa-paper-plane" />
                         </a>
                     </p>

@@ -5,7 +5,13 @@ import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
 import Chat from '../../components/chat';
 
+import testSocket from '../../store';
+
 const Main = React.createClass({
+    componentDidMount() {
+        testSocket();
+    },
+
     render() {
         return (
             <div className={styles.app}>
