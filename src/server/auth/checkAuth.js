@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import logger from '../logger';
+import {logger} from '../util';
 import {User} from '../db';
 import {jwtconf} from '../../../config';
 
@@ -22,13 +22,13 @@ export const checkStringToken = async (token) => {
         throw e;
     }
     logger.debug('decoded: ', decoded);
-    const {email, id} = decoded;
-    logger.debug('searching for: ', email, id);
+    const {_id} = decoded;
+    logger.debug('searching for: ', _id);
     // find user
-    const user = await User.find({email, id});
+    const user = await User.findOne(_id);
     if (user) {
-        logger.info('user found!', user);
-        return user;
+        logger.info('user found!', user.toObject());
+        return user.toObject();
     }
 
     throw new Error('Not logged in!');

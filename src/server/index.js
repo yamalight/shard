@@ -11,8 +11,10 @@ import morgan from 'morgan';
 import setupWebpack from './webpack';
 // auth api
 import setupAuthAPI from './auth';
+// team api
+import setupTeamAPI from './team';
 // chat api
-import setupChatAPI from './chat';
+// import setupChatAPI from './chat';
 
 // logger
 import {logger} from './util';
@@ -32,8 +34,10 @@ setupWebpack(app);
 
 // setup auth API
 setupAuthAPI(app);
+// setup team API
+setupTeamAPI(app);
 // setup chat API
-setupChatAPI(app);
+// setupChatAPI(app);
 
 // serve static content
 app.use(express.static(join(__dirname, '..', 'client')));

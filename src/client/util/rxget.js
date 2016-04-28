@@ -3,13 +3,13 @@ import {DOM} from 'rx-dom';
 
 const {just} = Observable;
 
-export const post = (url, body) =>
-DOM.post({
+export const get = (url, token) =>
+DOM.get({
     url,
-    body: JSON.stringify(body),
     headers: {
         accept: 'application/json',
         'content-type': 'application/json',
+        'x-access-token': token,
     },
 })
 .map(res => JSON.parse(res.response))

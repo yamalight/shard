@@ -1,7 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import {createAction} from 'rxstate';
 import status from './status';
-import post from '../../util/rxpost';
+import {post} from '../../util';
 
 // create action
 export const loginUser = createAction();

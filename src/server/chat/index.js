@@ -1,8 +1,8 @@
-import isLoggedIn from '../auth/isLoggedIn';
+import checkAuth from '../auth/checkAuth';
 import {Message} from '../db';
 
 export default (app) => {
-    app.get('/api/test', isLoggedIn, (req, res) => {
+    app.get('/api/test', checkAuth, (req, res) => {
         res.send(`You are in: ${JSON.stringify(req.user)}`);
     });
 
