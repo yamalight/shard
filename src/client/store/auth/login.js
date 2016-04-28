@@ -1,3 +1,4 @@
+import jwtDecode from 'jwt-decode';
 import {createAction} from 'rxstate';
 import status from './status';
 import post from '../../util/rxpost';
@@ -9,6 +10,15 @@ export const loginUser = createAction();
 const login$ = loginUser.$
     .do(() => status('loggingin'))
     .flatMap(user => post('/api/login', user))
-    .do(res => (res.authError ? status('error') : status('loggedin')));
+    .map(res => {
+        // get token
+        const {token} = res;
+        // try to parse out user
+        if (token) {
+            res.user = jwtDecode(token); // eslint-disable-line
+        }
+        return res;
+    })
+    .do(res => (res.authError || !res.user ? status('error') : status('loggedin')));
 
 export default login$;

@@ -5,10 +5,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 // sockets
 import expressWs from 'express-ws';
-// auth
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import passport from 'passport';
 // logging
 import morgan from 'morgan';
 // webpack for dev
@@ -17,31 +13,19 @@ import setupWebpack from './webpack';
 import setupAuthAPI from './auth';
 // chat api
 import setupChatAPI from './chat';
-// config
-import {auth} from '../../config';
 
 // logger
-import logger from './util/logger';
+import {logger} from './util';
 
 // init app
 const app = express();
 // logging
 app.use(morgan('combined', {stream: logger.stream}));
-// session & cookies
-app.use(cookieParser());
-app.use(session({
-    resave: false,
-    saveUninitialized: false,
-    ...auth.session,
-}));
 // body parsing
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 // sockets
 expressWs(app);
-// Initialize Passport and restore authentication state, if any, from the session
-app.use(passport.initialize());
-app.use(passport.session());
 
 // setup webpack
 setupWebpack(app);
@@ -67,3 +51,7 @@ app.listen(8080, function() {
     const port = this.address().port;
     logger.info(`Shard listening at http://${host}:${port}`);
 });
+
+// output all uncaught exceptions
+process.on('uncaughtException', err => logger.error('uncaught exception:', err));
+process.on('unhandledRejection', error => logger.error('unhandled rejection:', error));
