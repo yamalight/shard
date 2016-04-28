@@ -11,7 +11,8 @@ import login$, {loginUser} from './auth/login';
 // plug in team actions
 import teamStatus from './team/status';
 import createTeam$, {createTeam} from './team/create';
-import teams$, {getTeams} from './team/get';
+import getTeams$, {getTeams} from './team/get';
+import setTeam$, {setTeam} from './team/set';
 
 // create an array of action streams for store
 const streams = [
@@ -21,8 +22,9 @@ const streams = [
     login$,
     // team streams
     teamStatus.$,
-    teams$,
+    getTeams$,
     createTeam$,
+    setTeam$,
 ];
 // create store
 const store = createStore({streams, defaultState});
@@ -34,6 +36,7 @@ export {
     // team
     getTeams,
     createTeam,
+    setTeam,
 };
 
 export default store;

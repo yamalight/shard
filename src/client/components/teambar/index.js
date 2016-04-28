@@ -1,6 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
-import store$, {getTeams} from '../../store';
+import store$, {getTeams, setTeam} from '../../store';
 import styles from './teambar.css';
 
 import Modal from '../modal';
@@ -17,7 +17,7 @@ const Teambar = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['teams', 'newTeam'].includes(key)))
+            .map(s => s.filter((_, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
@@ -35,6 +35,10 @@ const Teambar = React.createClass({
         }
     },
 
+    isCurrent(team) {
+        return this.state.currentTeam && this.state.currentTeam._id === team._id;
+    },
+
     render() {
         return (
             <div className={styles.teambar}>
@@ -48,7 +52,11 @@ const Teambar = React.createClass({
 
                 {/* Teams list */}
                 {this.state.teams.map(team => (
-                    <a className={`${styles.iconButton} ${styles.iconButtonFaded}`} key={team._id}>
+                    <a
+                        key={team._id}
+                        className={`${styles.iconButton} ${this.isCurrent(team) || styles.iconButtonFaded}`}
+                        onClick={() => setTeam(team)}
+                    >
                         <span className="icon is-large hint--right hint--info" data-hint={team.name}>
                             <i className="fa fa-circle"></i>
                         </span>
