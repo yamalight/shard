@@ -14,7 +14,7 @@ const Home = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(state => state.filter((_, key) => ['authStatus', 'registerError'].includes(key)))
+            .map(state => state.filter((_, key) => ['authStatus', 'registerError', 'user'].includes(key)))
             .map(auth => auth.toJS())
             .do(auth => this.checkAuth(auth))
             .subscribe(auth => this.setState(auth)),
@@ -55,13 +55,30 @@ const Home = React.createClass({
         loginUser({username, password});
     },
 
+    goHome() {
+        browserHistory.push('/channel/home');
+    },
+
     checkAuth(auth) {
         if (auth.authStatus === 'loggedin') {
-            browserHistory.push('/channel/home');
+            this.goHome();
         }
     },
 
     renderInput() {
+        if (this.state.user.username) {
+            return (
+                <div className="has-text-centered">
+                    <a
+                        className="button is-success is-large"
+                        onClick={() => this.goHome()}
+                    >
+                        Continue
+                    </a>
+                </div>
+            );
+        }
+
         if (!this.state.showRegister && !this.state.showLogin) {
             return (
                 <div className="has-text-centered">

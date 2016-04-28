@@ -16,6 +16,8 @@ const login$ = loginUser.$
         // try to parse out user
         if (token) {
             res.user = jwtDecode(token); // eslint-disable-line
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(res.user));
         }
         return res;
     })

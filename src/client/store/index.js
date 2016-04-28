@@ -23,4 +23,5 @@ export {
     loginUser,
 };
 
-export default store;
+export default store
+    .do(s => console.log(s.toJS()));
