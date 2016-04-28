@@ -1,9 +1,24 @@
 import React from 'react';
+import store$ from '../../store';
 import styles from './sidebar.css';
 
 const Sidebar = React.createClass({
     getInitialState() {
-        return {};
+        return {
+            currentTeam: {},
+        };
+    },
+
+    componentWillMount() {
+        this.subs = [
+            store$
+            .map(s => s.filter((_, key) => ['currentTeam'].includes(key)))
+            .map(s => s.toJS())
+            .subscribe(s => this.setState(s)),
+        ];
+    },
+    componentWillUnmount() {
+        this.subs.map(s => s.dispose());
     },
 
     render() {
@@ -11,7 +26,7 @@ const Sidebar = React.createClass({
             <aside className={styles.sidebar}>
                 <div className={styles.header}>
                     <header>
-                        Team name
+                        {this.state.currentTeam.name || 'No team selected'}
                     </header>
                 </div>
 
