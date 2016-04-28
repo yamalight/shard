@@ -21,6 +21,10 @@ const login$ = loginUser.$
         }
         return res;
     })
-    .do(res => (res.authError || !res.user ? status('error') : status('loggedin')));
+    .map(res => {
+        res.authError = res.error; // eslint-disable-line
+        return res;
+    })
+    .do(res => (res.error || !res.user ? status('error') : status('loggedin')));
 
 export default login$;

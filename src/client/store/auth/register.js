@@ -19,6 +19,10 @@ const register$ = registerUser.$
         }
         return res;
     })
-    .do(res => (res.registerError || !res.user ? status('error') : status('registered')));
+    .map(res => {
+        res.registerError = res.error; // eslint-disable-line
+        return res;
+    })
+    .do(res => (res.error || !res.user ? status('error') : status('registered')));
 
 export default register$;

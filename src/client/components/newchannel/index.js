@@ -1,13 +1,13 @@
 import React from 'react';
-import store$, {createTeam} from '../../store';
+import store$, {createChannel} from '../../store';
 
-const NewTeam = React.createClass({
+const NewChannel = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['newTeam'].includes(key)))
+            .map(s => s.filter((_, key) => ['newChannel', 'currentTeam'].includes(key)))
             .map(s => s.toJS())
-            .do(s => s.newTeam && this.close(null, true))
+            .do(s => s.newChannel && this.close(null, true))
             .subscribe(s => this.setState(s)),
         ];
     },
@@ -16,8 +16,10 @@ const NewTeam = React.createClass({
     },
 
     create() {
-        const name = this.input.value;
-        createTeam({name});
+        const name = this.nameInput.value;
+        const description = this.descInput.value;
+        const team = this.state.currentTeam._id;
+        createChannel({name, description, team});
     },
     close(e, refetch = false) {
         this.props.close(refetch);
@@ -28,7 +30,7 @@ const NewTeam = React.createClass({
             <div className="card is-fullwidth">
                 <header className="card-header">
                     <p className="card-header-title">
-                        Create new team
+                        Create new channel
                     </p>
                 </header>
                 <div className="card-content">
@@ -37,8 +39,15 @@ const NewTeam = React.createClass({
                             <input
                                 className="input is-medium"
                                 type="text"
-                                placeholder="Enter new team name.."
-                                ref={t => { this.input = t; }}
+                                placeholder="Enter new channel name.."
+                                ref={t => { this.nameInput = t; }}
+                            />
+                        </p>
+                        <p className="control">
+                            <textarea
+                                className="textarea"
+                                placeholder="Enter new channel description.."
+                                ref={t => { this.descInput = t; }}
                             />
                         </p>
                     </div>
@@ -52,4 +61,4 @@ const NewTeam = React.createClass({
     },
 });
 
-export default NewTeam;
+export default NewChannel;

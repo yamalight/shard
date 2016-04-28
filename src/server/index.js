@@ -13,6 +13,8 @@ import setupWebpack from './webpack';
 import setupAuthAPI from './auth';
 // team api
 import setupTeamAPI from './team';
+// channel api
+import setupChannelAPI from './channel';
 // chat api
 // import setupChatAPI from './chat';
 
@@ -36,6 +38,8 @@ setupWebpack(app);
 setupAuthAPI(app);
 // setup team API
 setupTeamAPI(app);
+// setup channel API
+setupChannelAPI(app);
 // setup chat API
 // setupChatAPI(app);
 

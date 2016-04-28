@@ -1,24 +1,43 @@
 import React from 'react';
-import store$ from '../../store';
+import Portal from 'react-portal';
+import store$, {getChannels, setChannel} from '../../store';
 import styles from './sidebar.css';
+
+import Modal from '../modal';
+import NewChannel from '../newchannel';
 
 const Sidebar = React.createClass({
     getInitialState() {
         return {
             currentTeam: {},
+            channels: [],
+            showCreateChannel: false,
         };
     },
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['currentTeam'].includes(key)))
+            .map(s => s.filter((_, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
+
+        getChannels();
     },
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    },
+
+    closeCreateChannel(refetch = false) {
+        this.setState({showCreateChannel: false});
+        if (refetch) {
+            getChannels();
+        }
+    },
+
+    isCurrent(channel) {
+        return this.state.currentChannel && this.state.currentChannel._id === channel._id;
     },
 
     render() {
@@ -30,33 +49,53 @@ const Sidebar = React.createClass({
                     </header>
                 </div>
 
-                <div className={`menu dark-menu ${styles.channels}`}>
-                    <p className="menu-label">
-                        <a href="#" className={styles.channelsHeader}>
-                            Channels
-                            <span className={styles.separator} />
-                            <span className="icon is-small">
-                                <i className="fa fa-plus" />
-                            </span>
-                        </a>
-                    </p>
-                    <ul className="menu-list">
-                        <li>
-                            <a href="#" className="is-active channel-name">Channel 1</a>
-                            <ul>
+                {this.state.currentTeam.name && (
+                    <div className={`menu dark-menu ${styles.channels}`}>
+                        <p className="menu-label">
+                            <a
+                                className={styles.channelsHeader}
+                                onClick={() => this.setState({showCreateChannel: true})}
+                            >
+                                Channels
+                                <span className={styles.separator} />
+                                <span className="icon is-small">
+                                    <i className="fa fa-plus" />
+                                </span>
+                            </a>
+                        </p>
+                        <ul className="menu-list">
+                            {this.state.channels.length === 0 && (
                                 <li>
-                                    <a href="#" className="channel-name">Subchannel 1</a>
+                                    No channels found! Add one?
                                 </li>
+                            )}
+                            {this.state.channels.map(channel => (
                                 <li>
-                                    <a href="#" className="channel-name">Subchannel with a super really long name</a>
+                                    <a
+                                        className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
+                                        onClick={() => setChannel(channel)}
+                                    >
+                                        {channel.name}
+                                    </a>
+                                    <ul>
+                                        {channel.subchannels && channel.subchannels.map(ch => (
+                                            <li>
+                                                <a className="channel-name">{ch.name}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </li>
-                                <li>
-                                    <a href="#" className="channel-name">Subchannel 3</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Modal for team creation */}
+                <Portal closeOnEsc isOpened={this.state.showCreateChannel}>
+                    <Modal closeAction={this.closeCreateChannel}>
+                        <NewChannel close={this.closeCreateChannel} />
+                    </Modal>
+                </Portal>
             </aside>
         );
     },
