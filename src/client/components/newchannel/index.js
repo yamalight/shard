@@ -2,6 +2,12 @@ import React from 'react';
 import store$, {createChannel} from '../../store';
 
 const NewChannel = React.createClass({
+    getInitialState() {
+        return {
+            currentTeam: {},
+        };
+    },
+
     componentWillMount() {
         this.subs = [
             store$

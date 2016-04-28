@@ -21,9 +21,14 @@ const Sidebar = React.createClass({
             .map(s => s.filter((_, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
+            // request channels once you have team
+            store$
+            .map(s => s.get('currentTeam'))
+            .filter(s => s !== undefined)
+            .map(s => s.toJS())
+            .distinctUntilChanged()
+            .subscribe(currentTeam => getChannels({team: currentTeam._id})),
         ];
-
-        getChannels();
     },
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
@@ -32,7 +37,7 @@ const Sidebar = React.createClass({
     closeCreateChannel(refetch = false) {
         this.setState({showCreateChannel: false});
         if (refetch) {
-            getChannels();
+            getChannels(this.state.currentTeam._id);
         }
     },
 
@@ -70,7 +75,7 @@ const Sidebar = React.createClass({
                                 </li>
                             )}
                             {this.state.channels.map(channel => (
-                                <li>
+                                <li key={channel._id}>
                                     <a
                                         className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
                                         onClick={() => setChannel(channel)}

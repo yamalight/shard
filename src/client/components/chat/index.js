@@ -5,28 +5,31 @@ import Description from '../description';
 import Message from '../message/';
 import MessageShort from '../message-short';
 
-import {sendMessage} from '../../store';
-
-const desc = `This is some __markdown__ description of our awesome chat theme here.
-
-Tasks for nearest future:
-- [x] I even
-- [ ] can use
-- [ ] some lists
-
-## Misc things to remember
-
-This is just a channel description that has some useful things.
-There can be [links](http://google.com) [here](http://duckduckgo.com). Or whatever.
-
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-Even images.
-`;
+import store$ from '../../store';
 
 const Chat = React.createClass({
+    getInitialState() {
+        return {
+            currentChannel: {},
+        };
+    },
+
+    componentWillMount() {
+        this.subs = [
+            store$
+            .map(s => s.filter((_, key) => ['currentChannel'].includes(key)))
+            .map(s => s.toJS())
+            .subscribe(s => this.setState(s)),
+        ];
+    },
+    componentWillUnmount() {
+        this.subs.map(s => s.dispose());
+    },
+
     sendMessage() {
         const message = this._text.value;
-        sendMessage({user: 'test', message});
+        console.log(message);
+        // sendMessage({user: 'test', message});
     },
 
     render() {
@@ -35,13 +38,13 @@ const Chat = React.createClass({
                 <nav className={`navbar ${styles.navbar}`}>
                     <div className="navbar-item">
                         <p className={`title channel-name ${styles.title}`}>
-                            Channel 1
+                            {this.state.currentChannel.name || 'No channel selected'}
                         </p>
                     </div>
                 </nav>
 
                 <div ref="chatContainer" className={styles.section}>
-                    <Description text={desc} />
+                    <Description text={this.state.currentChannel.description || ''} />
                     <Message
                         user="John Smith"
                         username="johnsmith"
@@ -118,7 +121,7 @@ const Chat = React.createClass({
                             className="input"
                             type="text"
                             placeholder="Write a message..."
-                            ref={(t) => {this._text = t;}}
+                            ref={(t) => { this._text = t; }}
                         />
                         <a className="button" onClick={this.sendMessage}>
                             <i className="fa fa-paper-plane" />

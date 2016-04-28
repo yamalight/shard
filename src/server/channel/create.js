@@ -9,6 +9,7 @@ export default (app) => {
         const newChannel = new Channel({
             name,
             description,
+            team,
             users: [{
                 id: req.userInfo._id,
                 access: 'owner',

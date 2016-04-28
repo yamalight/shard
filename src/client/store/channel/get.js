@@ -8,8 +8,8 @@ export const getChannels = createAction();
 // map to request
 const channels$ = getChannels.$
     .do(() => status('loading'))
-    .map(() => sign({}))
-    .flatMap(({token}) => get('/api/channels', token))
+    .map(data => sign(data))
+    .flatMap(({team, token}) => get(`/api/channels?team=${team}`, token))
     .do(res => (res.error || !res.channels ? status('error') : status('finished')))
     .map(channels => ({channels}));
 

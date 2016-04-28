@@ -2,6 +2,10 @@ import React from 'react';
 import store$, {createTeam} from '../../store';
 
 const NewTeam = React.createClass({
+    getInitialState() {
+        return {};
+    },
+
     componentWillMount() {
         this.subs = [
             store$
