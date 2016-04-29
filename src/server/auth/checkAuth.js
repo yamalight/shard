@@ -36,7 +36,8 @@ export const checkStringToken = async (token) => {
 
 // action
 export default async (req, res, next) => {
-    const token = requestToToken(req);
+    const reqToCheck = req.upgradeReq || req;
+    const token = requestToToken(reqToCheck);
     try {
         const user = await checkStringToken(token);
         logger.info('user found!', user);

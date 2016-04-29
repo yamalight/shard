@@ -69,12 +69,12 @@ const Sidebar = React.createClass({
                             </a>
                         </p>
                         <ul className="menu-list">
-                            {this.state.channels.length === 0 && (
+                            {this.state.channels && this.state.channels.length === 0 && (
                                 <li>
                                     No channels found! Add one?
                                 </li>
                             )}
-                            {this.state.channels.map(channel => (
+                            {this.state.channels && this.state.channels.map(channel => (
                                 <li key={channel._id}>
                                     <a
                                         className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}

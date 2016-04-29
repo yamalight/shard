@@ -16,7 +16,7 @@ import setupTeamAPI from './team';
 // channel api
 import setupChannelAPI from './channel';
 // chat api
-// import setupChatAPI from './chat';
+import setupChatAPI from './chat';
 
 // logger
 import {logger} from './util';
@@ -41,7 +41,7 @@ setupTeamAPI(app);
 // setup channel API
 setupChannelAPI(app);
 // setup chat API
-// setupChatAPI(app);
+setupChatAPI(app);
 
 // serve static content
 app.use(express.static(join(__dirname, '..', 'client')));

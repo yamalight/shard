@@ -3,9 +3,9 @@ import mongoose, {Schema} from 'mongoose';
 const ChannelSchema = new Schema({
     name: String,
     description: String,
-    team: Schema.Types.ObjectId,
+    team: {type: Schema.Types.ObjectId, ref: 'Team'},
     users: [{
-        id: Schema.Types.ObjectId,
+        id: {type: Schema.Types.ObjectId, ref: 'User'},
         access: {type: String, enum: ['owner', 'admin', 'member']},
     }],
 });
