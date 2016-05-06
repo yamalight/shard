@@ -19,6 +19,7 @@ const Sidebar = React.createClass({
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
+            .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
             // request channels once you have team
@@ -37,7 +38,7 @@ const Sidebar = React.createClass({
     closeCreateChannel(refetch = false) {
         this.setState({showCreateChannel: false});
         if (refetch) {
-            getChannels(this.state.currentTeam.id);
+            getChannels({team: this.state.currentTeam.id});
         }
     },
 

@@ -42,6 +42,8 @@ const Teambar = React.createClass({
     render() {
         return (
             <div className={styles.teambar}>
+                {/*
+                TODO: Uncomment later when DM functionality is implemented
                 <a href="#" className={styles.iconButton}>
                     <span className="icon is-large hint--right hint--info" data-hint="Direct messages">
                         <i className="fa fa-users"></i>
@@ -49,6 +51,7 @@ const Teambar = React.createClass({
                 </a>
 
                 <div className={styles.separator} />
+                */}
 
                 {/* Teams list */}
                 {this.state.teams && this.state.teams.map(team => (
