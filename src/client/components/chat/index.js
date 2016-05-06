@@ -4,6 +4,7 @@ import styles from './chat.css';
 import Description from '../description';
 import Message from '../message/';
 // import MessageShort from '../message-short';
+import ChatInput from '../chatInput';
 
 import store$, {initChat, getChat, getHistory, sendChat} from '../../store';
 
@@ -85,20 +86,7 @@ const Chat = React.createClass({
                     ))}
                 </div>
                 <div className={styles.footer}>
-                    <p className="control has-addons">
-                        <a className="button">
-                            <i className="fa fa-paperclip" />
-                        </a>
-                        <input
-                            className="input"
-                            type="text"
-                            placeholder="Write a message..."
-                            ref={(t) => { this._text = t; }}
-                        />
-                        <a className="button" onClick={this.sendMessage}>
-                            <i className="fa fa-paper-plane" />
-                        </a>
-                    </p>
+                    <ChatInput {...this.state} />
                 </div>
             </div>
         );
