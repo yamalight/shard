@@ -6,7 +6,7 @@ export default (app) => {
     app.post('/api/teams/new', checkAuth, asyncRequest(async (req, res) => {
         const {name} = req.body;
         logger.debug('saving team with name:', name, 'and owner:', req.userInfo.username);
-        const team = Team.create({
+        const team = await Team.create({
             name,
             users: [{
                 id: req.userInfo.id,

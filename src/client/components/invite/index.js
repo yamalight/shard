@@ -1,5 +1,5 @@
 import React from 'react';
-import store$ from '../../store';
+import store$, {inviteUser} from '../../store';
 
 const Invite = React.createClass({
     getInitialState() {
@@ -22,7 +22,12 @@ const Invite = React.createClass({
     },
 
     invite() {
-        console.log('invite:', this.nameInput.value);
+        inviteUser({
+            username: this.nameInput.value,
+            team: this.state.currentTeam.id,
+            channel: this.state.currentChannel && this.state.currentChannel.id,
+        });
+        this.close();
     },
 
     close() {

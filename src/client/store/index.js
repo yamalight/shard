@@ -13,6 +13,7 @@ import teamStatus from './team/status';
 import createTeam$, {createTeam} from './team/create';
 import getTeams$, {getTeams} from './team/get';
 import setTeam$, {setTeam} from './team/set';
+import inviteUser$, {inviteUser} from './team/invite';
 
 // plug in channel actions
 import channelStatus from './channel/status';
@@ -38,6 +39,7 @@ const streams = [
     getTeams$,
     createTeam$,
     setTeam$,
+    inviteUser$,
     // channel streams
     channelStatus.$,
     getChannels$,
@@ -60,6 +62,7 @@ export {
     getTeams,
     createTeam,
     setTeam,
+    inviteUser,
     // channel
     getChannels,
     createChannel,

@@ -1,5 +1,5 @@
 import r from 'rethinkdb';
-import logger from '../util/logger';
+import {logger} from '../util';
 import {rdb} from './connection';
 
 /*

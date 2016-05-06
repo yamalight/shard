@@ -1,4 +1,4 @@
-import logger from '../util/logger';
+import {logger} from '../util';
 import {rdb} from './connection';
 
 /*
@@ -68,10 +68,16 @@ const create = async function(data) {
     return res;
 };
 
-const update = async function(pattern, data) {
+const update = async function(id, data) {
     const {t, connection} = await table();
-    logger.debug('updating channel:', pattern, 'with:', data);
-    return t.get(pattern).update(data).run(connection);
+    logger.debug('updating channel:', id, 'with:', data);
+    return t.get(id).update(data).run(connection);
+};
+
+const addUser = async function({channel, user, access = 'member'}) {
+    const {t, connection} = await table();
+    logger.debug('adding user:', user, ' to channel:', channel);
+    return t.get(channel).update(row => ({users: row('users').append({id: user, access})})).run(connection);
 };
 
 const del = async function(id) {
@@ -87,4 +93,5 @@ export const Channel = {
     create,
     update,
     del,
+    addUser,
 };

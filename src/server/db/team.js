@@ -66,7 +66,7 @@ const get = async function(id) {
     let result = null;
     try {
         result = await t.get(id)
-            .merge(c => ({users: c('users').map(u => ({user: db.table('users').get(u('id')).pluck(userFields)}))}))
+            .merge(c => ({users: c('users').merge(u => ({user: db.table('users').get(u('id')).pluck(userFields)}))}))
             .run(connection);
     } catch (err) {
         // check if it's just nothing found error
@@ -86,10 +86,16 @@ const create = async function(data) {
     return res;
 };
 
-const update = async function(pattern, data) {
+const update = async function(id, data) {
     const {t, connection} = await table();
-    logger.debug('updating team:', pattern, 'with:', data);
-    return t.get(pattern).update(data).run(connection);
+    logger.debug('updating team:', id, 'with:', data);
+    return t.get(id).update(data).run(connection);
+};
+
+const addUser = async function({team, user, access = 'member'}) {
+    const {t, connection} = await table();
+    logger.debug('adding user:', user, ' to team:', team);
+    return t.get(team).update(row => ({users: row('users').append({id: user, access})})).run(connection);
 };
 
 const del = async function(id) {
@@ -106,4 +112,5 @@ export const Team = {
     create,
     update,
     del,
+    addUser,
 };
