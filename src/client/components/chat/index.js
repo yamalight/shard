@@ -3,7 +3,7 @@ import styles from './chat.css';
 
 import Description from '../description';
 import Message from '../message/';
-// import MessageShort from '../message-short';
+import MessageShort from '../message-short';
 import ChatInput from '../chatInput';
 
 import store$, {initChat, getChat, getHistory, sendChat} from '../../store';
@@ -44,6 +44,31 @@ const Chat = React.createClass({
                     this.setState({messagesRequested: true});
                 }
             })
+            .map(({history = [], messages = [], ...rest}) => ({
+                ...rest,
+                allMessages: history
+                    .concat(messages)
+                    .filter(m => m !== undefined)
+                    .reduce((result, message) => {
+                        const lastIndex = result.length - 1;
+                        if (lastIndex < 0) {
+                            return [message];
+                        }
+
+                        const lastMessage = result[lastIndex];
+                        if (lastMessage.user.id === message.user.id) {
+                            if (!lastMessage.moreMessages) {
+                                lastMessage.moreMessages = [];
+                            }
+
+                            lastMessage.moreMessages.push(message);
+                        } else {
+                            result.push(message);
+                        }
+
+                        return result;
+                    }, []),
+            }))
             .subscribe(s => this.setState(s)),
         ];
     },
@@ -56,10 +81,6 @@ const Chat = React.createClass({
         const team = this.state.currentTeam.id;
         const channel = this.state.currentChannel.id;
         sendChat({team, channel, message});
-    },
-
-    allMessages() {
-        return this.state.history.concat(this.state.messages);
     },
 
     render() {
@@ -75,13 +96,20 @@ const Chat = React.createClass({
 
                 <div ref="chatContainer" className={styles.section}>
                     <Description text={this.state.currentChannel.description || ''} />
-                    {this.allMessages().length === 0 && 'No messages yet!'}
-                    {this.allMessages().filter(m => m !== undefined).map(m => (
+                    {this.state.allMessages.length === 0 && 'No messages yet!'}
+                    {this.state.allMessages.map(m => (
                         <Message
                             key={m.id}
                             user={m.user.username}
                             time={m.time}
                             message={m.message}
+                            moreMessages={m.moreMessages.map(mm => (
+                                <MessageShort
+                                    key={mm.id}
+                                    time={mm.time}
+                                    message={mm.message}
+                                />
+                            ))}
                         />
                     ))}
                 </div>
