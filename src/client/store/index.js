@@ -22,7 +22,7 @@ import setChannel$, {setChannel} from './channel/set';
 
 // plug in chat actions
 import chatStatus from './chat/status';
-import {initChat} from './chat/connect';
+import {initChat, closeChat} from './chat/connect';
 import getChat$, {getChat} from './chat/get';
 import getHistory$, {getHistory} from './chat/getHistory';
 import sendChat$, {sendChat} from './chat/send';
@@ -66,6 +66,7 @@ export {
     setChannel,
     // chat
     initChat,
+    closeChat,
     getChat,
     getHistory,
     sendChat,

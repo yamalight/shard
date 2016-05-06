@@ -16,9 +16,9 @@ export default (app) => {
     app.get('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
         logger.info('getting messages for channel:', channel);
-        const messages = await Message.find({channel});
-        logger.debug('got message', messages);
-        res.send(messages);
+        const history = await Message.find({channel});
+        logger.debug('got message', history);
+        res.send({history});
     }));
 
     app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {

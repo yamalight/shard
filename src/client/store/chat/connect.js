@@ -11,3 +11,12 @@ export const initChat = ({team, channel}) => {
     chatSockets[team + channel] = socket(`/api/chat/${team}/${channel}?token=${localStorage.getItem('token')}`);
     return chatSockets[team + channel];
 };
+
+// close chat action
+export const closeChat = (id) => {
+    if (!chatSockets[id]) {
+        return;
+    }
+
+    chatSockets[id].onCompleted();
+};

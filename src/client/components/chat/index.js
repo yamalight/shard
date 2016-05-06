@@ -6,13 +6,13 @@ import Message from '../message/';
 import MessageShort from '../message-short';
 import ChatInput from '../chatInput';
 
-import store$, {initChat, getChat, getHistory, sendChat} from '../../store';
+import store$, {initChat, closeChat, getChat, getHistory, sendChat} from '../../store';
 
 const Chat = React.createClass({
     getInitialState() {
         return {
             currentChannel: {},
-            messagesRequested: false,
+            requestedForChannel: undefined,
             messages: [],
             history: [],
         };
@@ -25,11 +25,18 @@ const Chat = React.createClass({
             .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => {
-                if (this.state.messagesRequested) {
-                    return;
-                }
-
                 if (s.currentTeam && s.currentChannel) {
+                    // if already opened for this chat - ignore action
+                    if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
+                        return;
+                    }
+
+                    // if another socket exists - close it
+                    if (this.state.requestedForChannel) {
+                        closeChat(this.state.requestedForChannel);
+                    }
+
+                    // construct request
                     const params = {
                         team: s.currentTeam.id,
                         channel: s.currentChannel.id,
@@ -41,7 +48,7 @@ const Chat = React.createClass({
                     // setup listener
                     getChat(params);
                     // set flag to not repeat that
-                    this.setState({messagesRequested: true});
+                    this.setState({requestedForChannel: s.currentTeam.id + s.currentChannel.id});
                 }
             })
             .map(({history = [], messages = [], ...rest}) => ({
@@ -57,10 +64,6 @@ const Chat = React.createClass({
 
                         const lastMessage = result[lastIndex];
                         if (lastMessage.user.id === message.user.id) {
-                            if (!lastMessage.moreMessages) {
-                                lastMessage.moreMessages = [];
-                            }
-
                             lastMessage.moreMessages.push(message);
                         } else {
                             result.push(message);

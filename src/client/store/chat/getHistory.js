@@ -10,11 +10,11 @@ const history$ = getHistory.$
     .do(() => status('loading'))
     .map(data => sign(data))
     .flatMap(({team, channel, token}) => get(`/api/chat/${team}/${channel}`, token))
-    .do(res => (res.error || !res.channels ? status('error') : status('finished')))
+    .do(res => (res.error || !res.history ? status('error') : status('finished')))
     .map(res => {
         res.chatError = res.error; // eslint-disable-line
         return res;
     })
-    .map(history => (Array.isArray(history) ? ({history}) : ({...history, history: []})));
+    .map(res => ({...res, history: res.history.map(h => ({...h, moreMessages: []}))}));
 
 export default history$;
