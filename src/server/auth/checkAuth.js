@@ -22,10 +22,10 @@ export const checkStringToken = async (token) => {
         throw e;
     }
     logger.debug('decoded: ', decoded);
-    const {id, username} = decoded;
+    const {id} = decoded;
     logger.debug('searching for: ', id);
     // find user
-    const user = await User.find({id, username});
+    const user = await User.get(id).run();
     if (user) {
         logger.info('user found!', user);
         return user;

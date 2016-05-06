@@ -19,7 +19,8 @@ export default (app) => {
         }
 
         // find user that's getting invited
-        const user = await User.find({username});
+        const users = await User.filter({username}).limit(1).run();
+        const user = users.pop();
         logger.debug('found user:', user);
         if (!user) {
             logger.error('target user not found!');
@@ -28,11 +29,14 @@ export default (app) => {
         }
 
         // add user to team
-        await Team.addUser({team: id, user: user.id});
+        team.users.push({id: user.id});
+        await team.save();
 
         // add user to channel (if present)
         if (channel) {
-            await Channel.addUser({channel, user: user.id});
+            const ch = await Channel.get(channel);
+            ch.users.push({id: user.id});
+            await ch.save();
         }
 
         logger.debug('invited user to team!');

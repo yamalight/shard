@@ -8,7 +8,7 @@ import expressWs from 'express-ws';
 // logging
 import morgan from 'morgan';
 // db
-import setupDb from './db';
+import thinky from './db';
 // webpack for dev
 import setupWebpack from './webpack';
 // auth api
@@ -57,7 +57,7 @@ app.use((err, req, res, next) => { // eslint-disable-line
 
 
 // wait for DB setup
-setupDb().then(() => {
+thinky.dbReady().then(() => {
     // start server
     app.listen(8080, function() {
         const host = this.address().address;

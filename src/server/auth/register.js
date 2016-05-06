@@ -10,7 +10,7 @@ export default (app) => {
         const password = hash(plainPass);
         logger.debug('adding: ', username, password);
         // find user
-        const user = await User.create({
+        const user = await User.save({
             username,
             password,
         });
@@ -21,9 +21,10 @@ export default (app) => {
             return;
         }
 
-        logger.debug('created user: ', user);
+        const userObj = user._makeSavableCopy();
+        logger.debug('created user: ', userObj);
         // generate token
-        const token = jwt.sign(user, jwtconf.secret, {expiresIn: '1d'});
+        const token = jwt.sign(_.omit(userObj, ['password']), jwtconf.secret, {expiresIn: '1d'});
         res.status(200).json({token});
     }));
 };

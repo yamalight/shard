@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import jwt from 'jsonwebtoken';
 import {User} from '../db';
 import {jwtconf} from '../../../config';
@@ -10,10 +9,10 @@ export default (app) => {
         const password = hash(plainPass);
         logger.debug('searching for: ', username, password);
         // find user
-        const user = await User.find({
-            username,
-            password,
-        });
+        const users = await User.filter({username, password})
+            .without(['password'])
+            .limit(1).run();
+        const user = users.pop();
         // check if user was found
         if (!user) {
             res.status(401).json({error: 'Incorrect username or password!'});

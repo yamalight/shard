@@ -1,8 +1,11 @@
 // connection
-import {setup} from './connection';
+import {thinky, r} from './thinky';
 
-// setup db
-export default setup;
+// export db
+export default thinky;
+
+// export helpers
+export {r};
 
 // export models
 export {User} from './user';

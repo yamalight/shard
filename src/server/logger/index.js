@@ -7,6 +7,7 @@ export default (label) => {
                 level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
                 colorize: true,
                 timestamp: true,
+                prettyPrint: true,
                 label,
             }),
         ],

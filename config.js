@@ -1,8 +1,8 @@
 export const db = {
     host: process.env.EXYNIZE_DB_HOST || 'docker.dev',
-    database: process.env.EXYNIZE_DB_NAME || 'sharddb',
-    user: '',
-    password: '',
+    db: process.env.EXYNIZE_DB_NAME || 'sharddb',
+    // user: '',
+    // password: '',
 };
 
 export const jwtconf = {

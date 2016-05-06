@@ -49,10 +49,10 @@
     "react-dom": "^15.0.1",
     "react-portal": "^2.1.0",
     "react-router": "^2.3.0",
-    "rethinkdb": "^2.3.1",
     "rx": "^4.1.0",
     "rx-dom": "^7.0.3",
     "rxstate": "^0.3.0",
+    "thinky": "^2.3.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {

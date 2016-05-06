@@ -6,7 +6,7 @@ export default (app) => {
     app.post('/api/channels/new', checkAuth, asyncRequest(async (req, res) => {
         const {name, description, team} = req.body;
         logger.debug('saving channel with:', {name, description, team}, 'and owner:', req.userInfo.username);
-        const channel = await Channel.create({
+        const channel = await Channel.save({
             name,
             description,
             team,
