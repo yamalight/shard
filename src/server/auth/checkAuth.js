@@ -22,13 +22,13 @@ export const checkStringToken = async (token) => {
         throw e;
     }
     logger.debug('decoded: ', decoded);
-    const {_id} = decoded;
-    logger.debug('searching for: ', _id);
+    const {id, username} = decoded;
+    logger.debug('searching for: ', id);
     // find user
-    const user = await User.findOne(_id);
+    const user = await User.find({id, username});
     if (user) {
-        logger.info('user found!', user.toObject());
-        return user.toObject();
+        logger.info('user found!', user);
+        return user;
     }
 
     throw new Error('Not logged in!');

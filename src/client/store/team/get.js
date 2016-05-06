@@ -15,6 +15,6 @@ const teams$ = getTeams.$
         res.teamError = res.error; // eslint-disable-line
         return res;
     })
-    .map(teams => ({teams}));
+    .map(teams => (Array.isArray(teams) ? ({teams}) : ({...teams, teams: []})));
 
 export default teams$;

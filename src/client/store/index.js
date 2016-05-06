@@ -24,7 +24,8 @@ import setChannel$, {setChannel} from './channel/set';
 import chatStatus from './chat/status';
 import {initChat} from './chat/connect';
 import getChat$, {getChat} from './chat/get';
-import {sendChat} from './chat/send';
+import getHistory$, {getHistory} from './chat/getHistory';
+import sendChat$, {sendChat} from './chat/send';
 
 // create an array of action streams for store
 const streams = [
@@ -45,6 +46,8 @@ const streams = [
     // chat streams
     chatStatus.$,
     getChat$,
+    getHistory$,
+    sendChat$,
 ];
 // create store
 const store = createStore({streams, defaultState});
@@ -64,7 +67,10 @@ export {
     // chat
     initChat,
     getChat,
+    getHistory,
     sendChat,
 };
+
+// store.subscribe(s => console.log('state update:', s.toJS()));
 
 export default store;

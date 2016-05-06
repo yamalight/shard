@@ -1,5 +1,9 @@
-// init connection
-import './connection';
+// connection
+import {setup} from './connection';
+
+// setup db
+export default setup;
+
 // export models
 export {User} from './user';
 export {Team} from './team';

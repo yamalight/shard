@@ -36,7 +36,7 @@ const Teambar = React.createClass({
     },
 
     isCurrent(team) {
-        return this.state.currentTeam && this.state.currentTeam._id === team._id;
+        return this.state.currentTeam && this.state.currentTeam.id === team.id;
     },
 
     render() {
@@ -51,9 +51,9 @@ const Teambar = React.createClass({
                 <div className={styles.separator} />
 
                 {/* Teams list */}
-                {this.state.teams.map(team => (
+                {this.state.teams && this.state.teams.map(team => (
                     <a
-                        key={team._id}
+                        key={team.id}
                         className={`${styles.iconButton} ${this.isCurrent(team) || styles.iconButtonFaded}`}
                         onClick={() => setTeam(team)}
                     >

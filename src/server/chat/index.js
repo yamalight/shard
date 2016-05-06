@@ -1,5 +1,6 @@
+import _ from 'lodash';
 import checkAuth from '../auth/checkAuth';
-import {logger} from '../util';
+import {logger, asyncRequest} from '../util';
 import {Message} from '../db';
 
 export default (app) => {
@@ -12,27 +13,41 @@ export default (app) => {
         res.send(messages);
     });
 
-    app.ws('/api/chat/:team/:channel', checkAuth, (ws, req, next) => {
+    app.get('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
-        const sendMessages = async () => {
-            const messages = await Message.find({channel}).populate('user');
-            ws.send(JSON.stringify(messages));
-        };
+        logger.info('getting messages for channel:', channel);
+        const messages = await Message.find({channel});
+        logger.debug('got message', messages);
+        res.send(messages);
+    }));
 
-        ws.on('message', async (data) => {
-            logger.info('got msg:', data, 'from:', ws.userInfo.username, 'channel:', channel);
-            const msg = JSON.parse(data);
-            const m = new Message({
-                ...msg,
-                user: ws.userInfo._id,
-                channel,
-            });
-            await m.save();
-            logger.info('saved new message', m.toObject());
-            ws.send(JSON.stringify(m.toObject()));
+    app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
+        const channel = req.params.channel;
+        const message = _.omit(req.body, ['token']);
+        logger.info('got msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
+        const m = await Message.create({
+            ...message,
+            user: req.userInfo.id,
+            channel,
         });
+        logger.debug('saved new message:', m);
+        res.sendStatus(201);
+    }));
 
-        sendMessages();
-        // next();
-    });
+    app.ws('/api/chat/:team/:channel', checkAuth, asyncRequest(async (ws, req) => {
+        const channel = req.params.channel;
+        logger.info('initing stream for channel:', channel);
+        const messageStream = await Message.findStream({channel});
+        messageStream.each((err, it) => {
+            if (err) {
+                logger.error('got err in channel stream:', err);
+                return;
+            }
+
+            ws.send(JSON.stringify(it));
+        });
+        // cleanup on socket close
+        ws.on('error', () => messageStream.close());
+        ws.on('close', () => messageStream.close());
+    }));
 };

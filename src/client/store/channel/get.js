@@ -11,6 +11,10 @@ const channels$ = getChannels.$
     .map(data => sign(data))
     .flatMap(({team, token}) => get(`/api/channels?team=${team}`, token))
     .do(res => (res.error || !res.channels ? status('error') : status('finished')))
-    .map(channels => ({channels}));
+    .map(res => {
+        res.channelError = res.error; // eslint-disable-line
+        return res;
+    })
+    .map(channels => (Array.isArray(channels) ? ({channels}) : ({...channels, channels: []})));
 
 export default channels$;

@@ -24,7 +24,7 @@ const NewChannel = React.createClass({
     create() {
         const name = this.nameInput.value;
         const description = this.descInput.value;
-        const team = this.state.currentTeam._id;
+        const team = this.state.currentTeam.id;
         createChannel({name, description, team});
     },
     close(e, refetch = false) {

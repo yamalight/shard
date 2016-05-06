@@ -16,5 +16,5 @@ DOM.get({
 .catch(err => (
     err.xhr && err.xhr.response ?
     just(JSON.parse(err.xhr.response)) :
-    just({registerError: err})
+    just({error: err})
 ));

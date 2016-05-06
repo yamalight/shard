@@ -27,7 +27,7 @@ const Sidebar = React.createClass({
             .filter(s => s !== undefined)
             .map(s => s.toJS())
             .distinctUntilChanged()
-            .subscribe(currentTeam => getChannels({team: currentTeam._id})),
+            .subscribe(currentTeam => getChannels({team: currentTeam.id})),
         ];
     },
     componentWillUnmount() {
@@ -37,12 +37,12 @@ const Sidebar = React.createClass({
     closeCreateChannel(refetch = false) {
         this.setState({showCreateChannel: false});
         if (refetch) {
-            getChannels(this.state.currentTeam._id);
+            getChannels(this.state.currentTeam.id);
         }
     },
 
     isCurrent(channel) {
-        return this.state.currentChannel && this.state.currentChannel._id === channel._id;
+        return this.state.currentChannel && this.state.currentChannel.id === channel.id;
     },
 
     render() {
@@ -75,7 +75,7 @@ const Sidebar = React.createClass({
                                 </li>
                             )}
                             {this.state.channels && this.state.channels.map(channel => (
-                                <li key={channel._id}>
+                                <li key={channel.id}>
                                     <a
                                         className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
                                         onClick={() => setChannel(channel)}

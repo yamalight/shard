@@ -10,11 +10,10 @@ export default (app) => {
         const password = hash(plainPass);
         logger.debug('adding: ', username, password);
         // find user
-        const newUser = new User({
+        const user = await User.create({
             username,
             password,
         });
-        const user = await newUser.save();
 
         if (!user) {
             logger.debug('unknown error while creating user during registration!');
@@ -22,10 +21,9 @@ export default (app) => {
             return;
         }
 
-        const userObj = _.omit(user.toObject(), ['password', '__v']);
-        logger.debug('created user: ', userObj);
+        logger.debug('created user: ', user);
         // generate token
-        const token = jwt.sign(userObj, jwtconf.secret, {expiresIn: '1d'});
+        const token = jwt.sign(user, jwtconf.secret, {expiresIn: '1d'});
         res.status(200).json({token});
     }));
 };

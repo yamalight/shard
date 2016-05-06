@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 // logging
 import morgan from 'morgan';
+// db
+import setupDb from './db';
 // webpack for dev
 import setupWebpack from './webpack';
 // auth api
@@ -53,11 +55,15 @@ app.use((err, req, res, next) => { // eslint-disable-line
     res.status(500).send(err);
 });
 
-// start server
-app.listen(8080, function() {
-    const host = this.address().address;
-    const port = this.address().port;
-    logger.info(`Shard listening at http://${host}:${port}`);
+
+// wait for DB setup
+setupDb().then(() => {
+    // start server
+    app.listen(8080, function() {
+        const host = this.address().address;
+        const port = this.address().port;
+        logger.info(`Shard listening at http://${host}:${port}`);
+    });
 });
 
 // output all uncaught exceptions

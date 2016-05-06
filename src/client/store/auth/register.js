@@ -16,6 +16,8 @@ const register$ = registerUser.$
         // try to parse out user
         if (token) {
             res.user = jwtDecode(token); // eslint-disable-line
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(res.user));
         }
         return res;
     })
@@ -23,6 +25,6 @@ const register$ = registerUser.$
         res.registerError = res.error; // eslint-disable-line
         return res;
     })
-    .do(res => (res.error || !res.user ? status('error') : status('registered')));
+    .do(res => (res.registerError || !res.user ? status('error') : status('registered')));
 
 export default register$;

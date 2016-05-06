@@ -5,7 +5,7 @@ import Description from '../description';
 import Message from '../message/';
 // import MessageShort from '../message-short';
 
-import store$, {initChat, getChat, sendChat} from '../../store';
+import store$, {initChat, getChat, getHistory, sendChat} from '../../store';
 
 const Chat = React.createClass({
     getInitialState() {
@@ -13,13 +13,14 @@ const Chat = React.createClass({
             currentChannel: {},
             messagesRequested: false,
             messages: [],
+            history: [],
         };
     },
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['messages', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((_, key) => ['history', 'messages', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => {
@@ -29,11 +30,13 @@ const Chat = React.createClass({
 
                 if (s.currentTeam && s.currentChannel) {
                     const params = {
-                        team: s.currentTeam._id,
-                        channel: s.currentChannel._id,
+                        team: s.currentTeam.id,
+                        channel: s.currentChannel.id,
                     };
                     // init connection
                     initChat(params);
+                    // get history
+                    getHistory(params);
                     // setup listener
                     getChat(params);
                     // set flag to not repeat that
@@ -49,9 +52,13 @@ const Chat = React.createClass({
 
     sendMessage() {
         const message = this._text.value;
-        const team = this.state.currentTeam._id;
-        const channel = this.state.currentChannel._id;
+        const team = this.state.currentTeam.id;
+        const channel = this.state.currentChannel.id;
         sendChat({team, channel, message});
+    },
+
+    allMessages() {
+        return this.state.history.concat(this.state.messages);
     },
 
     render() {
@@ -67,9 +74,10 @@ const Chat = React.createClass({
 
                 <div ref="chatContainer" className={styles.section}>
                     <Description text={this.state.currentChannel.description || ''} />
-                    {this.state.messages.length === 0 && 'No messages yet!'}
-                    {this.state.messages.filter(m => m !== undefined).map(m => (
+                    {this.allMessages().length === 0 && 'No messages yet!'}
+                    {this.allMessages().filter(m => m !== undefined).map(m => (
                         <Message
+                            key={m.id}
                             user={m.user.username}
                             time={m.time}
                             message={m.message}
