@@ -38,3 +38,15 @@
 .channelsHeader .separator {
     flex-grow: 1;
 }
+
+.teamName {
+    flex-grow: 1;
+}
+
+.teamButton {
+    color: #aeb1b5;
+}
+
+.teamButton:hover {
+    color: #fff;
+}

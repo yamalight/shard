@@ -5,6 +5,7 @@ import styles from './sidebar.css';
 
 import Modal from '../modal';
 import NewChannel from '../newchannel';
+import Invite from '../invite';
 
 const Sidebar = React.createClass({
     getInitialState() {
@@ -12,6 +13,7 @@ const Sidebar = React.createClass({
             currentTeam: {},
             channels: [],
             showCreateChannel: false,
+            showInvite: false,
         };
     },
 
@@ -46,12 +48,30 @@ const Sidebar = React.createClass({
         return this.state.currentChannel && this.state.currentChannel.id === channel.id;
     },
 
+    invitePeople() {
+        this.setState({showInvite: true});
+    },
+    closeInvite() {
+        this.setState({showInvite: false});
+    },
+
     render() {
         return (
             <aside className={styles.sidebar}>
                 <div className={styles.header}>
                     <header>
-                        {this.state.currentTeam.name || 'No team selected'}
+                        <span className={styles.teamName}>
+                            {this.state.currentTeam.name || 'No team selected'}
+                        </span>
+                        {this.state.currentTeam.name && (
+                            <a
+                                className={`${styles.teamButton} hint--bottom`}
+                                data-hint="Invite people"
+                                onClick={this.invitePeople}
+                            >
+                                <i className="fa fa-share-square-o" />
+                            </a>
+                        )}
                     </header>
                 </div>
 
@@ -97,9 +117,16 @@ const Sidebar = React.createClass({
                 )}
 
                 {/* Modal for team creation */}
-                <Portal closeOnEsc isOpened={this.state.showCreateChannel}>
+                <Portal closeOnEsc onClose={this.closeCreateChannel} isOpened={this.state.showCreateChannel}>
                     <Modal closeAction={this.closeCreateChannel}>
                         <NewChannel close={this.closeCreateChannel} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for team invites */}
+                <Portal closeOnEsc onClose={this.closeInvite} isOpened={this.state.showInvite}>
+                    <Modal closeAction={this.closeInvite}>
+                        <Invite close={this.closeInvite} />
                     </Modal>
                 </Portal>
             </aside>
