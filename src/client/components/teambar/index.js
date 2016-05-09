@@ -62,6 +62,7 @@ const Teambar = React.createClass({
                     >
                         <span className="icon is-large hint--right hint--info" data-hint={team.name}>
                             <i className="fa fa-circle"></i>
+                            <span className={styles.teamLetter}>{team.name[0]}</span>
                         </span>
                     </a>
                 ))}

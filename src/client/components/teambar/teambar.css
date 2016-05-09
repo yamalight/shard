@@ -22,6 +22,17 @@
     opacity: 1;
 }
 
+.teamLetter {
+    position: absolute;
+    left: 0;
+    color: #000;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    font-size: 70%;
+    font-weight: 600;
+}
+
 .separator {
     display: flex;
     width: 80%;
