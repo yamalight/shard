@@ -1,6 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
-import store$, {getChannels, setChannel} from '../../store';
+import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
 import styles from './sidebar.css';
 
 import Modal from '../modal';
@@ -28,8 +28,8 @@ const Sidebar = React.createClass({
             store$
             .map(s => s.get('currentTeam'))
             .filter(s => s !== undefined)
-            .map(s => s.toJS())
             .distinctUntilChanged()
+            .map(s => s.toJS())
             .subscribe(currentTeam => getChannels({team: currentTeam.id})),
         ];
     },
@@ -38,7 +38,11 @@ const Sidebar = React.createClass({
     },
 
     closeCreateChannel(refetch = false) {
+        // hide modal
         this.setState({showCreateChannel: false});
+        // reset state
+        resetNewChannel();
+        // refetch channels if needed
         if (refetch) {
             getChannels({team: this.state.currentTeam.id});
         }

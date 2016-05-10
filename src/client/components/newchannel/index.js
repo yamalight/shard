@@ -12,6 +12,7 @@ const NewChannel = React.createClass({
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['newChannel', 'currentTeam'].includes(key)))
+            .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => s.newChannel && this.close(null, true))
             .subscribe(s => this.setState(s)),

@@ -10,6 +10,7 @@ const NewTeam = React.createClass({
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['newTeam'].includes(key)))
+            .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => s.newTeam && this.close(null, true))
             .subscribe(s => this.setState(s)),

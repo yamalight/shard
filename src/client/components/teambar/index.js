@@ -1,6 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
-import store$, {getTeams, setTeam} from '../../store';
+import store$, {getTeams, setTeam, resetNewTeam} from '../../store';
 import styles from './teambar.css';
 
 import Modal from '../modal';
@@ -18,6 +18,7 @@ const Teambar = React.createClass({
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
+            .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
@@ -29,7 +30,11 @@ const Teambar = React.createClass({
     },
 
     closeCreateTeam(refetch = false) {
+        // hide dialoge
         this.setState({showCreateTeam: false});
+        // reset new team
+        resetNewTeam();
+        // refetch teams if needed
         if (refetch) {
             getTeams();
         }

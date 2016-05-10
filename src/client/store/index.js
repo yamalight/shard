@@ -14,12 +14,14 @@ import createTeam$, {createTeam} from './team/create';
 import getTeams$, {getTeams} from './team/get';
 import setTeam$, {setTeam} from './team/set';
 import inviteUser$, {inviteUser} from './team/invite';
+import resetNewTeam$, {resetNewTeam} from './team/resetNew';
 
 // plug in channel actions
 import channelStatus from './channel/status';
 import createChannel$, {createChannel} from './channel/create';
 import getChannels$, {getChannels} from './channel/get';
 import setChannel$, {setChannel} from './channel/set';
+import resetNewChannel$, {resetNewChannel} from './channel/resetNew';
 
 // plug in chat actions
 import chatStatus from './chat/status';
@@ -40,11 +42,13 @@ const streams = [
     createTeam$,
     setTeam$,
     inviteUser$,
+    resetNewTeam$,
     // channel streams
     channelStatus.$,
     getChannels$,
     createChannel$,
     setChannel$,
+    resetNewChannel$,
     // chat streams
     chatStatus.$,
     getChat$,
@@ -63,10 +67,12 @@ export {
     createTeam,
     setTeam,
     inviteUser,
+    resetNewTeam,
     // channel
     getChannels,
     createChannel,
     setChannel,
+    resetNewChannel,
     // chat
     initChat,
     closeChat,
