@@ -15,6 +15,14 @@ const history$ = getHistory.$
         res.chatError = res.error; // eslint-disable-line
         return res;
     })
-    .map(res => ({...res, history: res.history.map(h => ({...h, moreMessages: []}))}));
+    .map(res => ({
+        ...res,
+        history: res.history
+            .map(({replies, ...h}) => ({
+                ...h,
+                replies: replies.map(r => ({...r, moreMessages: []})),
+                moreMessages: [],
+            })),
+    }));
 
 export default history$;

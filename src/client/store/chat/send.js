@@ -1,6 +1,7 @@
 import {createAction} from 'rxstate';
 import status from './status';
 import {post, sign} from '../../util';
+import {resetReply} from './resetReply';
 
 // create action
 export const sendChat = createAction();
@@ -9,7 +10,14 @@ export const sendChat = createAction();
 const sendChat$ = sendChat.$
     .do(() => status('sending'))
     .map(data => sign(data))
-    .flatMap(({team, channel, message, token}) => post(`/api/chat/${team}/${channel}`, {message, token}))
+    .map(data => ({
+        ...data,
+        url: data.replyTo ?
+            `/api/chat/${data.team}/${data.channel}/reply/${data.replyTo}` :
+            `/api/chat/${data.team}/${data.channel}`,
+    }))
+    .flatMap(({message, url, token}) => post(url, {message, token}))
+    .do(() => resetReply())
     .do(res => (res.error ? status('error') : status('messageSent')));
 
 export default sendChat$;

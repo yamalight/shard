@@ -29,6 +29,8 @@ import {initChat, closeChat} from './chat/connect';
 import getChat$, {getChat} from './chat/get';
 import getHistory$, {getHistory} from './chat/getHistory';
 import sendChat$, {sendChat} from './chat/send';
+import replyTo$, {replyTo} from './chat/replyTo';
+import resetReply$, {resetReply} from './chat/resetReply';
 
 // create an array of action streams for store
 const streams = [
@@ -54,6 +56,8 @@ const streams = [
     getChat$,
     getHistory$,
     sendChat$,
+    replyTo$,
+    resetReply$,
 ];
 // create store
 const store = createStore({streams, defaultState});
@@ -79,6 +83,8 @@ export {
     getChat,
     getHistory,
     sendChat,
+    replyTo,
+    resetReply,
 };
 
 // store.subscribe(s => console.log('state update:', s.toJS()));

@@ -8,6 +8,8 @@ import ChatInput from '../chatInput';
 
 import store$, {initChat, closeChat, getChat, getHistory, sendChat} from '../../store';
 
+import {reduceShortMessages} from '../../util';
+
 const Chat = React.createClass({
     getInitialState() {
         return {
@@ -53,24 +55,11 @@ const Chat = React.createClass({
             })
             .map(({history = [], messages = [], ...rest}) => ({
                 ...rest,
-                allMessages: history
-                    .concat(messages)
-                    .filter(m => m !== undefined)
-                    .reduce((result, message) => {
-                        const lastIndex = result.length - 1;
-                        if (lastIndex < 0) {
-                            return [message];
-                        }
-
-                        const lastMessage = result[lastIndex];
-                        if (lastMessage.user.id === message.user.id) {
-                            lastMessage.moreMessages.push(message);
-                        } else {
-                            result.push(message);
-                        }
-
-                        return result;
-                    }, []),
+                allMessages: reduceShortMessages(history.concat(messages))
+                    .map(({replies, ...message}) => ({
+                        ...message,
+                        replies: reduceShortMessages(replies),
+                    })),
             }))
             .subscribe(s => this.setState(s)),
         ];

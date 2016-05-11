@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import checkAuth from '../auth/checkAuth';
 import {logger, asyncRequest} from '../util';
-import {Message, r} from '../db';
+import {Message, Reply, r} from '../db';
 
 export default (app) => {
     app.get('/api/test', checkAuth, (req, res) => {
@@ -13,6 +13,15 @@ export default (app) => {
         logger.info('getting messages for channel:', channel);
         const historyReverse = await Message
             .orderBy(r.desc('time'))
+            .getJoin({
+                replies: {
+                    _apply(sequence) {
+                        return sequence
+                            .orderBy('time')
+                            .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}));
+                    },
+                },
+            })
             .filter({channel})
             .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
             .limit(10)
@@ -34,6 +43,22 @@ export default (app) => {
         logger.debug('saved new message:', m);
         res.sendStatus(201);
     }));
+
+    app.post('/api/chat/:team/:channel/reply/:message', checkAuth, asyncRequest(async (req, res) => {
+        const channel = req.params.channel;
+        const replyTo = req.params.message;
+        const message = _.omit(req.body, ['token']);
+        logger.info('got reply: ', replyTo, ' with msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
+        const m = await Reply.save({
+            ...message,
+            user: req.userInfo.id,
+            channel,
+            replyTo,
+        });
+        logger.debug('saved new reply:', m);
+        res.sendStatus(201);
+    }));
+
 
     app.ws('/api/chat/:team/:channel', checkAuth, asyncRequest(async (ws, req) => {
         const channel = req.params.channel;

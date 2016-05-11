@@ -1,0 +1,14 @@
+.chatInput {
+    background-color: white;
+}
+
+.replyPreview {
+    padding-top: 4px;
+    flex-grow: 1;
+}
+
+.replyButton {
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
