@@ -4,7 +4,6 @@ import styles from './chat.css';
 
 import Description from '../description';
 import Message from '../message/';
-import MessageShort from '../message-short';
 import ChatInput from '../chatInput';
 
 import store$, {initChat, closeChat, getChat, getHistory, sendChat} from '../../store';
@@ -110,19 +109,7 @@ const Chat = React.createClass({
                     <Description text={this.state.currentChannel.description || ''} />
                     {this.state.allMessages.length === 0 && 'No messages yet!'}
                     {this.state.allMessages.map(m => (
-                        <Message
-                            key={m.id}
-                            user={m.user.username}
-                            time={m.time}
-                            message={m.message}
-                            moreMessages={m.moreMessages.map(mm => (
-                                <MessageShort
-                                    key={mm.id}
-                                    time={mm.time}
-                                    message={mm.message}
-                                />
-                            ))}
-                        />
+                        <Message key={m.id} {...m} />
                     ))}
                 </div>
                 <div className={styles.footer}>
