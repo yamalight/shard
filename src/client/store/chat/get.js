@@ -11,10 +11,6 @@ const chat$ = getChat.$
     .do(() => status('connecting'))
     .flatMap(({team, channel}) => chatSockets[team + channel]
         .map(e => JSON.parse(e.data))
-        .startWith([])
-        .scan((acc, msg) => acc.concat([msg]))
-        .map(messages => _.flattenDeep(messages))
-        .map(messages => messages.map(m => ({...m, moreMessages: []})))
         .map(messages => ({messages}))
     )
     .do(res => (res.error || !res.messsages ? status('error') : status('connected')));

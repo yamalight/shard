@@ -3,6 +3,15 @@ import checkAuth from '../auth/checkAuth';
 import {logger, asyncRequest} from '../util';
 import {Message, Reply, r} from '../db';
 
+const messageJoin = {
+    replies: {
+        _apply(sequence) {
+            return sequence.orderBy('time').getJoin({user: true});
+        },
+    },
+    user: true,
+};
+
 export default (app) => {
     app.get('/api/test', checkAuth, (req, res) => {
         res.send(`You are in: ${JSON.stringify(req.user)}`);
@@ -13,17 +22,9 @@ export default (app) => {
         logger.info('getting messages for channel:', channel);
         const historyReverse = await Message
             .orderBy(r.desc('time'))
-            .getJoin({
-                replies: {
-                    _apply(sequence) {
-                        return sequence
-                            .orderBy('time')
-                            .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}));
-                    },
-                },
-            })
+            .getJoin(messageJoin)
             .filter({channel})
-            .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
+            // .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
             .limit(10)
             .execute();
         const history = historyReverse.reverse();
@@ -35,11 +36,12 @@ export default (app) => {
         const channel = req.params.channel;
         const message = _.omit(req.body, ['token']);
         logger.info('got msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
-        const m = await Message.save({
+        const m = new Message({
             ...message,
-            user: req.userInfo.id,
             channel,
         });
+        m.user = req.userInfo;
+        await m.saveAll({user: true});
         logger.debug('saved new message:', m);
         res.sendStatus(201);
     }));
@@ -49,12 +51,13 @@ export default (app) => {
         const replyTo = req.params.message;
         const message = _.omit(req.body, ['token']);
         logger.info('got reply: ', replyTo, ' with msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
-        const m = await Reply.save({
+        const m = new Reply({
             ...message,
-            user: req.userInfo.id,
             channel,
             replyTo,
         });
+        m.user = req.userInfo;
+        await m.saveAll({user: true});
         logger.debug('saved new reply:', m);
         res.sendStatus(201);
     }));
@@ -66,7 +69,7 @@ export default (app) => {
         const messageStream = await r.table('Message').filter({channel})
             .changes()
             .map(c => c('new_val'))
-            .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
+            .merge(c => ({user: r.table('User').get(c('userId')).pluck(['id', 'username'])}))
             .run();
         messageStream.each((err, it) => {
             if (err) {
@@ -77,8 +80,29 @@ export default (app) => {
             logger.debug('sending out message:', it);
             ws.send(JSON.stringify(it));
         });
+
+        // replies
+        const repliesStream = await r.table('Reply').filter({channel})
+            .changes()
+            .map(c => c('new_val'))
+            .merge(c => ({user: r.table('User').get(c('userId')).pluck(['id', 'username'])}))
+            .run();
+        repliesStream.each((err, it) => {
+            if (err) {
+                logger.error('got err in channel reply stream:', err);
+                return;
+            }
+
+            logger.debug('sending out reply:', it);
+            ws.send(JSON.stringify(it));
+        });
+
         // cleanup on socket close
-        ws.on('error', () => messageStream.close());
-        ws.on('close', () => messageStream.close());
+        const clean = () => {
+            messageStream.close();
+            repliesStream.close();
+        };
+        ws.on('error', clean);
+        ws.on('close', clean);
     }));
 };

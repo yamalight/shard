@@ -23,9 +23,10 @@ const Chat = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['history', 'messages', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((_, key) => ['history', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
+            // init socket when needed
             .do(s => {
                 if (s.currentTeam && s.currentChannel) {
                     // if already opened for this chat - ignore action
@@ -53,15 +54,47 @@ const Chat = React.createClass({
                     this.setState({requestedForChannel: s.currentTeam.id + s.currentChannel.id});
                 }
             })
-            .map(({history = [], messages = [], ...rest}) => ({
+            // map history
+            .map(({history = [], ...rest}) => ({
                 ...rest,
-                allMessages: reduceShortMessages(history.concat(messages))
+                allMessages: history.filter(s => s !== undefined)
+                    .reduce(reduceShortMessages, [])
                     .map(({replies, ...message}) => ({
                         ...message,
-                        replies: reduceShortMessages(replies),
+                        replies: replies.reduce(reduceShortMessages, []),
                     })),
             }))
+            // store to state
             .subscribe(s => this.setState(s)),
+            // listen for new messages
+            store$
+            .map(s => s.get('messages'))
+            .filter(s => s !== undefined)
+            .distinctUntilChanged()
+            .map(s => s.toJS())
+            .subscribe(m => {
+                const {allMessages: oldMessages} = this.state;
+                // if new message is not a reply - just fit it into allMessages
+                if (!m.replyTo) {
+                    const allMessages = reduceShortMessages(oldMessages, m);
+                    this.setState({allMessages});
+                    return;
+                }
+
+                // if it's a reply, find parent and add it there
+                const allMessages = oldMessages.map(msg => {
+                    if (msg.id !== m.replyTo) {
+                        return msg;
+                    }
+
+                    return {
+                        ...msg,
+                        replies: reduceShortMessages(msg.replies, m),
+                    };
+                });
+
+                this.setState({allMessages});
+            }),
         ];
     },
     componentDidUpdate() {
