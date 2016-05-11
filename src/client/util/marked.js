@@ -20,4 +20,4 @@ const markedOptions = {
     sanitize: true,
 };
 
-export default (text) => marked(text, markedOptions);
+export const markdown = (text) => marked(text, markedOptions);

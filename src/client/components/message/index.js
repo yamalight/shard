@@ -1,4 +1,5 @@
 import React from 'react';
+import {markdown} from '../../util';
 import styles from './message.css';
 
 const Message = ({user, time, message, moreMessages, replies}) => (
@@ -22,7 +23,7 @@ const Message = ({user, time, message, moreMessages, replies}) => (
                         </a>
                     </div>
                 </div>
-                <p>{message}</p>
+                <p dangerouslySetInnerHTML={{__html: markdown(message)}} />
             </div>
             {moreMessages}
             {replies}
