@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styles from './chat.css';
 
 import Description from '../description';
@@ -16,6 +17,11 @@ const Chat = React.createClass({
             messages: [],
             history: [],
         };
+    },
+
+    scrollToBottom() {
+        const n = ReactDOM.findDOMNode(this.chatContainer);
+        n.scrollTop = n.scrollHeight;
     },
 
     componentWillMount() {
@@ -78,6 +84,9 @@ const Chat = React.createClass({
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     },
+    componentDidUpdate() {
+        this.scrollToBottom();
+    },
 
     sendMessage() {
         const message = this._text.value;
@@ -97,7 +106,7 @@ const Chat = React.createClass({
                     </div>
                 </nav>
 
-                <div ref="chatContainer" className={styles.section}>
+                <div ref={c => { this.chatContainer = c; }} className={styles.section}>
                     <Description text={this.state.currentChannel.description || ''} />
                     {this.state.allMessages.length === 0 && 'No messages yet!'}
                     {this.state.allMessages.map(m => (
