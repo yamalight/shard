@@ -18,11 +18,6 @@ const Chat = React.createClass({
         };
     },
 
-    scrollToBottom() {
-        const n = ReactDOM.findDOMNode(this.chatContainer);
-        n.scrollTop = n.scrollHeight;
-    },
-
     componentWillMount() {
         this.subs = [
             store$
@@ -80,11 +75,16 @@ const Chat = React.createClass({
             .subscribe(s => this.setState(s)),
         ];
     },
+    componentDidUpdate() {
+        this.scrollToBottom();
+    },
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     },
-    componentDidUpdate() {
-        this.scrollToBottom();
+
+    scrollToBottom() {
+        const n = ReactDOM.findDOMNode(this.chatContainer);
+        n.scrollTop = n.scrollHeight;
     },
 
     sendMessage() {
