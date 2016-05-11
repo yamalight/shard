@@ -11,12 +11,13 @@ export default (app) => {
     app.get('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
         logger.info('getting messages for channel:', channel);
-        const history = await Message
-            .orderBy('time')
+        const historyReverse = await Message
+            .orderBy(r.desc('time'))
             .filter({channel})
             .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
             .limit(10)
             .execute();
+        const history = historyReverse.reverse();
         logger.debug('got message', history);
         res.send({history});
     }));
