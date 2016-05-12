@@ -145,8 +145,8 @@ const Home = React.createClass({
 
     render() {
         return (
-            <div className="hero is-fullheight">
-                <div className="hero-content">
+            <section className="hero is-fullheight">
+                <div className="hero-body">
                     <div className="container">
                         <div className="columns">
                             <div className="column is-one-third">
@@ -172,7 +172,7 @@ const Home = React.createClass({
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         );
     },
 });
