@@ -19,9 +19,6 @@ const some = 'javascript'.here;
 Normal image:
 ![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
-Custom widget:
-%[My Image](http://example.com/img.jpg)
-
 Emojis: :thumbsup: :tada:
 
 Font-awesome: :fa-flag: :fa-gitlab:
