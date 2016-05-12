@@ -29,11 +29,11 @@ m.use(container, 'widget', {
 
         if (tokens[idx].nesting === 1) {
             // opening tag
-            return `<div class="box"><iframe class="widget" src="${match[1]}"`;
+            return `<iframe class="widget" src="${match[1]}"`;
         }
 
         // closing tag
-        return `/></div>\n`;
+        return `/>\n`;
     },
 
     marker: '%',
