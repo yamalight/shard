@@ -1,17 +1,20 @@
 import React from 'react';
+import styles from './newchannel.css';
 import store$, {createChannel} from '../../store';
 
 const NewChannel = React.createClass({
     getInitialState() {
         return {
             currentTeam: {},
+            parentChannel: 'none',
+            channels: [],
         };
     },
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['newChannel', 'currentTeam'].includes(key)))
+            .map(s => s.filter((_, key) => ['newChannel', 'currentTeam', 'channels'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => s.newChannel && this.close(null, true))
@@ -26,10 +29,15 @@ const NewChannel = React.createClass({
         const name = this.nameInput.value;
         const description = this.descInput.value;
         const team = this.state.currentTeam.id;
-        createChannel({name, description, team});
+        const parent = this.state.parentChannel;
+        createChannel({name, description, team, parent});
     },
     close(e, refetch = false) {
         this.props.close(refetch);
+    },
+
+    parentChange(e) {
+        this.setState({parentChannel: e.target.value});
     },
 
     render() {
@@ -56,6 +64,19 @@ const NewChannel = React.createClass({
                                 placeholder="Enter new channel description.."
                                 ref={t => { this.descInput = t; }}
                             />
+                        </p>
+                        <p className={`control is-grouped ${styles.parentChannel}`}>
+                            <label className="label">Parent channel:</label>
+                            <span className="select">
+                                <select onChange={this.parentChange} value={this.state.parentChannel}>
+                                    <option value="none">None</option>
+                                    {this.state.channels && this.state.channels.map(channel => (
+                                        <option key={channel.id} value={channel.id}>
+                                            {channel.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </span>
                         </p>
                     </div>
                 </div>

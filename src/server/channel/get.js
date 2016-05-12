@@ -7,6 +7,13 @@ export default (app) => {
         const {team} = req.query;
         logger.debug('searching for channels for', req.userInfo, 'and team', team);
         const channels = await Channel
+            .getJoin({
+                subchannels: {
+                    _apply(sequence) {
+                        return sequence.filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)));
+                    },
+                },
+            })
             .filter({team})
             .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)))
             .run();

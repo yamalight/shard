@@ -30,7 +30,6 @@ const ChatInput = React.createClass({
             .map(s => s.filter((_, key) => ['replyToMessage'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
-            .do(s => console.log(s))
             .subscribe(s => this.setState(s)),
         ];
     },

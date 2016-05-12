@@ -8,8 +8,8 @@ export const createChannel = createAction();
 // map to request
 const channel$ = createChannel.$
     .do(() => status('loading'))
-    .map(team => sign(team))
-    .flatMap(team => post('/api/channels/new', team))
+    .map(channel => sign(channel))
+    .flatMap(channel => post('/api/channels/new', channel))
     .do(res => (res.error || !res.team ? status('error') : status('finished')))
     .map(res => ({newChannel: res}));
 

@@ -109,8 +109,13 @@ const Sidebar = React.createClass({
                                     </a>
                                     <ul>
                                         {channel.subchannels && channel.subchannels.map(ch => (
-                                            <li>
-                                                <a className="channel-name">{ch.name}</a>
+                                            <li key={ch.id}>
+                                                <a
+                                                    className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
+                                                    onClick={() => setChannel(ch)}
+                                                >
+                                                    {ch.name}
+                                                </a>
                                             </li>
                                         ))}
                                     </ul>
