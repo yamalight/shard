@@ -1,5 +1,6 @@
 @import './hint';
 @import './bulma';
+@import '~highlight.js/styles/github-gist.css';
 
 // dark menu
 .dark-menu {
@@ -51,4 +52,10 @@
     color: #8a8e94 !important;
     margin-right: 3px;
     font-weight: 600;
+}
+
+// widget
+.widget {
+    min-width: 400px;
+    min-height: 300px;
 }

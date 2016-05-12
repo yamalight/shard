@@ -4,7 +4,6 @@ import styles from './message.css';
 
 import {replyTo} from '../../store';
 
-import MessagePlain from '../message-plain';
 import MessageShort from '../message-short';
 
 const Message = (m) => (

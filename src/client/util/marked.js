@@ -1,23 +1,42 @@
 import {highlightAuto} from 'highlight.js';
-import marked from 'marked';
+import MarkdownIt from 'markdown-it';
+import emoji from 'markdown-it-emoji';
+import fontawesome from 'markdown-it-fontawesome';
+import taskLists from 'markdown-it-task-lists';
+import container from 'markdown-it-container';
 
-const renderer = new marked.Renderer();
-renderer.listitem = function(text) {
-    if (/^\s*\[[x ]\]\s*/.test(text)) {
-        const formatted = text.replace(/^\s*\[ \]\s*/, '<input type="checkbox" /> ')
-            .replace(/^\s*\[x\]\s*/, '<input type="checkbox" checked /> ');
-        return `<li style="list-style: none">${formatted}</li>`;
-    }
-
-    return `<li>${text}</li>`;
-};
-
-const markedOptions = {
-    renderer,
+// marked options
+const mdOpt = {
     highlight: (code) => highlightAuto(code).value,
-    gfm: true,
     breaks: true,
-    sanitize: true,
+    linkify: true,
+    typographer: true,
 };
 
-export const markdown = (text) => marked(text, markedOptions);
+// init parser
+const m = new MarkdownIt(mdOpt);
+// add plugins
+m.use(emoji);
+m.use(fontawesome);
+m.use(taskLists);
+m.use(container, 'widget', {
+    validate(params) {
+        return params.trim().match(/^widget=(.*)$/);
+    },
+
+    render(tokens, idx) {
+        const match = tokens[idx].info.trim().match(/^widget=(.*)$/);
+
+        if (tokens[idx].nesting === 1) {
+            // opening tag
+            return `<div class="box"><iframe class="widget" src="${match[1]}"`;
+        }
+
+        // closing tag
+        return `/></div>\n`;
+    },
+
+    marker: '%',
+});
+
+export const markdown = (text) => m.render(text);
