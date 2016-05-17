@@ -2,6 +2,7 @@ import _ from 'lodash';
 import checkAuth from '../auth/checkAuth';
 import {logger, asyncRequest} from '../util';
 import {Message, Reply, r} from '../db';
+import {socket} from '../../../config';
 
 const messageJoin = {
     replies: {
@@ -97,10 +98,17 @@ export default (app) => {
             ws.send(JSON.stringify(it));
         });
 
+        // setup pings
+        const pingInterval = setInterval(() => {
+            ws.ping();
+        }, socket.pingTime);
+
         // cleanup on socket close
         const clean = () => {
+            logger.debug('cleaning up socket!');
             messageStream.close();
             repliesStream.close();
+            clearInterval(pingInterval);
         };
         ws.on('error', clean);
         ws.on('close', clean);

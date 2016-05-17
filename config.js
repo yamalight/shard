@@ -12,3 +12,7 @@ export const jwtconf = {
 export const auth = {
     salt: 'Jst#ULN9&HD!NZ0g',
 };
+
+export const socket = {
+    pingTime: 30000, // 30s
+};
