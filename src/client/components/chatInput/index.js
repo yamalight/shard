@@ -4,6 +4,7 @@ import styles from './chatInput.css';
 import store$, {sendChat, resetReply} from '../../store';
 
 import MessagePlain from '../message-plain';
+import Typeahead from '../typeahead';
 
 const messageToReplyId = message => {
     if (!message) {
@@ -21,13 +22,16 @@ const ChatInput = React.createClass({
     getInitialState() {
         return {
             replyToMessage: null,
+            currentTeam: null,
+            currentChannel: null,
+            text: '',
         };
     },
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['replyToMessage'].includes(key)))
+            .map(s => s.filter((_, key) => ['replyToMessage', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -46,6 +50,10 @@ const ChatInput = React.createClass({
         sendChat({team, channel, message, replyTo});
         // reset value
         this._text.value = '';
+    },
+
+    handleKeyUp(e) {
+        this.setState({text: e.target.value});
     },
 
     handleKeyPress(e) {
@@ -74,6 +82,9 @@ const ChatInput = React.createClass({
                         </a>
                     </div>
                 )}
+
+                <Typeahead {...this.state} input={this._text} />
+
                 <p className="control has-addons">
                     <a className="button">
                         <i className="fa fa-paperclip" />
@@ -84,6 +95,7 @@ const ChatInput = React.createClass({
                         placeholder="Write a message..."
                         ref={(t) => { this._text = t; }}
                         onKeyPress={this.handleKeyPress}
+                        onKeyUp={this.handleKeyUp}
                     />
                     <a className="button" onClick={this.sendMessage}>
                         <i className="fa fa-paper-plane" />

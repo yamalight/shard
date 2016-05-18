@@ -1,9 +1,18 @@
+import _ from 'lodash';
 import {highlightAuto} from 'highlight.js';
 import MarkdownIt from 'markdown-it';
 import emoji from 'markdown-it-emoji';
 import fontawesome from 'markdown-it-fontawesome';
 import taskLists from 'markdown-it-task-lists';
 import container from 'markdown-it-container';
+
+// import extensions
+import {extensions} from '../extensions';
+const mdExtensions = _.flatten(
+    extensions
+    .filter(ex => ex.markdownPlugins && ex.markdownPlugins.length)
+    .map(ex => ex.markdownPlugins)
+);
 
 // marked options
 const mdOpt = {
@@ -19,6 +28,7 @@ const m = new MarkdownIt(mdOpt);
 m.use(emoji);
 m.use(fontawesome);
 m.use(taskLists);
+// widget support
 m.use(container, 'widget', {
     validate(params) {
         return params.trim().match(/^widget=(.*)$/);
@@ -38,5 +48,7 @@ m.use(container, 'widget', {
 
     marker: '%',
 });
+// apply plugins from extensions
+mdExtensions.forEach(p => m.use(p));
 
 export const markdown = (text) => m.render(text);

@@ -16,3 +16,10 @@ export const auth = {
 export const socket = {
     pingTime: 30000, // 30s
 };
+
+// extensions
+import userTypeahead from './src/extensions/userTypeahead/server';
+
+export const extensions = [
+    ...userTypeahead,
+];

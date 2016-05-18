@@ -12,6 +12,9 @@ import App from './app';
 // routes
 import routes from './routes';
 
+// extensions support
+import './extensions';
+
 render((
     <Router history={browserHistory}>
         <Route path="/" component={App}>
