@@ -2,6 +2,8 @@ import React from 'react';
 import {markdown} from '../../util';
 import styles from './message.css';
 
+import {markdownClick} from '../message';
+
 const MessagePlain = (m) => (
     <article className="media">
         <figure className="media-left">
@@ -15,7 +17,7 @@ const MessagePlain = (m) => (
                     <strong>{m.user.username} <small>{m.time}</small></strong>
                     <span className={styles.headerSeparator} />
                 </div>
-                <p dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
+                <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
             </div>
         </div>
     </article>

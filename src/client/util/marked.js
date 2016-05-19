@@ -49,6 +49,6 @@ m.use(container, 'widget', {
     marker: '%',
 });
 // apply plugins from extensions
-mdExtensions.forEach(p => m.use(p));
+mdExtensions.forEach(p => m.use(p.plugin, p.options));
 
 export const markdown = (text) => m.render(text);

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
@@ -32,8 +33,7 @@ const Teambar = React.createClass({
 
     setTeam(team) {
         setTeam(team);
-        console.log('team', team);
-        browserHistory.push(`/channels/${team.id}`);
+        browserHistory.push(`/channels/${_.camelCase(team.name)}`);
     },
 
     closeCreateTeam(refetch = false) {

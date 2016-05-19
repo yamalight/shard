@@ -83,7 +83,7 @@ const Home = React.createClass({
     },
 
     goHome() {
-        browserHistory.push('/channels/home');
+        browserHistory.push('/channels/@me');
     },
 
     checkAuth(auth) {

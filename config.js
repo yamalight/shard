@@ -19,7 +19,9 @@ export const socket = {
 
 // extensions
 import userTypeahead from './src/extensions/userTypeahead/server';
+import channelTypeahead from './src/extensions/channelTypeahead/server';
 
 export const extensions = [
     ...userTypeahead,
+    ...channelTypeahead,
 ];

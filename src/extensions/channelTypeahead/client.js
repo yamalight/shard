@@ -1,18 +1,19 @@
-import UserTypeahead from './base';
+import _ from 'lodash';
+import ChannelsTypeahead from './base';
 import tag from '../../lib/markdown-it-tag';
 
 // typeahead extension
-class Client extends UserTypeahead {
+class Client extends ChannelsTypeahead {
     // typeahead extension
     type = 'typeahead'
 
-    title = 'Users'
+    title = 'Channels'
 
     markdownPlugins = [{
         plugin: tag,
         options: {
-            tagSymbol: '@',
-            urlPrefix: '/users/',
+            tagSymbol: '#',
+            urlPrefix: `${window.location.pathname.split('/').slice(0, 3).join('/')}/`,
         },
     }]
 
@@ -24,15 +25,15 @@ class Client extends UserTypeahead {
     }
 
     check(text) {
-        const els = text.split('@');
+        const els = text.split('#');
         return els.length > 1 &&
             (!/\s/.test(els[els.length - 1]) || els[els.length - 1] === '');
     }
 
     get({text, currentTeam, currentChannel}) {
-        const els = text.split('@');
+        const els = text.split('#');
         const search = els[els.length - 1];
-        this.search = `@${search}`;
+        this.search = `#${search}`;
         const req = this.utils.sign({
             text: search,
             currentTeam,
@@ -40,26 +41,27 @@ class Client extends UserTypeahead {
         });
         this.utils
             .post(`/ex/${this.extensionName}`, req)
-            .subscribe(res => this.render(res.users));
+            .subscribe(res => this.render(res.channels));
     }
 
-    action(user) {
+    action(channel) {
+        const name = _.camelCase(channel.name);
         this.actions.onNext({
-            typeahead: `@${user.username}`,
+            typeahead: `#${name}`,
             search: this.search,
         });
     }
 
-    render(users) {
+    render(channels) {
         const {React} = this.utils;
 
         const results = (
             <div className="menu">
                 <ul className="menu-list">
-                {users.map(user => (
-                    <li key={user.id}>
-                        <a onClick={() => this.action(user)}>
-                            @{user.username}
+                {channels.map(channel => (
+                    <li key={channel.id}>
+                        <a onClick={() => this.action(channel)}>
+                            #{channel.name}
                         </a>
                     </li>
                 ))}

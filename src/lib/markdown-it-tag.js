@@ -1,32 +1,22 @@
 /* eslint no-param-reassign: 0 */
-
-const atopen = (tokens, idx) =>
-    `<a href="/user/${tokens[idx].content.toLowerCase()}">`;
-const atclose = () => '</a>';
-const attext = (tokens, idx) => `@${tokens[idx].content}`;
-
 const isLinkOpen = (str) => /^<a[>\s]/i.test(str);
 const isLinkClose = (str) => /^<\/a\s*>/i.test(str);
 
-export default (md, options) => {
-    const arrayReplaceAt = md.utils.arrayReplaceAt;
-    const escapeHtml = md.utils.escapeHtml;
-    let attagRegExp = '\\w+';
-    let preceding = '^|\\s';
+export default (md, {
+    preceding = '^|\\s',
+    tagRegExp = '\\w+',
+    tagSymbol = '#',
+    urlPrefix = '/tag/',
+} = {}) => {
+    const {arrayReplaceAt, escapeHtml} = md.utils;
 
-    if (options) {
-        if (typeof options.preceding !== 'undefined') {
-            preceding = options.preceding;
-        }
-        if (typeof options.attagRegExp !== 'undefined') {
-            attagRegExp = options.attagRegExp;
-        }
-    }
+    const tagopen = (tokens, idx) => `<a href="${urlPrefix}${tokens[idx].content}">`;
+    const tagclose = () => '</a>';
+    const tagtext = (tokens, idx) => `${tagSymbol}${tokens[idx].content}`;
 
-    const regex = new RegExp(`(${preceding})@(${attagRegExp})`, 'g');
+    const regex = new RegExp(`(${preceding})${tagSymbol}(${tagRegExp})`, 'g');
 
-
-    const attag = (state) => {
+    const tag = (state) => {
         const Token = state.Token;
         const blockTokens = state.tokens;
 
@@ -81,12 +71,12 @@ export default (md, options) => {
                 let level = currentToken.level;
 
                 for (let m = 0; m < matches.length; m++) {
-                    const tagName = matches[m].split('@', 2)[1];
+                    const tagName = matches[m].split(tagSymbol, 2)[1];
 
                     // find the beginning of the matched text
                     let pos = text.indexOf(matches[m]);
                     // find the beginning of the attag
-                    pos = text.indexOf(`@${tagName}`, pos);
+                    pos = text.indexOf(`${tagSymbol}${tagName}`, pos);
 
                     if (pos > 0) {
                         const token = new Token('text', '', 0);
@@ -95,17 +85,17 @@ export default (md, options) => {
                         nodes.push(token);
                     }
 
-                    let token = new Token('atopen', '', 1);
+                    let token = new Token(`${tagSymbol}tagopen`, '', 1);
                     token.content = tagName;
                     token.level = level++;
                     nodes.push(token);
 
-                    token = new Token('attext', '', 0);
+                    token = new Token(`${tagSymbol}tagtext`, '', 0);
                     token.content = escapeHtml(tagName);
                     token.level = level;
                     nodes.push(token);
 
-                    token = new Token('atclose', '', -1);
+                    token = new Token(`${tagSymbol}tagclose`, '', -1);
                     token.level = --level;
                     nodes.push(token);
 
@@ -125,8 +115,8 @@ export default (md, options) => {
         }
     };
 
-    md.core.ruler.after('inline', 'attag', attag);
-    md.renderer.rules.atopen = atopen;
-    md.renderer.rules.attext = attext;
-    md.renderer.rules.atclose = atclose;
+    md.core.ruler.after('inline', 'tag', tag);
+    md.renderer.rules[`${tagSymbol}tagopen`] = tagopen;
+    md.renderer.rules[`${tagSymbol}tagtext`] = tagtext;
+    md.renderer.rules[`${tagSymbol}tagclose`] = tagclose;
 };

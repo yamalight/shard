@@ -73,7 +73,7 @@ const Typeahead = React.createClass({
         console.log('handle action:', typeahead, search);
         const parts = this.props.input.value.split(' ');
         const last = parts.length - 1;
-        parts[last] = parts[last].replace(`@${search}`, `${typeahead} `);
+        parts[last] = parts[last].replace(search, `${typeahead} `);
         this.props.input.value = parts.join(' ');
         this.props.input.focus();
         this.hide();

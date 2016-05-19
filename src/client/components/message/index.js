@@ -1,10 +1,22 @@
 import React from 'react';
+import {browserHistory} from 'react-router';
 import {markdown} from '../../util';
 import styles from './message.css';
 
 import {replyTo} from '../../store';
 
 import MessageShort from '../message-short';
+
+export const markdownClick = (e) => {
+    e.preventDefault();
+    if (!e.target.href) {
+        return;
+    }
+
+    const link = new URL(e.target.href);
+    const path = link.pathname;
+    browserHistory.push(path);
+};
 
 const Message = (m) => (
     <article className="media">
@@ -29,7 +41,7 @@ const Message = (m) => (
                         </a>
                     </div>
                 </div>
-                <p dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
+                <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
             </div>
             {m.moreMessages && m.moreMessages.map(mm => (
                 <MessageShort key={mm.id} {...mm} />

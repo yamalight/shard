@@ -48,14 +48,14 @@ const Main = React.createClass({
 
     updateTeamChannel() {
         // set team if needed
-        const currentTeam = this.state.teams.find(t => t.id === this.state.team);
+        const currentTeam = this.state.teams.find(t => _.camelCase(t.name) === this.state.team);
         if (currentTeam && (!this.state.currentTeam || currentTeam.id !== this.state.currentTeam.id)) {
             setTeam(currentTeam);
         }
 
         // set channel if present
         const currentChannel = _.flatten(this.state.channels.concat(this.state.channels.map(ch => ch.subchannels)))
-            .find(c => c.id === this.state.channel);
+            .find(c => _.camelCase(c.name) === this.state.channel);
         if (currentChannel && (!this.state.currentChannel || currentChannel.id !== this.state.currentChannel.id)) {
             setChannel(currentChannel);
         }

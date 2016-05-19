@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
@@ -21,7 +22,7 @@ const Sidebar = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
+            .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -40,7 +41,9 @@ const Sidebar = React.createClass({
 
     setChannel(channel) {
         setChannel(channel);
-        browserHistory.push(`/channels/${this.state.currentTeam.id}/${channel.id}`);
+        const team = _.camelCase(this.state.currentTeam.name);
+        const ch = _.camelCase(channel.name);
+        browserHistory.push(`/channels/${team}/${ch}`);
     },
 
     closeCreateChannel(refetch = false) {
