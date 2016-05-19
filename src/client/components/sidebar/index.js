@@ -16,6 +16,7 @@ const Sidebar = React.createClass({
             channels: [],
             showCreateChannel: false,
             showInvite: false,
+            joinChannel: undefined,
         };
     },
 
@@ -32,9 +33,20 @@ const Sidebar = React.createClass({
             .filter(s => s !== undefined)
             .distinctUntilChanged()
             .map(s => s.toJS())
-            .subscribe(currentTeam => getChannels({team: currentTeam.id})),
+            .subscribe(currentTeam => {
+                getChannels({team: currentTeam.id});
+                this.setState({joinChannel: 'general'});
+            }),
         ];
     },
+
+    componentDidUpdate() {
+        if (this.state.channels.length && this.state.joinChannel) {
+            const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
+            this.setChannel(ch);
+        }
+    },
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     },
@@ -44,6 +56,7 @@ const Sidebar = React.createClass({
         const team = _.camelCase(this.state.currentTeam.name);
         const ch = _.camelCase(channel.name);
         browserHistory.push(`/channels/${team}/${ch}`);
+        this.setState({joinChannel: undefined});
     },
 
     closeCreateChannel(refetch = false) {

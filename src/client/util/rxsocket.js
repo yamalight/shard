@@ -13,19 +13,16 @@ const createSocket = ({url, open, close}) => DOM.fromWebSocket(
 
 export const socket = (url) => {
     const s = new Subject();
-    let sock;
 
     const open = Observer.create(() => {
         console.info('socket open');
     });
     const close = Observer.create(() => {
-        console.log('socket is about to close, reiniting..');
-        // re-init socket and pipe result to subject
-        sock = createSocket({url, open, close}).subscribe(m => s.onNext(m));
+        console.log('socket is about to close..');
     });
 
     // init socket and pipe result to subject
-    sock = createSocket({url, open, close}).subscribe(m => s.onNext(m));
+    const sock = createSocket({url, open, close}).subscribe(m => s.onNext(m));
 
     // cleanup when done
     const cleanup = (e) => {

@@ -4,7 +4,7 @@ export const chatSockets = {};
 
 // create action
 export const initChat = ({team, channel}) => {
-    if (chatSockets[team + channel]) {
+    if (chatSockets[team + channel] && !chatSockets[team + channel].isStopped) {
         return chatSockets[team + channel];
     }
 

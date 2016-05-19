@@ -9,5 +9,5 @@ import NoMatch from './pages/nomatch';
 export default [
     <IndexRoute key="home" name="home" component={Home} />,
     <Route key="channels" name="channels" path="/channels/:team(/:channel)" component={Main} />,
-    <Route path="*" component={NoMatch} />,
+    <Route key="nomatch" path="*" component={NoMatch} />,
 ];
