@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './infobar.css';
 
-import store$ from '../../store';
+import store$, {setInfobar} from '../../store';
 
 const Infobar = React.createClass({
     getInitialState() {
@@ -25,6 +25,10 @@ const Infobar = React.createClass({
         this.subs.map(s => s.dispose());
     },
 
+    hide() {
+        setInfobar({});
+    },
+
     render() {
         return (
             <div className={`card is-fullwidth is-flex ${styles.infobar}`}>
@@ -32,7 +36,7 @@ const Infobar = React.createClass({
                     <p className="card-header-title">
                         {this.state.title}
                     </p>
-                    <a className="card-header-icon" onClick={() => this.props.onHide()}>
+                    <a className="card-header-icon" onClick={() => this.hide()}>
                         <i className="fa fa-times"></i>
                     </a>
                 </header>

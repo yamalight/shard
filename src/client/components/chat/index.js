@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './chat.css';
-import Dock from 'react-dock';
 
 import Description from '../description';
 import Message from '../message/';
 import ChatInput from '../chatInput';
 import Dropdown from '../dropdown';
-import Infobar from '../infobar';
+
 
 import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar} from '../../store';
 
@@ -124,7 +123,6 @@ const Chat = React.createClass({
     },
     handleMenuItem(item) {
         // console.log('menu item:', item);
-        this.setState({dockVisible: true});
         switch (item) {
         case 'Description':
             setInfobar({
@@ -179,11 +177,6 @@ const Chat = React.createClass({
                 <div className={styles.footer}>
                     <ChatInput {...this.state} />
                 </div>
-
-                {/* dock */}
-                <Dock position="right" isVisible={this.state.dockVisible}>
-                    <Infobar onHide={() => this.setState({dockVisible: false})} />
-                </Dock>
             </div>
         );
     },

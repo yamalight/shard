@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import Dock from 'react-dock';
 import styles from './main.css';
 
 import store$, {setTeam, setChannel} from '../../store';
@@ -7,6 +8,7 @@ import store$, {setTeam, setChannel} from '../../store';
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
 import Chat from '../../components/chat';
+import Infobar from '../../components/infobar';
 
 const Main = React.createClass({
     getInitialState() {
@@ -23,7 +25,13 @@ const Main = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['teams', 'channels', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => [
+                'teams',
+                'channels',
+                'currentTeam',
+                'currentChannel',
+                'infobar',
+            ].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -72,6 +80,9 @@ const Main = React.createClass({
                 <Teambar toggleSidebar={this.toggleSidebar} showSidebar={this.state.showSidebar} />
                 {this.state.showSidebar && <Sidebar />}
                 <Chat />
+                <Dock position="right" isVisible={this.state.infobar && !!this.state.infobar.content}>
+                    <Infobar />
+                </Dock>
             </div>
         );
     },
