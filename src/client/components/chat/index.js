@@ -122,7 +122,6 @@ const Chat = React.createClass({
         this.setState({showMenu: true});
     },
     handleMenuItem(item) {
-        // console.log('menu item:', item);
         setInfobar(item);
     },
     closeMenu() {

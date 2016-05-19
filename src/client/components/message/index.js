@@ -3,9 +3,10 @@ import {browserHistory} from 'react-router';
 import {markdown} from '../../util';
 import styles from './message.css';
 
-import {replyTo} from '../../store';
+import {replyTo, setInfobar} from '../../store';
 
 import MessageShort from '../message-short';
+import UserInfo from '../user';
 
 export const markdownClick = (e) => {
     e.preventDefault();
@@ -15,6 +16,14 @@ export const markdownClick = (e) => {
 
     const link = new URL(e.target.href);
     const path = link.pathname;
+    if (path.includes('/users/')) {
+        const username = path.replace('/users/', '');
+        setInfobar({
+            title: `Profile: ${username}`,
+            content: <UserInfo username={username} />,
+        });
+        return;
+    }
     browserHistory.push(path);
 };
 
