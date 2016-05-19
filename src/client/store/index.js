@@ -31,6 +31,7 @@ import getHistory$, {getHistory} from './chat/getHistory';
 import sendChat$, {sendChat} from './chat/send';
 import replyTo$, {replyTo} from './chat/replyTo';
 import resetReply$, {resetReply} from './chat/resetReply';
+import markRead$, {markRead} from './chat/markRead';
 
 // infobar actions
 import infobar$, {setInfobar} from './infobar/set';
@@ -61,6 +62,7 @@ const streams = [
     sendChat$,
     replyTo$,
     resetReply$,
+    markRead$,
     // infobar streams
     infobar$,
 ];
@@ -90,6 +92,7 @@ export {
     sendChat,
     replyTo,
     resetReply,
+    markRead,
     // infobar
     setInfobar,
 };

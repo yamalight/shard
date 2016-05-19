@@ -7,7 +7,11 @@ import {socket} from '../../../config';
 const messageJoin = {
     replies: {
         _apply(sequence) {
-            return sequence.orderBy('time').getJoin({user: true});
+            return sequence.orderBy('time')
+                .getJoin({user: true})
+                .merge(c => ({
+                    readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+                }));
         },
     },
     user: true,
@@ -25,10 +29,19 @@ export default (app) => {
             .orderBy(r.desc('time'))
             .getJoin(messageJoin)
             .filter({channel})
-            // .merge(c => ({user: r.table('User').get(c('user')).pluck(['id', 'username'])}))
+            .merge(c => ({
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+            }))
             .limit(10)
             .execute();
-        const history = historyReverse.reverse();
+        const history = historyReverse.reverse().map(msg => ({
+            ...msg,
+            replies: msg.replies.map(m => ({
+                ...m,
+                isNew: m.readBy.findIndex(el => el.id === req.userInfo.id) === -1,
+            })),
+            isNew: msg.readBy.findIndex(el => el.id === req.userInfo.id) === -1,
+        }));
         logger.debug('got message', history);
         res.send({history});
     }));
@@ -40,10 +53,25 @@ export default (app) => {
         const m = new Message({
             ...message,
             channel,
+            readBy: [req.userInfo.id],
         });
         m.user = req.userInfo;
         await m.saveAll({user: true});
         logger.debug('saved new message:', m);
+        res.sendStatus(201);
+    }));
+
+    app.post('/api/chat/:team/:channel/read', checkAuth, asyncRequest(async (req, res) => {
+        const channel = req.params.channel;
+        const {messages, replies} = req.body;
+        logger.info('marking as read:', messages, replies, 'for:', req.userInfo.username, 'channel:', channel);
+        const m = await Message.getAll(...messages)
+            .update({readBy: r.row('readBy').append(req.userInfo.id)})
+            .run();
+        const repl = await Reply.getAll(...replies)
+            .update({readBy: r.row('readBy').append(req.userInfo.id)})
+            .run();
+        logger.debug('marked all as read:', m, repl);
         res.sendStatus(201);
     }));
 
@@ -56,6 +84,7 @@ export default (app) => {
             ...message,
             channel,
             replyTo,
+            readBy: [req.userInfo.id],
         });
         m.user = req.userInfo;
         await m.saveAll({user: true});
@@ -70,7 +99,10 @@ export default (app) => {
         const messageStream = await r.table('Message').filter({channel})
             .changes()
             .map(c => c('new_val'))
-            .merge(c => ({user: r.table('User').get(c('userId')).pluck(['id', 'username'])}))
+            .merge(c => ({
+                user: r.table('User').get(c('userId')).pluck(['id', 'username']),
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+            }))
             .run();
         messageStream.each((err, it) => {
             if (err) {
@@ -78,15 +110,22 @@ export default (app) => {
                 return;
             }
 
-            logger.debug('sending out message:', it);
-            ws.send(JSON.stringify(it));
+            const msg = {
+                ...it,
+                isNew: it.readBy.findIndex(el => el.id === ws.userInfo.id) === -1,
+            };
+            logger.debug('sending out message:', msg);
+            ws.send(JSON.stringify(msg));
         });
 
         // replies
         const repliesStream = await r.table('Reply').filter({channel})
             .changes()
             .map(c => c('new_val'))
-            .merge(c => ({user: r.table('User').get(c('userId')).pluck(['id', 'username'])}))
+            .merge(c => ({
+                user: r.table('User').get(c('userId')).pluck(['id', 'username']),
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+            }))
             .run();
         repliesStream.each((err, it) => {
             if (err) {
@@ -94,8 +133,12 @@ export default (app) => {
                 return;
             }
 
-            logger.debug('sending out reply:', it);
-            ws.send(JSON.stringify(it));
+            const msg = {
+                ...it,
+                isNew: it.readBy.findIndex(el => el.id === ws.userInfo.id) === -1,
+            };
+            logger.debug('sending out reply:', msg);
+            ws.send(JSON.stringify(msg));
         });
 
         // setup pings

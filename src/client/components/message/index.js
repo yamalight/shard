@@ -27,7 +27,7 @@ export const markdownClick = (e) => {
 };
 
 const Message = (m) => (m.layout === 'short' ? (
-    <article className={`media ${styles.short}`}>
+    <article className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
         <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
     </article>
 ) : (
@@ -38,7 +38,7 @@ const Message = (m) => (m.layout === 'short' ? (
             </p>
         </figure>
         <div className="media-content">
-            <div className={`content ${styles.content}`}>
+            <div className={`content ${styles.content} ${m.isNew ? 'is-new' : ''}`}>
                 <div className={styles.header}>
                     <strong>{m.user.username} <small>{m.time}</small></strong>
                     <span className={styles.headerSeparator} />

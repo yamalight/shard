@@ -1,5 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Subject} from 'rx';
 import styles from './chat.css';
 
 import Description from '../description';
@@ -8,12 +10,14 @@ import ChatInput from '../chatInput';
 import Dropdown from '../dropdown';
 
 
-import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar} from '../../store';
+import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar, markRead} from '../../store';
 
 import {reduceShortMessages} from '../../util';
 
 const Chat = React.createClass({
     getInitialState() {
+        this.unreadSubj = new Subject();
+
         return {
             currentChannel: {},
             requestedForChannel: undefined,
@@ -25,7 +29,7 @@ const Chat = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['history', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['history', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             // init socket when needed
@@ -66,6 +70,8 @@ const Chat = React.createClass({
                         replies: replies.reduce(reduceShortMessages, []),
                     })),
             }))
+            // say we need to mark new unread
+            .do(() => this.unreadSubj.onNext())
             // store to state
             .subscribe(s => this.setState(s)),
             // listen for new messages
@@ -76,6 +82,8 @@ const Chat = React.createClass({
             .map(s => s.toJS())
             .subscribe(m => {
                 const {allMessages: oldMessages} = this.state;
+                // say we need to mark new unread
+                this.unreadSubj.onNext();
                 // if new message is not a reply - just fit it into allMessages
                 if (!m.replyTo) {
                     const allMessages = reduceShortMessages(oldMessages, m);
@@ -97,6 +105,10 @@ const Chat = React.createClass({
 
                 this.setState({allMessages});
             }),
+            // mark unread as read
+            this.unreadSubj
+            .debounce(3000)
+            .subscribe(() => this.markUnread()),
         ];
     },
     componentDidUpdate() {
@@ -126,6 +138,28 @@ const Chat = React.createClass({
     },
     closeMenu() {
         this.setState({showMenu: false});
+    },
+
+    markUnread() {
+        const messages = _.flatten(this.state.allMessages.concat(this.state.allMessages.map(m => m.moreMessages)))
+            .filter(msg => msg !== undefined)
+            .filter(msg => msg.isNew)
+            .map(msg => msg.id);
+        const rep = _.flatten(this.state.allMessages.map(msg => msg.replies))
+            .filter(msg => msg !== undefined);
+        const replies = _.flatten(rep.concat(rep.map(m => m.moreMessages)))
+            .filter(msg => msg !== undefined)
+            .filter(msg => msg.isNew)
+            .map(msg => msg.id);
+
+        // only send requests if there are any new messages
+        if (!messages.length && !replies.length) {
+            return;
+        }
+
+        const team = this.state.currentTeam.id;
+        const channel = this.state.currentChannel.id;
+        markRead({team, channel, messages, replies});
     },
 
     render() {
