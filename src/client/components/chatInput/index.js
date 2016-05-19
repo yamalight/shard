@@ -3,7 +3,7 @@ import styles from './chatInput.css';
 
 import store$, {sendChat, resetReply} from '../../store';
 
-import MessagePlain from '../message-plain';
+import Message from '../message';
 import Typeahead from '../typeahead';
 
 const messageToReplyId = message => {
@@ -71,7 +71,7 @@ const ChatInput = React.createClass({
                             <i className="fa fa-reply" />
                         </div>
                         <div className={styles.replyPreview}>
-                            <MessagePlain {...this.state.replyToMessage} hideActions />
+                            <Message layout="plain" {...this.state.replyToMessage} hideActions />
                         </div>
                         <a
                             className={`is-flex hint--left ${styles.replyButton}`}

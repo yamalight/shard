@@ -5,7 +5,6 @@ import styles from './message.css';
 
 import {replyTo, setInfobar} from '../../store';
 
-import MessageShort from '../message-short';
 import UserInfo from '../user';
 
 export const markdownClick = (e) => {
@@ -27,7 +26,11 @@ export const markdownClick = (e) => {
     browserHistory.push(path);
 };
 
-const Message = (m) => (
+const Message = (m) => (m.layout === 'short' ? (
+    <article className={`media ${styles.short}`}>
+        <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
+    </article>
+) : (
     <article className="media">
         <figure className="media-left">
             <p className="image is-64x64">
@@ -39,16 +42,18 @@ const Message = (m) => (
                 <div className={styles.header}>
                     <strong>{m.user.username} <small>{m.time}</small></strong>
                     <span className={styles.headerSeparator} />
-                    <div className="navbar-left">
-                        <a className="navbar-item" onClick={() => replyTo(m)}>
-                            <span className="icon is-small">
-                                <i className="fa fa-reply"></i>
-                            </span>
-                        </a>
-                        <a className="navbar-item">
-                            <span className="icon is-small"><i className="fa fa-heart"></i></span>
-                        </a>
-                    </div>
+                    {m.layout !== 'plain' && (
+                        <div className="navbar-left">
+                            <a className="navbar-item" onClick={() => replyTo(m)}>
+                                <span className="icon is-small">
+                                    <i className="fa fa-reply"></i>
+                                </span>
+                            </a>
+                            <a className="navbar-item">
+                                <span className="icon is-small"><i className="fa fa-heart"></i></span>
+                            </a>
+                        </div>
+                    )}
                 </div>
                 <p
                     className={styles.markdown}
@@ -56,14 +61,14 @@ const Message = (m) => (
                     dangerouslySetInnerHTML={{__html: markdown(m.message)}}
                 />
             </div>
-            {m.moreMessages && m.moreMessages.map(mm => (
-                <MessageShort key={mm.id} {...mm} />
+            {m.layout !== 'plain' && m.moreMessages && m.moreMessages.map(mm => (
+                <Message layout="short" key={mm.id} {...mm} />
             ))}
-            {m.replies && m.replies.map(reply => (
+            {m.layout !== 'plain' && m.replies && m.replies.map(reply => (
                 <Message key={reply.id} {...reply} />
             ))}
         </div>
     </article>
-);
+));
 
 export default Message;
