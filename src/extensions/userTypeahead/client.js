@@ -53,19 +53,14 @@ class Client extends UserTypeahead {
     render(users) {
         const {React} = this.utils;
 
-        const results = (
-            <div className="menu">
-                <ul className="menu-list">
-                {users.map(user => (
-                    <li key={user.id}>
-                        <a onClick={() => this.action(user)}>
-                            @{user.username}
-                        </a>
-                    </li>
-                ))}
-                </ul>
-            </div>
-        );
+        const results = users.map(user => (
+            <a className="panel-block" key={user.id} onClick={() => this.action(user)}>
+                <span className="panel-icon">
+                    <i className="fa fa-user" />
+                </span>
+                {user.username}
+            </a>
+        ));
 
         this.results.onNext(results);
     }

@@ -85,14 +85,18 @@ const Typeahead = React.createClass({
         }
 
         return (
-            <div className={`message ${styles.typeahead}`}>
-                <div className="message-header">
+            <div className={`panel ${styles.typeahead}`}>
+                <div className="panel-heading">
                     {this.state.title}
                 </div>
-                <div className="message-body">
-                    {this.state.loading && 'Loading...'}
-                    {!this.state.loading && this.state.results}
-                </div>
+                {this.state.loading && (
+                    <div className="panel-block">
+                        <a className="button is-loading is-fullwidth">
+                            Loading...
+                        </a>
+                    </div>
+                )}
+                {!this.state.loading && this.state.results}
             </div>
         );
     },

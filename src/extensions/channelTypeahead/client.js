@@ -55,19 +55,14 @@ class Client extends ChannelsTypeahead {
     render(channels) {
         const {React} = this.utils;
 
-        const results = (
-            <div className="menu">
-                <ul className="menu-list">
-                {channels.map(channel => (
-                    <li key={channel.id}>
-                        <a onClick={() => this.action(channel)}>
-                            #{channel.name}
-                        </a>
-                    </li>
-                ))}
-                </ul>
-            </div>
-        );
+        const results = channels.map(channel => (
+            <a className="panel-block" key={channel.id} onClick={() => this.action(channel)}>
+                <span className="panel-icon">
+                    <i className="fa fa-hashtag" />
+                </span>
+                {channel.name}
+            </a>
+        ));
 
         this.results.onNext(results);
     }
