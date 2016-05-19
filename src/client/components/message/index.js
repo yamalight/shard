@@ -41,7 +41,11 @@ const Message = (m) => (
                         </a>
                     </div>
                 </div>
-                <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
+                <p
+                    className={styles.markdown}
+                    onClick={markdownClick}
+                    dangerouslySetInnerHTML={{__html: markdown(m.message)}}
+                />
             </div>
             {m.moreMessages && m.moreMessages.map(mm => (
                 <MessageShort key={mm.id} {...mm} />

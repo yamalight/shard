@@ -19,4 +19,10 @@
 
 .content {
     min-height: 67px;
+    display: flex;
+    flex-direction: column;
+}
+
+.markdown {
+    display: flex;
 }
