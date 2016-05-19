@@ -1,4 +1,7 @@
 .typeahead {
     position: fixed;
-    bottom: 12px;
+    min-width: 150px;
+    min-height: 90px;
+    margin-bottom: 0 !important;
+    bottom: 30px;
 }

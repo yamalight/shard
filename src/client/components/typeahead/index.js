@@ -1,3 +1,4 @@
+import {Subject} from 'rx';
 import React from 'react';
 import styles from './typeahead.css';
 import {extensions} from '../../extensions';
@@ -8,6 +9,8 @@ const typeaheadExtensions = extensions.filter(ex => ex.type === 'typeahead');
 // react component
 const Typeahead = React.createClass({
     getInitialState() {
+        this.typeaheadSubject = new Subject();
+
         return {
             title: 'Typeahead title',
             shouldAppear: false,
@@ -21,10 +24,23 @@ const Typeahead = React.createClass({
             .map(ex => [
                 ...ex.results.subscribe(res => this.setState({results: res, loading: false})),
                 ...ex.actions.subscribe(ctx => this.handleAction(ctx)),
+            ])
+            .concat([
+                this.typeaheadSubject
+                .debounce(300)
+                .subscribe(d => this.getTypeahead(d)),
             ]);
     },
 
     componentWillReceiveProps({text, currentTeam, currentChannel}) {
+        this.typeaheadSubject.onNext({text, currentTeam, currentChannel});
+    },
+
+    componentWillUnmount() {
+        this.subs.map(s => s.dispose());
+    },
+
+    getTypeahead({text, currentTeam, currentChannel}) {
         const extension = typeaheadExtensions.find(ex => ex.check(text));
 
         // if no extension found - hide
@@ -47,10 +63,6 @@ const Typeahead = React.createClass({
             currentChannel: currentChannel.id,
         };
         extension.get(context);
-    },
-
-    componentWillUnmount() {
-        this.subs.map(s => s.dispose());
     },
 
     hide() {
@@ -79,7 +91,7 @@ const Typeahead = React.createClass({
                 </div>
                 <div className="message-body">
                     {this.state.loading && 'Loading...'}
-                    {this.state.results}
+                    {!this.state.loading && this.state.results}
                 </div>
             </div>
         );
