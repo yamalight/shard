@@ -123,23 +123,18 @@ const Chat = React.createClass({
     },
     handleMenuItem(item) {
         // console.log('menu item:', item);
-        switch (item) {
-        case 'Description':
-            setInfobar({
-                title: item,
-                content: <Description text={this.state.currentChannel.description || ''} />,
-            });
-            break;
-        default:
-            console.log('wtf is this infobar item?');
-            break;
-        }
+        setInfobar(item);
     },
     closeMenu() {
         this.setState({showMenu: false});
     },
 
     render() {
+        const menuItems = [{
+            title: 'Description',
+            content: <Description text={this.state.currentChannel.description || ''} />,
+        }];
+
         return (
             <div className={`column is-flex ${styles.mainarea}`}>
                 <nav className={`navbar is-flex ${styles.navbar}`}>
@@ -161,7 +156,7 @@ const Chat = React.createClass({
                         <Dropdown
                             style={{top: 50, right: 5}}
                             title="Channel"
-                            items={['Description']}
+                            items={menuItems}
                             onItem={it => this.handleMenuItem(it)}
                             onHide={() => this.closeMenu()}
                         />

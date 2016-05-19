@@ -20,7 +20,7 @@ const Dropdown = React.createClass({
     },
 
     renderItem(it) {
-        return <li key={it}><a onClick={() => this.props.onItem(it)}>{it}</a></li>;
+        return <li key={it.title}><a onClick={() => this.props.onItem(it)}>{it.title}</a></li>;
     },
 
     render() {
