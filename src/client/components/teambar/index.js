@@ -19,7 +19,7 @@ const Teambar = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
+            .map(s => s.filter((v, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -85,6 +85,16 @@ const Teambar = React.createClass({
                 >
                     <span className="icon is-large hint--right hint--info" data-hint="Create new team">
                         <i className="fa fa-plus-circle"></i>
+                    </span>
+                </a>
+
+
+                {/* Sidebar toggle button */}
+                <div className={styles.spacer} />
+                <div className={styles.separator} />
+                <a className={styles.iconButton} onClick={() => this.props.toggleSidebar()}>
+                    <span className="icon is-large hint--right hint--info" data-hint="Toggle sidebar">
+                        <i className={`fa fa-${this.props.showSidebar ? 'toggle-off' : 'toggle-on'}`} />
                     </span>
                 </a>
 

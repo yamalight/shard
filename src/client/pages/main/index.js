@@ -16,6 +16,7 @@ const Main = React.createClass({
             team,
             teams: [],
             channels: [],
+            showSidebar: true,
         };
     },
 
@@ -61,11 +62,15 @@ const Main = React.createClass({
         }
     },
 
+    toggleSidebar() {
+        this.setState({showSidebar: !this.state.showSidebar});
+    },
+
     render() {
         return (
             <div className={styles.app}>
-                <Teambar />
-                <Sidebar />
+                <Teambar toggleSidebar={this.toggleSidebar} showSidebar={this.state.showSidebar} />
+                {this.state.showSidebar && <Sidebar />}
                 <Chat />
             </div>
         );
