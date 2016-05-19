@@ -52,6 +52,7 @@
     "marked": "^0.3.5",
     "morgan": "^1.7.0",
     "react": "^15.0.1",
+    "react-dock": "^0.2.3",
     "react-dom": "^15.0.1",
     "react-portal": "^2.1.0",
     "react-router": "^2.3.0",

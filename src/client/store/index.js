@@ -8,7 +8,7 @@ import authStatus from './auth/status';
 import register$, {registerUser} from './auth/register';
 import login$, {loginUser} from './auth/login';
 
-// plug in team actions
+// team actions
 import teamStatus from './team/status';
 import createTeam$, {createTeam} from './team/create';
 import getTeams$, {getTeams} from './team/get';
@@ -16,14 +16,14 @@ import setTeam$, {setTeam} from './team/set';
 import inviteUser$, {inviteUser} from './team/invite';
 import resetNewTeam$, {resetNewTeam} from './team/resetNew';
 
-// plug in channel actions
+// channel actions
 import channelStatus from './channel/status';
 import createChannel$, {createChannel} from './channel/create';
 import getChannels$, {getChannels} from './channel/get';
 import setChannel$, {setChannel} from './channel/set';
 import resetNewChannel$, {resetNewChannel} from './channel/resetNew';
 
-// plug in chat actions
+// chat actions
 import chatStatus from './chat/status';
 import {initChat, closeChat} from './chat/connect';
 import getChat$, {getChat} from './chat/get';
@@ -31,6 +31,9 @@ import getHistory$, {getHistory} from './chat/getHistory';
 import sendChat$, {sendChat} from './chat/send';
 import replyTo$, {replyTo} from './chat/replyTo';
 import resetReply$, {resetReply} from './chat/resetReply';
+
+// infobar actions
+import infobar$, {setInfobar} from './infobar/set';
 
 // create an array of action streams for store
 const streams = [
@@ -58,6 +61,8 @@ const streams = [
     sendChat$,
     replyTo$,
     resetReply$,
+    // infobar streams
+    infobar$,
 ];
 // create store
 const store = createStore({streams, defaultState});
@@ -85,6 +90,8 @@ export {
     sendChat,
     replyTo,
     resetReply,
+    // infobar
+    setInfobar,
 };
 
 // store.subscribe(s => console.log('state update:', s.toJS()));

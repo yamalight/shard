@@ -1,6 +1,7 @@
 .teambar {
     padding-top: 10px;
     width: 80px;
+    min-width: 80px;
     background: #1E2124;
     display: flex;
     flex-direction: column;

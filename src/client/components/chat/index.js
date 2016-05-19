@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './chat.css';
+import Dock from 'react-dock';
 
 import Description from '../description';
 import Message from '../message/';
 import ChatInput from '../chatInput';
+import Dropdown from '../dropdown';
+import Infobar from '../infobar';
 
-import store$, {initChat, closeChat, getChat, getHistory, sendChat} from '../../store';
+import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar} from '../../store';
 
 import {reduceShortMessages} from '../../util';
 
@@ -116,19 +119,58 @@ const Chat = React.createClass({
         sendChat({team, channel, message});
     },
 
+    showMenu() {
+        this.setState({showMenu: true});
+    },
+    handleMenuItem(item) {
+        // console.log('menu item:', item);
+        this.setState({dockVisible: true});
+        switch (item) {
+        case 'Description':
+            setInfobar({
+                title: item,
+                content: <Description text={this.state.currentChannel.description || ''} />,
+            });
+            break;
+        default:
+            console.log('wtf is this infobar item?');
+            break;
+        }
+    },
+    closeMenu() {
+        this.setState({showMenu: false});
+    },
+
     render() {
         return (
             <div className={`column is-flex ${styles.mainarea}`}>
-                <nav className={`navbar ${styles.navbar}`}>
+                <nav className={`navbar is-flex ${styles.navbar}`}>
                     <div className="navbar-item">
-                        <p className={`title channel-name ${styles.title}`}>
+                        <p className={`title channel-name is-flex ${styles.title}`}>
                             {this.state.currentChannel.name || 'No channel selected'}
                         </p>
                     </div>
+
+                    <div className={styles.navSpacer} />
+
+                    <div className={`navbar-item is-flex ${styles.navMenu}`}>
+                        <a className="card-header-icon" onClick={() => this.showMenu()}>
+                            <i className="fa fa-angle-down" />
+                        </a>
+                    </div>
+
+                    {this.state.showMenu && (
+                        <Dropdown
+                            style={{top: 50, right: 5}}
+                            title="Channel"
+                            items={['Description']}
+                            onItem={it => this.handleMenuItem(it)}
+                            onHide={() => this.closeMenu()}
+                        />
+                    )}
                 </nav>
 
                 <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                    <Description text={this.state.currentChannel.description || ''} />
                     {this.state.allMessages.length === 0 && 'No messages yet!'}
                     {this.state.allMessages.map(m => (
                         <Message key={m.id} {...m} />
@@ -137,6 +179,11 @@ const Chat = React.createClass({
                 <div className={styles.footer}>
                     <ChatInput {...this.state} />
                 </div>
+
+                {/* dock */}
+                <Dock position="right" isVisible={this.state.dockVisible}>
+                    <Infobar onHide={() => this.setState({dockVisible: false})} />
+                </Dock>
             </div>
         );
     },
