@@ -1,5 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
+import {browserHistory} from 'react-router';
 import store$, {getTeams, setTeam, resetNewTeam} from '../../store';
 import styles from './teambar.css';
 
@@ -27,6 +28,12 @@ const Teambar = React.createClass({
     },
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    },
+
+    setTeam(team) {
+        setTeam(team);
+        console.log('team', team);
+        browserHistory.push(`/channels/${team.id}`);
     },
 
     closeCreateTeam(refetch = false) {
@@ -63,7 +70,7 @@ const Teambar = React.createClass({
                     <a
                         key={team.id}
                         className={`${styles.iconButton} ${this.isCurrent(team) || styles.iconButtonFaded}`}
-                        onClick={() => setTeam(team)}
+                        onClick={() => this.setTeam(team)}
                     >
                         <span className="icon is-large hint--right hint--info" data-hint={team.name}>
                             <i className="fa fa-circle"></i>

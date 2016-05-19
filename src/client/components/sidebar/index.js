@@ -1,5 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
+import {browserHistory} from 'react-router';
 import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
 import styles from './sidebar.css';
 
@@ -35,6 +36,11 @@ const Sidebar = React.createClass({
     },
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    },
+
+    setChannel(channel) {
+        setChannel(channel);
+        browserHistory.push(`/channels/${this.state.currentTeam.id}/${channel.id}`);
     },
 
     closeCreateChannel(refetch = false) {
@@ -103,7 +109,7 @@ const Sidebar = React.createClass({
                                 <li key={channel.id}>
                                     <a
                                         className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
-                                        onClick={() => setChannel(channel)}
+                                        onClick={() => this.setChannel(channel)}
                                     >
                                         {channel.name}
                                     </a>
@@ -112,7 +118,7 @@ const Sidebar = React.createClass({
                                             <li key={ch.id}>
                                                 <a
                                                     className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
-                                                    onClick={() => setChannel(ch)}
+                                                    onClick={() => this.setChannel(ch)}
                                                 >
                                                     {ch.name}
                                                 </a>

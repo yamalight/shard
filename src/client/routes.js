@@ -7,5 +7,5 @@ import Main from './pages/main';
 
 export default [
     <IndexRoute key="home" name="home" component={Home} />,
-    <Route key="channels" name="channels" path="/channel/:id" component={Main} />,
+    <Route key="channels" name="channels" path="/channels/:team(/:channel)" component={Main} />,
 ];
