@@ -1,18 +1,39 @@
-import _ from 'lodash';
-import jwt from 'jsonwebtoken';
+import uuid from 'node-uuid';
 import {User} from '../db';
-import {jwtconf} from '../../../config';
-import {logger, hash, asyncRequest} from '../util';
+import {requireEmailValidation} from '../../../config';
+import {logger, hash, asyncRequest, sendEmail} from '../util';
 
 export default (app) => {
     app.post('/api/register', asyncRequest(async (req, res) => {
-        const {username, password: plainPass} = req.body;
+        const host = process.env.SHARD_HOST || req.get('host');
+        const {username, password: plainPass, email} = req.body;
         const password = hash(plainPass);
-        logger.debug('adding: ', username, password);
+        const verifyId = uuid.v4();
+        logger.debug('adding: ', {username, password, email, verifyId});
+        // check if email already used
+        let existingUserCount = await User.filter({email}).count().execute();
+        logger.debug('checked email:', existingUserCount);
+        if (existingUserCount > 0) {
+            logger.debug('Email already userd!');
+            res.status(400).json({error: 'User with given email already exists!'});
+            return;
+        }
+        // check if username already used
+        existingUserCount = await User.filter({username}).count().execute();
+        logger.debug('checked username:', existingUserCount);
+        if (existingUserCount > 0) {
+            logger.debug('Username already used!');
+            res.status(400).json({error: 'User with given username already exists!'});
+            return;
+        }
+
         // find user
         const user = await User.save({
             username,
             password,
+            email,
+            verifyId,
+            isEmailValid: !requireEmailValidation,
         });
 
         if (!user) {
@@ -21,10 +42,26 @@ export default (app) => {
             return;
         }
 
-        const userObj = user._makeSavableCopy();
-        logger.debug('created user: ', userObj);
-        // generate token
-        const token = jwt.sign(_.omit(userObj, ['password']), jwtconf.secret, {expiresIn: '1d'});
-        res.status(200).json({token});
+        if (requireEmailValidation) {
+            // send email
+            const verifyLink = `http://${host}/api/verify/${verifyId}`;
+            const text = `Hi ${username},
+            Please Click on the link to verify your email: ${verifyLink}`;
+            const html = `Hi ${username},<br/>
+            Please Click on the link to verify your email.<br/>
+            <a href="${verifyLink}">Click here to verify</a><br/>
+            Or open this in a browser: ${verifyLink}.`;
+
+            // send email
+            await sendEmail({
+                to: email,
+                subject: 'Shard.chat: Confirm Your Email',
+                text,
+                html,
+            });
+        }
+
+        logger.debug('created user: ', user);
+        res.status(201).send({message: 'Please validate your email!'});
     }));
 };

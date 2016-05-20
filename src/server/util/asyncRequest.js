@@ -11,5 +11,5 @@ export const asyncRequest = (asyncFn) => (req, res) =>
     asyncFn(req, res)
     .catch(e => {
         logger.error(e);
-        res.status(500).json({message: e.message});
+        res.status(500).json({error: e.message});
     });

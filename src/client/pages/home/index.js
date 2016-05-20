@@ -14,7 +14,13 @@ const Home = React.createClass({
     componentWillMount() {
         this.subs = [
             store$
-            .map(state => state.filter((_, key) => ['authStatus', 'registerError', 'user'].includes(key)))
+            .map(state => state.filter((_, key) => [
+                'authStatus',
+                'registerError',
+                'registerMessage',
+                'authError',
+                'user',
+            ].includes(key)))
             .map(auth => auth.toJS())
             .do(auth => this.checkAuth(auth))
             .subscribe(auth => this.setState(auth)),
@@ -43,12 +49,13 @@ const Home = React.createClass({
         const password = this.password.value;
         if (this.state.showRegister) {
             const passwordRepeat = this.passwordRepeat.value;
+            const email = this.email.value;
             if (password !== passwordRepeat) {
                 this.setState({error: 'Passwords must match!'});
                 return;
             }
 
-            registerUser({username, password});
+            registerUser({username, password, email});
             return;
         }
 
@@ -106,33 +113,67 @@ const Home = React.createClass({
 
         return (
             <div>
-                <input
-                    className="input"
-                    type="text"
-                    placeholder="Enter your username"
-                    ref={(i) => { this.username = i; }}
-                />
-                <input
-                    className="input"
-                    type="password"
-                    placeholder="Enter your password"
-                    ref={(i) => { this.password = i; }}
-                    onKeyUp={() => this.validatePasswords()}
-                />
+                <p className="control has-icon">
+                    <input
+                        className="input"
+                        type="text"
+                        placeholder="Enter your username"
+                        ref={(i) => { this.username = i; }}
+                    />
+                    <i className="fa fa-user" />
+                </p>
                 {this.state.showRegister && (
+                    <p className="control has-icon">
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter your email for validation"
+                            ref={(i) => { this.email = i; }}
+                        />
+                        <i className="fa fa-envelope" />
+                    </p>
+                )}
+                <p className="control has-icon">
                     <input
                         className="input"
                         type="password"
-                        placeholder="Repeat your password"
-                        ref={(i) => { this.passwordRepeat = i; }}
+                        placeholder="Enter your password"
+                        ref={(i) => { this.password = i; }}
                         onKeyUp={() => this.validatePasswords()}
                     />
+                    <i className="fa fa-lock" />
+                </p>
+                {this.state.showRegister && (
+                    <p className="control has-icon">
+                        <input
+                            className="input"
+                            type="password"
+                            placeholder="Repeat your password"
+                            ref={(i) => { this.passwordRepeat = i; }}
+                            onKeyUp={() => this.validatePasswords()}
+                        />
+                        <i className="fa fa-lock" />
+                    </p>
+                )}
+                {this.state.showRegister && this.state.registerMessage && (
+                    <div className="notification is-success">
+                        Registration successful!
+                        <br />
+                        {this.state.registerMessage.toString()}
+                    </div>
                 )}
                 {this.state.showRegister && this.state.registerError && (
                     <div className="notification is-danger">
                         Error during registration!
                         <br />
                         {this.state.registerError.toString()}
+                    </div>
+                )}
+                {this.state.authError && (
+                    <div className="notification is-danger">
+                        Error during authorization!
+                        <br />
+                        {this.state.authError.toString()}
                     </div>
                 )}
                 {this.state.error ? (

@@ -11,11 +11,17 @@ export default (app) => {
         // find user
         const users = await User.filter({username, password})
             .without(['password'])
-            .limit(1).run();
+            .limit(1)
+            .run();
         const user = users.pop();
         // check if user was found
         if (!user) {
             res.status(401).json({error: 'Incorrect username or password!'});
+            return;
+        }
+
+        if (!user.isEmailValid) {
+            res.status(401).json({error: 'You need to validate your email first!'});
             return;
         }
 
