@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 // logging
 import morgan from 'morgan';
+// config
+import * as config from '../../config';
 // db
 import thinky from './db';
 // webpack for dev
@@ -59,6 +61,8 @@ app.use((err, req, res, next) => { // eslint-disable-line
     res.status(500).send(err);
 });
 
+// log config
+logger.info('starting with config:', config);
 
 // wait for DB setup
 thinky.dbReady().then(() => {

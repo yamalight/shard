@@ -10,6 +10,7 @@ export default (app) => {
         const password = hash(plainPass);
         const verifyId = uuid.v4();
         logger.debug('adding: ', {username, password, email, verifyId});
+        logger.debug('email valudation is:', requireEmailValidation);
         // check if email already used
         let existingUserCount = await User.filter({email}).count().execute();
         logger.debug('checked email:', existingUserCount);
@@ -59,6 +60,8 @@ export default (app) => {
                 text,
                 html,
             });
+
+            logger.debug('email valudation sent to:', email);
         }
 
         logger.debug('created user: ', user);

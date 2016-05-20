@@ -2,8 +2,8 @@ version: '2'
 services:
   db:
     image: rethinkdb
-    #volumes:
-    #  - ./db:/data
+    volumes:
+      - ./db:/data
   shard:
     build: .
     depends_on:
