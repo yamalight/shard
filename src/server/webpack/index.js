@@ -1,21 +1,40 @@
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import {logger} from '../util';
 import config from './webpack.config.js';
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 // define node_env
 config.plugins = [
     new webpack.DefinePlugin({
         'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV)},
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
 ];
-// override entry for hotload
-config.entry = [
-    'webpack-hot-middleware/client',
-    config.entry,
-];
+
+// if not prod - enable hot reload
+if (!isProduction) {
+    logger.info('not production - adding hot reload plugins');
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+    config.plugins.push(new webpack.NoErrorsPlugin());
+    // override entry for hotload
+    config.entry = [
+        'webpack-hot-middleware/client',
+        config.entry,
+    ];
+} else {
+    logger.info('production - adding optimization plugins');
+    config.devtool = 'cheap-source-map';
+    config.debug = false;
+    config.plugins.push(new webpack.optimize.DedupePlugin());
+    config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false,
+        },
+    }));
+}
+
 // returns a Compiler instance
 const compiler = webpack(config);
 
