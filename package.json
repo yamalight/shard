@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "SHARD_MAIL_VALIDATION=0 nodemon --ignore ./src/client index.js",
+    "production": "NODE_ENV=production SHARD_MAIL_VALIDATION=0 node index.js",
     "db:start": "docker run -d -p 28015:28015 -p 8090:8080 --name sharddb rethinkdb",
     "db:rm": "docker stop sharddb && docker rm sharddb"
   },
@@ -61,6 +62,7 @@
     "rx": "^4.1.0",
     "rx-dom": "^7.0.3",
     "rxstate": "^0.4.0",
+    "spark-md5": "^2.0.2",
     "thinky": "^2.3.2",
     "winston": "^2.2.0"
   },

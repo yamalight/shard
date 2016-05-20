@@ -1,5 +1,6 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
+import {hash} from 'spark-md5';
 import {markdown} from '../../util';
 import styles from './message.css';
 
@@ -28,13 +29,17 @@ export const markdownClick = (e) => {
 
 const Message = (m) => (m.layout === 'short' ? (
     <article className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
-        <p onClick={markdownClick} dangerouslySetInnerHTML={{__html: markdown(m.message)}} />
+        <p
+            className={styles.markdown}
+            onClick={markdownClick}
+            dangerouslySetInnerHTML={{__html: markdown(m.message)}}
+        />
     </article>
 ) : (
     <article className="media">
         <figure className="media-left">
             <p className="image is-64x64">
-                <img src="http://placehold.it/128x128" alt="avatar" />
+                <img src={`http://www.gravatar.com/avatar/${hash(m.user.email)}`} alt="avatar" />
             </p>
         </figure>
         <div className="media-content">

@@ -231,7 +231,7 @@ const Home = React.createClass({
                             </div>
                             <div className="column">
                                 <img
-                                    src="https://discordapp.com/assets/75821e7b35417974f6c9111165071a10.png"
+                                    src="/img/shard.png"
                                     alt="Shard screenshot"
                                 />
                             </div>

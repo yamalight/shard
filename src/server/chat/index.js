@@ -4,13 +4,15 @@ import {logger, asyncRequest} from '../util';
 import {Message, Reply, r} from '../db';
 import {socket} from '../../../config';
 
+const userFields = ['id', 'username', 'email'];
+
 const messageJoin = {
     replies: {
         _apply(sequence) {
             return sequence.orderBy('time')
                 .getJoin({user: true})
                 .merge(c => ({
-                    readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+                    readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
                 }));
         },
     },
@@ -30,7 +32,7 @@ export default (app) => {
             .getJoin(messageJoin)
             .filter({channel})
             .merge(c => ({
-                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
             .limit(10)
             .execute();
@@ -100,8 +102,8 @@ export default (app) => {
             .changes()
             .map(c => c('new_val'))
             .merge(c => ({
-                user: r.table('User').get(c('userId')).pluck(['id', 'username']),
-                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+                user: r.table('User').get(c('userId')).pluck(userFields),
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
             .run();
         messageStream.each((err, it) => {
@@ -123,8 +125,8 @@ export default (app) => {
             .changes()
             .map(c => c('new_val'))
             .merge(c => ({
-                user: r.table('User').get(c('userId')).pluck(['id', 'username']),
-                readBy: c('readBy').map(it => r.table('User').get(it).pluck(['id', 'username'])),
+                user: r.table('User').get(c('userId')).pluck(userFields),
+                readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
             .run();
         repliesStream.each((err, it) => {

@@ -29,4 +29,6 @@
 
 .short {
     border-top: 1px solid rgba(211, 214, 219, 0.25) !important;
+    display: flex;
+    flex-direction: column;
 }
