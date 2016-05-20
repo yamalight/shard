@@ -46,6 +46,12 @@
     }
 }
 
+// flex grow spacer
+.is-spacer {
+    flex-grow: 1;
+}
+
+// channel prefix
 .channel-name:before {
     content: '#';
     color: #8a8e94 !important;

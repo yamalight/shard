@@ -35,6 +35,8 @@ const Invite = React.createClass({
     },
 
     render() {
+        const inviteUrl = `${window.location.origin}/join/${this.state.currentTeam.id}/${this.state.currentChannel.id}`;
+
         return (
             <div className="card is-fullwidth">
                 <header className="card-header">
@@ -49,9 +51,19 @@ const Invite = React.createClass({
                             <input
                                 className="input is-medium"
                                 type="text"
-                                placeholder="Enter username.."
+                                placeholder="Enter username to invite.."
                                 ref={t => { this.nameInput = t; }}
                             />
+                        </p>
+                        <p className="control has-icon" onClick={() => this.urlInput.select()}>
+                            <input
+                                className="input is-disabled"
+                                type="text"
+                                value={inviteUrl}
+                                ref={t => { this.urlInput = t; }}
+                                readOnly
+                            />
+                            <i className="fa fa-link" />
                         </p>
                     </div>
                 </div>

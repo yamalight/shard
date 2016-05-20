@@ -3,33 +3,6 @@ import {browserHistory} from 'react-router';
 import styles from './home.css';
 import store$, {registerUser, loginUser} from '../../store';
 
-import {markdown} from '../../util';
-const testMarkdown = `
-# Hello world!
-
-> test markdown
-
-- [ ] one
-- [ ] two
-
-\`\`\`js
-const some = 'javascript'.here;
-\`\`\`
-
-Normal image:
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Emojis: :thumbsup: :tada:
-
-Font-awesome: :fa-flag: :fa-gitlab:
-
-Some more text with here.
-And some more text after that just to see how it looks.
-
-And here's a widget
-%%% widget=https://www.youtube.com/embed/b3ADsUFJ46Y
-`;
-
 const Home = React.createClass({
     getInitialState() {
         return {
@@ -83,7 +56,12 @@ const Home = React.createClass({
     },
 
     goHome() {
-        browserHistory.push('/channels/@me');
+        const {location} = this.props;
+        if (location.state && location.state.nextPathname) {
+            browserHistory.push(location.state.nextPathname);
+        } else {
+            browserHistory.push('/channels/@me');
+        }
     },
 
     checkAuth(auth) {
@@ -162,19 +140,39 @@ const Home = React.createClass({
                         {this.state.error}
                     </div>
                 ) : (
-                    <a className="button is-success" onClick={this.doAuth}>
-                        {this.state.showRegister ? 'Register' : 'Login'}
-                    </a>
+                    <div className="is-flex">
+                        <a className="button is-success" onClick={this.doAuth}>
+                            {this.state.showRegister ? 'Register' : 'Login'}
+                        </a>
+                        <div className="is-spacer" />
+                        <a
+                            className="button"
+                            onClick={() => this.setState({
+                                showLogin: this.state.showRegister,
+                                showRegister: !this.state.showRegister,
+                            })}
+                        >
+                            {this.state.showRegister ? 'Let me login!' : 'I want to register!'}
+                        </a>
+                    </div>
                 )}
             </div>
         );
     },
 
     render() {
+        const {location} = this.props;
+
         return (
             <section className="hero is-fullheight">
                 <div className="hero-body">
                     <div className="container">
+                        {location.state && location.state.nextPathname && (
+                            <div className="notification is-warning">
+                                You need to login to access <code>{location.state.nextPathname}</code>!
+                                Do it now and you'll be redirected to it upon success.
+                            </div>
+                        )}
                         <div className="columns">
                             <div className="column is-one-third">
                                 <h1 className="title">
@@ -190,19 +188,11 @@ const Home = React.createClass({
 
                                 {this.renderInput()}
                             </div>
-                            <div
-                                className="column"
-                                onClick={() => this.setState({showMarkdown: !this.state.showMarkdown})}
-                            >
-                            {!this.state.showMarkdown && (
+                            <div className="column">
                                 <img
                                     src="https://discordapp.com/assets/75821e7b35417974f6c9111165071a10.png"
                                     alt="Shard screenshot"
                                 />
-                            )}
-                            {this.state.showMarkdown && (
-                                <div dangerouslySetInnerHTML={{__html: markdown(testMarkdown)}} />
-                            )}
                             </div>
                         </div>
                     </div>

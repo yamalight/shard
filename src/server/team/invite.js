@@ -3,6 +3,34 @@ import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
 export default (app) => {
+    app.post('/api/teams/:id/join', checkAuth, asyncRequest(async (req, res) => {
+        const {id} = req.params;
+        const {channel} = req.body;
+        const username = req.userInfo.username;
+        logger.info('adding user with name:', username, 'to channel:', channel, 'via URL');
+
+        // get team
+        const team = await Team.get(id);
+        // add user to team if he's not already there
+        if (!team.users.find(u => u.id === req.userInfo.id)) {
+            team.users.push({id: req.userInfo.id});
+            await team.save();
+        }
+
+        // add user to channel (if present)
+        if (channel) {
+            const ch = await Channel.get(channel);
+            // only add if not already in channel
+            if (!ch.users.find(u => u.id === req.userInfo.id)) {
+                ch.users.push({id: req.userInfo.id});
+                await ch.save();
+            }
+        }
+
+        logger.debug('added user to team via url!');
+        res.sendStatus(204);
+    }));
+
     app.post('/api/teams/:id/invite', checkAuth, asyncRequest(async (req, res) => {
         const {id} = req.params;
         const {username, channel} = req.body;

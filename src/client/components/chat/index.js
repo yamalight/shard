@@ -197,8 +197,8 @@ const Chat = React.createClass({
                 </nav>
 
                 <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                    {this.state.allMessages.length === 0 && 'No messages yet!'}
-                    {this.state.allMessages.map(m => (
+                    {this.state.allMessages && this.state.allMessages.length === 0 && 'No messages yet!'}
+                    {this.state.allMessages && this.state.allMessages.map(m => (
                         <Message key={m.id} {...m} />
                     ))}
                 </div>

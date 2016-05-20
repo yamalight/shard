@@ -4,3 +4,4 @@ export {sign} from './sign';
 export {socket} from './rxsocket';
 export {markdown} from './marked';
 export {reduceShortMessages} from './reduceShortMessages';
+export {requireAuth} from './requireAuth';

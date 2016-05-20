@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {Subject} from 'rx';
 import React from 'react';
 import styles from './typeahead.css';
@@ -20,16 +21,16 @@ const Typeahead = React.createClass({
     },
 
     componentWillMount() {
-        this.subs = typeaheadExtensions
+        this.subs = _.flatten(typeaheadExtensions
             .map(ex => [
-                ...ex.results.subscribe(res => this.setState({results: res, loading: false})),
-                ...ex.actions.subscribe(ctx => this.handleAction(ctx)),
+                ex.results.subscribe(res => this.setState({results: res, loading: false})),
+                ex.actions.subscribe(ctx => this.handleAction(ctx)),
             ])
             .concat([
                 this.typeaheadSubject
                 .debounce(300)
                 .subscribe(d => this.getTypeahead(d)),
-            ]);
+            ]));
     },
 
     componentWillReceiveProps({text, currentTeam, currentChannel}) {

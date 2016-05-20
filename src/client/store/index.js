@@ -12,8 +12,10 @@ import login$, {loginUser} from './auth/login';
 import teamStatus from './team/status';
 import createTeam$, {createTeam} from './team/create';
 import getTeams$, {getTeams} from './team/get';
+import getTeam$, {getTeam} from './team/getTeam';
 import setTeam$, {setTeam} from './team/set';
 import inviteUser$, {inviteUser} from './team/invite';
+import joinTeam$, {joinTeam} from './team/join';
 import resetNewTeam$, {resetNewTeam} from './team/resetNew';
 
 // channel actions
@@ -45,9 +47,11 @@ const streams = [
     // team streams
     teamStatus.$,
     getTeams$,
+    getTeam$,
     createTeam$,
     setTeam$,
     inviteUser$,
+    joinTeam$,
     resetNewTeam$,
     // channel streams
     channelStatus.$,
@@ -75,9 +79,11 @@ export {
     loginUser,
     // team
     getTeams,
+    getTeam,
     createTeam,
     setTeam,
     inviteUser,
+    joinTeam,
     resetNewTeam,
     // channel
     getChannels,
