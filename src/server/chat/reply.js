@@ -8,7 +8,7 @@ export default (app) => {
         const channel = req.params.channel;
         const replyTo = req.params.message;
         const message = _.omit(req.body, ['token']);
-        logger.info('got reply: ', replyTo, ' with msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
+        logger.info('new reply: ', {replyTo, message, from: req.userInfo.username, channel});
         const m = new Reply({
             ...message,
             channel,
@@ -17,7 +17,7 @@ export default (app) => {
         });
         m.user = req.userInfo;
         await m.saveAll({user: true});
-        logger.debug('saved new reply:', m);
+        logger.info('saved new reply:', m);
         res.sendStatus(201);
     }));
 };

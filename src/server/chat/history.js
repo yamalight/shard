@@ -6,7 +6,7 @@ import {userFields, messageJoin} from './dbconf';
 export default (app) => {
     app.get('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
-        logger.info('getting messages for channel:', channel);
+        logger.info('getting history for channel:', channel);
         const historyReverse = await Message
             .orderBy(r.desc('time'))
             .getJoin(messageJoin)

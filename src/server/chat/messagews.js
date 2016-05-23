@@ -7,7 +7,9 @@ import {userFields} from './dbconf';
 export default (app) => {
     app.ws('/api/chat/:team/:channel', checkAuth, asyncRequest(async (ws, req) => {
         const channel = req.params.channel;
-        logger.info('initing stream for channel:', channel);
+        logger.info('initing streams for channel:', channel);
+
+        // init messages stream
         const messageStream = await r.table('Message').filter({channel})
             .changes()
             .map(c => c('new_val'))
@@ -16,6 +18,7 @@ export default (app) => {
                 readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
             .run();
+        // pass messages to user through socket
         messageStream.each((err, it) => {
             if (err) {
                 logger.error('got err in channel stream:', err);
@@ -30,7 +33,7 @@ export default (app) => {
             ws.send(JSON.stringify(msg));
         });
 
-        // replies
+        // init replies stream
         const repliesStream = await r.table('Reply').filter({channel})
             .changes()
             .map(c => c('new_val'))
@@ -39,6 +42,7 @@ export default (app) => {
                 readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
             .run();
+        // pass replies to user through socket
         repliesStream.each((err, it) => {
             if (err) {
                 logger.error('got err in channel reply stream:', err);
@@ -53,7 +57,7 @@ export default (app) => {
             ws.send(JSON.stringify(msg));
         });
 
-        // setup pings
+        // setup pings to keep socket alive
         const pingInterval = setInterval(() => {
             ws.ping();
         }, socket.pingTime);

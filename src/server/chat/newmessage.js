@@ -7,7 +7,7 @@ export default (app) => {
     app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
         const message = _.omit(req.body, ['token']);
-        logger.info('got msg:', message, 'from:', req.userInfo.username, 'channel:', channel);
+        logger.info('new msg:', {message, from: req.userInfo.username, channel});
         const m = new Message({
             ...message,
             channel,
@@ -15,7 +15,7 @@ export default (app) => {
         });
         m.user = req.userInfo;
         await m.saveAll({user: true});
-        logger.debug('saved new message:', m);
+        logger.info('saved new message:', m);
         res.sendStatus(201);
     }));
 };

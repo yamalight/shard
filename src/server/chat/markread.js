@@ -6,7 +6,7 @@ export default (app) => {
     app.post('/api/chat/:team/:channel/read', checkAuth, asyncRequest(async (req, res) => {
         const channel = req.params.channel;
         const {messages, replies} = req.body;
-        logger.info('marking as read:', messages, replies, 'for:', req.userInfo.username, 'channel:', channel);
+        logger.debug('marking as read:', {messages, replies, user: req.userInfo.username, channel});
         const m = await Message.getAll(...messages)
             .update({readBy: r.row('readBy').append(req.userInfo.id)})
             .run();
