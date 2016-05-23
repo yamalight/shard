@@ -4,28 +4,35 @@ import {logger, asyncRequest} from '../util';
 export default (app) => {
     app.get('/api/verify/:id', asyncRequest(async (req, res) => {
         const {id: verifyId} = req.params;
-        logger.debug('verifying email for:', verifyId);
+        logger.info('verifying email for:', verifyId);
+
+        // check if verifyId is valid
         if (verifyId === '0') {
+            logger.error('Incorrect verification token!');
             res.status(401).send('Incorrect verification token!');
             return;
         }
 
-        // find user
+        // find matching user
         const users = await User
             .filter({verifyId, isEmailValid: false})
             .limit(1)
             .run();
-
-        const user = users.pop();
+        // get first one
+        const user = users[0];
 
         // check if user was found
         if (!user) {
+            logger.error('Incorrect verification token!');
             res.status(401).send('Incorrect verification token!');
             return;
         }
 
         logger.debug('got user: ', user);
+        // update user to verified
         await User.get(user.id).update({isEmailValid: true, verifyId: '0'}).run();
-        res.status(200).send('Your email was successfully activated! You can login <a href="/">now</a>.');
+        logger.info('verified email for:', user);
+        // send success html
+        res.redirect(`/?username=${encodeURIComponent(user.username)}&emailValid=true`);
     }));
 };

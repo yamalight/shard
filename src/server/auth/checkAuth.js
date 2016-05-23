@@ -9,7 +9,7 @@ export const requestToToken = (req) => req.body.token || req.query.token || req.
 export const checkStringToken = async (token) => {
     logger.debug('checking token: ', token);
     if (!token) {
-        logger.debug('no broken');
+        logger.error('no auth token provided');
         throw new Error('No auth token provided!');
     }
 
@@ -27,7 +27,7 @@ export const checkStringToken = async (token) => {
     // find user
     const user = await User.get(id).run();
     if (user) {
-        logger.info('user found!', user);
+        logger.debug('user found!', user);
         return user;
     }
 
@@ -40,7 +40,7 @@ export default async (req, res, next) => {
     const token = requestToToken(reqToCheck);
     try {
         const user = await checkStringToken(token);
-        logger.info('user found!', user);
+        logger.debug('user found!', user);
         req.userInfo = user; // eslint-disable-line
         return next();
     } catch (e) {

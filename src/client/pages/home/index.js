@@ -5,8 +5,13 @@ import store$, {registerUser, loginUser} from '../../store';
 
 const Home = React.createClass({
     getInitialState() {
+        const {query} = this.props.location;
+        const {username} = query;
+        const emailValid = query.emailValid === 'true';
         return {
-            showLogin: false,
+            username,
+            emailValid,
+            showLogin: emailValid,
             showRegister: false,
         };
     },
@@ -119,6 +124,7 @@ const Home = React.createClass({
                         type="text"
                         placeholder="Enter your username"
                         ref={(i) => { this.username = i; }}
+                        defaultValue={this.state.username}
                     />
                     <i className="fa fa-user" />
                 </p>
@@ -212,6 +218,12 @@ const Home = React.createClass({
                             <div className="notification is-warning">
                                 You need to login to access <code>{location.state.nextPathname}</code>!
                                 Do it now and you'll be redirected to it upon success.
+                            </div>
+                        )}
+                        {this.state.username && this.state.emailValid && (
+                            <div className="notification is-success">
+                                Your email is now validated and account is active!
+                                You can now log in using the form below.
                             </div>
                         )}
                         <div className="columns">

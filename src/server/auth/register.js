@@ -9,13 +9,13 @@ export default (app) => {
         const {username, password: plainPass, email} = req.body;
         const password = hash(plainPass);
         const verifyId = uuid.v4();
-        logger.debug('adding: ', {username, password, email, verifyId});
+        logger.info('adding new user:', {username, password, email, verifyId});
         logger.debug('email valudation is:', requireEmailValidation);
         // check if email already used
         let existingUserCount = await User.filter({email}).count().execute();
         logger.debug('checked email:', existingUserCount);
         if (existingUserCount > 0) {
-            logger.debug('Email already userd!');
+            logger.error('Email already userd!');
             res.status(400).json({error: 'User with given email already exists!'});
             return;
         }
@@ -23,7 +23,7 @@ export default (app) => {
         existingUserCount = await User.filter({username}).count().execute();
         logger.debug('checked username:', existingUserCount);
         if (existingUserCount > 0) {
-            logger.debug('Username already used!');
+            logger.error('Username already used!');
             res.status(400).json({error: 'User with given username already exists!'});
             return;
         }
@@ -38,7 +38,7 @@ export default (app) => {
         });
 
         if (!user) {
-            logger.debug('unknown error while creating user during registration!');
+            logger.error('unknown error while creating user during registration!');
             res.status(500).json({error: 'Error while creating user!'});
             return;
         }
@@ -64,7 +64,7 @@ export default (app) => {
             logger.debug('email valudation sent to:', email);
         }
 
-        logger.debug('created user: ', user);
+        logger.info('created user: ', user);
         res.status(201).send({message: 'Please validate your email!'});
     }));
 };
