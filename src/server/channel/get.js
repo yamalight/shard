@@ -5,7 +5,7 @@ import checkAuth from '../auth/checkAuth';
 export default (app) => {
     app.get('/api/channels', checkAuth, asyncRequest(async (req, res) => {
         const {team} = req.query;
-        logger.debug('searching for channels for', req.userInfo, 'and team', team);
+        logger.info('searching for channels for', req.userInfo.username, 'and team', team);
         const channels = await Channel
             .getJoin({
                 subchannels: {

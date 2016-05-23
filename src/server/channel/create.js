@@ -5,7 +5,7 @@ import checkAuth from '../auth/checkAuth';
 export default (app) => {
     app.post('/api/channels/new', checkAuth, asyncRequest(async (req, res) => {
         const {name, description, team, parent} = req.body;
-        logger.debug('saving channel with:', {name, description, team, parent}, 'and owner:', req.userInfo.username);
+        logger.info('saving new channel:', {name, description, team, parent}, 'and owner:', req.userInfo.username);
 
         // init channel data
         const data = {
@@ -25,14 +25,14 @@ export default (app) => {
                 ...data,
                 parentChannel: parent,
             });
-            logger.debug('saved new subchannel:', subchannel);
+            logger.info('saved new subchannel:', subchannel);
             res.status(200).json(subchannel);
             return;
         }
 
         // otherwise save channel
         const channel = await Channel.save(data);
-        logger.debug('saved new channel:', channel);
+        logger.info('saved new channel:', channel);
         res.status(200).json(channel);
     }));
 };
