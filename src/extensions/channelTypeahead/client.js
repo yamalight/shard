@@ -3,7 +3,7 @@ import ChannelsTypeahead from './base';
 import tag from '../../lib/markdown-it-tag';
 
 // typeahead extension
-class Client extends ChannelsTypeahead {
+class ChannelsTypeaheadClient extends ChannelsTypeahead {
     // typeahead extension
     type = 'typeahead'
 
@@ -68,4 +68,4 @@ class Client extends ChannelsTypeahead {
     }
 }
 
-export default [Client];
+export default [ChannelsTypeaheadClient];

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import ChannelsTypeahead from './base';
 
-class Server extends ChannelsTypeahead {
+class ChannelsTypeaheadServer extends ChannelsTypeahead {
     constructor({route, db, util}) {
         super();
 
@@ -35,4 +35,4 @@ class Server extends ChannelsTypeahead {
     }
 }
 
-export default [Server];
+export default [ChannelsTypeaheadServer];

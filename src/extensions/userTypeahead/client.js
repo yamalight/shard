@@ -2,7 +2,7 @@ import UserTypeahead from './base';
 import tag from '../../lib/markdown-it-tag';
 
 // typeahead extension
-class Client extends UserTypeahead {
+class UserTypeaheadClient extends UserTypeahead {
     // typeahead extension
     type = 'typeahead'
 
@@ -66,4 +66,4 @@ class Client extends UserTypeahead {
     }
 }
 
-export default [Client];
+export default [UserTypeaheadClient];

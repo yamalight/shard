@@ -1,6 +1,6 @@
 import UserTypeahead from './base';
 
-class Server extends UserTypeahead {
+class UserTypeaheadServer extends UserTypeahead {
     constructor({route, db, util}) {
         super();
 
@@ -37,4 +37,4 @@ class Server extends UserTypeahead {
     }
 }
 
-export default [Server];
+export default [UserTypeaheadServer];
