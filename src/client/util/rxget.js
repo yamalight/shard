@@ -12,7 +12,13 @@ DOM.get({
         'x-access-token': token,
     },
 })
-.map(res => JSON.parse(res.response))
+.map(res => {
+    try {
+        return JSON.parse(res.response);
+    } catch (e) {
+        return {};
+    }
+})
 .catch(err => (
     err.xhr && err.xhr.response ?
     just(JSON.parse(err.xhr.response)) :

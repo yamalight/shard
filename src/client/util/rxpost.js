@@ -12,7 +12,13 @@ DOM.post({
         'content-type': 'application/json',
     },
 })
-.map(res => (res.response.length ? JSON.parse(res.response) : {}))
+.map(res => {
+    try {
+        return JSON.parse(res.response);
+    } catch (e) {
+        return {};
+    }
+})
 .catch(err => (
     err.xhr && err.xhr.response ?
     just(JSON.parse(err.xhr.response)) :

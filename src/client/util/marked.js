@@ -8,6 +8,7 @@ import container from 'markdown-it-container';
 
 // import extensions
 import {extensions} from '../extensions';
+// get extensions that has markdown plugins
 const mdExtensions = _.flatten(
     extensions
     .filter(ex => ex.markdownPlugins && ex.markdownPlugins.length)
