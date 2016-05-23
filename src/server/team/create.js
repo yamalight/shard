@@ -5,7 +5,7 @@ import checkAuth from '../auth/checkAuth';
 export default (app) => {
     app.post('/api/teams/new', checkAuth, asyncRequest(async (req, res) => {
         const {name} = req.body;
-        logger.debug('saving team with name:', name, 'and owner:', req.userInfo.username);
+        logger.info('saving new team:', {name, owner: req.userInfo.username});
         // save new team
         const team = await Team.save({
             name,

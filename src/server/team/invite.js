@@ -7,7 +7,7 @@ export default (app) => {
         const {id} = req.params;
         const {channel} = req.body;
         const username = req.userInfo.username;
-        logger.info('adding user with name:', username, 'to channel:', channel, 'via URL');
+        logger.info('adding user to channel via URL:', {username, channel});
 
         // get team
         const team = await Team.get(id);
@@ -34,7 +34,7 @@ export default (app) => {
     app.post('/api/teams/:id/invite', checkAuth, asyncRequest(async (req, res) => {
         const {id} = req.params;
         const {username, channel} = req.body;
-        logger.info('inviting user with name:', username, 'to channel:', channel);
+        logger.info('inviting user to channel:', {username, channel});
 
         // check user permissions for invite
         const team = await Team.get(id);
