@@ -10,6 +10,6 @@ import {logger} from './logger';
 export const asyncRequest = (asyncFn) => (req, res) =>
     asyncFn(req, res)
     .catch(e => {
-        logger.error(e);
+        logger.error('Error during async request:', e);
         res.status(500).json({error: e.message});
     });
