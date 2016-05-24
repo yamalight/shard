@@ -10,7 +10,7 @@ const team$ = inviteUser.$
     .do(() => status('loading'))
     .map(data => sign(data))
     .flatMap(({team, ...data}) => post(`/api/teams/${team}/invite`, data))
-    .do(res => (res.error || !res.team ? status('error') : status('finished')))
+    .do(res => (res.error ? status('error') : status('finished')))
     .map(res => {
         res.teamError = res.error; // eslint-disable-line
         return res;

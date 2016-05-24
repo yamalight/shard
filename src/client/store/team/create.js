@@ -10,11 +10,7 @@ const team$ = createTeam.$
     .do(() => status('loading'))
     .map(team => sign(team))
     .flatMap(team => post('/api/teams/new', team))
-    .do(res => (res.error || !res.team ? status('error') : status('finished')))
-    .map(res => {
-        res.teamError = res.error; // eslint-disable-line
-        return res;
-    })
-    .map(res => ({newTeam: res}));
+    .do(res => (res.error ? status('error') : status('finished')))
+    .map(res => (res.error ? ({teamError: res.error}) : ({newTeam: res})));
 
 export default team$;

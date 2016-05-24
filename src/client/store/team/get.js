@@ -10,7 +10,7 @@ const teams$ = getTeams.$
     .do(() => status('loading'))
     .map(() => sign({}))
     .flatMap(({token}) => get('/api/teams', token))
-    .do(res => (res.error || !res.team ? status('error') : status('finished')))
+    .do(res => (res.error ? status('error') : status('finished')))
     .map(res => {
         res.teamError = res.error; // eslint-disable-line
         return res;

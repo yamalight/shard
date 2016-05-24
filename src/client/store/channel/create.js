@@ -10,7 +10,7 @@ const channel$ = createChannel.$
     .do(() => status('loading'))
     .map(channel => sign(channel))
     .flatMap(channel => post('/api/channels/new', channel))
-    .do(res => (res.error || !res.team ? status('error') : status('finished')))
-    .map(res => ({newChannel: res}));
+    .do(res => (res.error ? status('error') : status('finished')))
+    .map(res => (res.error ? ({channelError: res.error}) : ({newChannel: res})));
 
 export default channel$;
