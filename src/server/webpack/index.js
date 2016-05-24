@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import {logger} from '../util';
 import config from './webpack.config.js';
 
@@ -27,31 +28,51 @@ if (!isProduction) {
     logger.info('production - adding optimization plugins');
     config.devtool = 'cheap-source-map';
     config.debug = false;
+    config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
     config.plugins.push(new webpack.optimize.DedupePlugin());
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
         compress: {
             warnings: false,
         },
     }));
+    config.plugins.push(new LodashModuleReplacementPlugin());
 }
 
 // returns a Compiler instance
 const compiler = webpack(config);
 
+// stats output config
+const statsConf = {
+    colors: true,
+    hash: false,
+    timings: true,
+    chunks: false,
+    chunkModules: false,
+    modules: false,
+};
+
 // create express
 export default (app) => {
-    app.use(webpackMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-        contentBase: 'src',
-        stats: {
-            colors: true,
-            hash: false,
-            timings: true,
-            chunks: false,
-            chunkModules: false,
-            modules: false,
-        },
-    }));
+    // only user middleware while in dev
+    if (!isProduction) {
+        app.use(webpackMiddleware(compiler, {
+            publicPath: config.output.publicPath,
+            contentBase: 'src',
+            stats: statsConf,
+        }));
+        app.use(webpackHotMiddleware(compiler));
+        return;
+    }
 
-    app.use(webpackHotMiddleware(compiler));
+    compiler.run((err, stats) => {
+        if (err) {
+            logger.error('Webpack error:', err);
+            return;
+        }
+
+        logger.info('webpack done!', stats.toJson({
+            ...statsConf,
+            assets: false,
+        }));
+    });
 };

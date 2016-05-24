@@ -3,3 +3,4 @@ npm-debug.log
 db/
 docker-compose-deploy.yml
 Makefile
+src/client/dist/
