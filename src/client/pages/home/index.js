@@ -167,6 +167,7 @@ export default class Home extends React.Component {
                             placeholder="Repeat your password"
                             ref={(i) => { this.passwordRepeat = i; }}
                             onKeyUp={() => this.validatePasswords()}
+                            onKeyPress={e => this.handleKeyPress(e)}
                         />
                         <i className="fa fa-lock" />
                     </p>
