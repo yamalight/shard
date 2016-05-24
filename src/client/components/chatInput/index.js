@@ -102,7 +102,7 @@ export default class ChatInput extends React.Component {
                         onKeyPress={e => this.handleKeyPress(e)}
                         onKeyUp={e => this.handleKeyUp(e)}
                     />
-                    <a className="button" onClick={() => this.sendMessage()}>
+                    <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
                         <i className="fa fa-paper-plane" />
                     </a>
                 </p>

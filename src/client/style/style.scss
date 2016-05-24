@@ -2,6 +2,12 @@
 @import './bulma';
 @import '~highlight.js/styles/github-gist.css';
 
+html, body, #container {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
 // dark menu
 .dark-menu {
     li ul {
