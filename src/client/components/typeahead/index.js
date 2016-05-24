@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {Subject} from 'rx';
 import React from 'react';
-import styles from './typeahead.css';
+// import styles from './typeahead.css';
 import {extensions} from '../../extensions';
 
 // get typeahead extensions
@@ -88,7 +88,7 @@ export default class Typeahead extends React.Component {
         }
 
         return (
-            <div className={`panel ${styles.typeahead}`}>
+            <div>
                 <div className="panel-heading">
                     {this.state.title}
                 </div>

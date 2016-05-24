@@ -88,24 +88,26 @@ export default class ChatInput extends React.Component {
                     </div>
                 )}
 
-                <Typeahead {...this.state} input={this._text} />
+                <div className="panel">
+                    <Typeahead {...this.state} input={this._text} />
 
-                <p className="control has-addons">
-                    <a className="button">
-                        <i className="fa fa-paperclip" />
-                    </a>
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder="Write a message..."
-                        ref={(t) => { this._text = t; }}
-                        onKeyPress={e => this.handleKeyPress(e)}
-                        onKeyUp={e => this.handleKeyUp(e)}
-                    />
-                    <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
-                        <i className="fa fa-paper-plane" />
-                    </a>
-                </p>
+                    <p className="control has-addons">
+                        <a className="button">
+                            <i className="fa fa-paperclip" />
+                        </a>
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Write a message..."
+                            ref={(t) => { this._text = t; }}
+                            onKeyPress={e => this.handleKeyPress(e)}
+                            onKeyUp={e => this.handleKeyUp(e)}
+                        />
+                        <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
+                            <i className="fa fa-paper-plane" />
+                        </a>
+                    </p>
+                </div>
             </div>
         );
     }
