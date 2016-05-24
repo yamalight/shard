@@ -28,7 +28,12 @@ export default class Sidebar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
+            .map(s => s.filter((v, key) => [
+                'currentTeam',
+                'currentChannel',
+                'channels',
+                'channelStatus',
+            ].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .map(s => {
@@ -125,9 +130,16 @@ export default class Sidebar extends React.Component {
                             </a>
                         </p>
                         <ul className="menu-list">
-                            {this.state.channels && this.state.channels.length === 0 && (
+                            {this.state.channelStatus === 'loading' && (
                                 <li>
-                                    No channels found! Add one?
+                                    <a>Loading channels...</a>
+                                </li>
+                            )}
+                            {this.state.channelStatus !== 'loading' &&
+                            this.state.channels &&
+                            this.state.channels.length === 0 && (
+                                <li>
+                                    <a>No channels found! Add one?</a>
                                 </li>
                             )}
                             {this.state.channels && this.state.channels.map(channel => (
