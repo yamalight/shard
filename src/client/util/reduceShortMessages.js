@@ -7,7 +7,10 @@ export const reduceShortMessages = (result = [], message) => {
     // try to find same message on top level
     let oldIndex = result.findIndex(msg => msg.id === message.id);
     if (oldIndex !== -1) {
-        result.splice(oldIndex, 1, message);
+        result[oldIndex] = { // eslint-disable-line
+            ...result[oldIndex],
+            ...message,
+        };
         return result;
     }
 
@@ -21,7 +24,10 @@ export const reduceShortMessages = (result = [], message) => {
         return nestedIndex !== -1;
     });
     if (oldIndex !== -1 && nestedIndex !== -1) {
-        result[oldIndex].moreMessages.splice(nestedIndex, 1, message);
+        result[oldIndex].moreMessages[nestedIndex] = {// eslint-disable-line
+            ...result[oldIndex].moreMessages[nestedIndex],
+            ...message,
+        };
         return result;
     }
 
