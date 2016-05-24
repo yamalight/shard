@@ -2,19 +2,24 @@ import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
-import store$, {getTeams, setTeam, resetNewTeam} from '../../store';
 import styles from './teambar.css';
 
+// components
 import Modal from '../modal';
 import NewTeam from '../newteam';
 
-const Teambar = React.createClass({
-    getInitialState() {
-        return {
+// store and actions
+import store$, {getTeams, setTeam, resetNewTeam} from '../../store';
+
+export default class Teambar extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             teams: [],
             showCreateTeam: false,
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -26,15 +31,16 @@ const Teambar = React.createClass({
         ];
 
         getTeams();
-    },
+    }
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     setTeam(team) {
         setTeam(team);
         browserHistory.push(`/channels/${_.camelCase(team.name)}`);
-    },
+    }
 
     closeCreateTeam(refetch = false) {
         // hide dialoge
@@ -45,11 +51,11 @@ const Teambar = React.createClass({
         if (refetch) {
             getTeams();
         }
-    },
+    }
 
     isCurrent(team) {
         return this.state.currentTeam && this.state.currentTeam.id === team.id;
-    },
+    }
 
     render() {
         return (
@@ -99,14 +105,12 @@ const Teambar = React.createClass({
                 </a>
 
                 {/* Modal for team creation */}
-                <Portal closeOnEsc isOpened={this.state.showCreateTeam}>
-                    <Modal closeAction={this.closeCreateTeam}>
-                        <NewTeam close={this.closeCreateTeam} />
+                <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened={this.state.showCreateTeam}>
+                    <Modal closeAction={() => this.closeCreateTeam()}>
+                        <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
                     </Modal>
                 </Portal>
             </div>
         );
-    },
-});
-
-export default Teambar;
+    }
+}

@@ -4,62 +4,39 @@ import ReactDOM from 'react-dom';
 import {Subject} from 'rx';
 import styles from './chat.css';
 
+// components
 import Description from '../description';
 import Message from '../message/';
 import ChatInput from '../chatInput';
 import Dropdown from '../dropdown';
 
-
+// store and actions
 import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar, markRead} from '../../store';
 
+// utils
 import {reduceShortMessages} from '../../util';
 
-const Chat = React.createClass({
-    getInitialState() {
-        this.unreadSubj = new Subject();
+export default class Chat extends React.Component {
+    constructor(props) {
+        super(props);
 
-        return {
+        this.unreadSubj = new Subject();
+        this.state = {
             currentChannel: {},
             requestedForChannel: undefined,
             messages: [],
             history: [],
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
+            // get initial data
             store$
             .map(s => s.filter((v, key) => ['history', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
-            // init socket when needed
-            .do(s => {
-                if (s.currentTeam && s.currentChannel) {
-                    // if already opened for this chat - ignore action
-                    if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
-                        return;
-                    }
-
-                    // if another socket exists - close it
-                    if (this.state.requestedForChannel) {
-                        closeChat(this.state.requestedForChannel);
-                    }
-
-                    // construct request
-                    const params = {
-                        team: s.currentTeam.id,
-                        channel: s.currentChannel.id,
-                    };
-                    // init connection
-                    initChat(params);
-                    // get history
-                    getHistory(params);
-                    // setup listener
-                    getChat(params);
-                    // set flag to not repeat that
-                    this.setState({requestedForChannel: s.currentTeam.id + s.currentChannel.id});
-                }
-            })
+            .do(s => this.initSocket(s))
             // map history
             .map(({history = [], ...rest}) => ({
                 ...rest,
@@ -74,6 +51,7 @@ const Chat = React.createClass({
             .do(() => this.unreadSubj.onNext())
             // store to state
             .subscribe(s => this.setState(s)),
+
             // listen for new messages
             store$
             .map(s => s.get('messages'))
@@ -105,40 +83,69 @@ const Chat = React.createClass({
 
                 this.setState({allMessages});
             }),
+
             // mark unread as read
             this.unreadSubj
             .debounce(3000)
             .subscribe(() => this.markUnread()),
         ];
-    },
+    }
     componentDidUpdate() {
         this.scrollToBottom();
-    },
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
+
+    initSocket(s) {
+        if (s.currentTeam && s.currentChannel) {
+            // if already opened for this chat - ignore action
+            if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
+                return;
+            }
+
+            // if another socket exists - close it
+            if (this.state.requestedForChannel) {
+                closeChat(this.state.requestedForChannel);
+            }
+
+            // construct request
+            const params = {
+                team: s.currentTeam.id,
+                channel: s.currentChannel.id,
+            };
+            // init connection
+            initChat(params);
+            // get history
+            getHistory(params);
+            // setup listener
+            getChat(params);
+            // set flag to not repeat that
+            this.setState({requestedForChannel: s.currentTeam.id + s.currentChannel.id});
+        }
+    }
 
     scrollToBottom() {
         const n = ReactDOM.findDOMNode(this.chatContainer);
         n.scrollTop = n.scrollHeight;
-    },
+    }
 
     sendMessage() {
         const message = this._text.value;
         const team = this.state.currentTeam.id;
         const channel = this.state.currentChannel.id;
         sendChat({team, channel, message});
-    },
+    }
 
     showMenu() {
         this.setState({showMenu: true});
-    },
+    }
     handleMenuItem(item) {
         setInfobar(item);
-    },
+    }
     closeMenu() {
         this.setState({showMenu: false});
-    },
+    }
 
     markUnread() {
         const messages = _.flatten(this.state.allMessages.concat(this.state.allMessages.map(m => m.moreMessages)))
@@ -160,7 +167,7 @@ const Chat = React.createClass({
         const team = this.state.currentTeam.id;
         const channel = this.state.currentChannel.id;
         markRead({team, channel, messages, replies});
-    },
+    }
 
     render() {
         const menuItems = [{
@@ -207,7 +214,5 @@ const Chat = React.createClass({
                 </div>
             </div>
         );
-    },
-});
-
-export default Chat;
+    }
+}

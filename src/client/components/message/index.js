@@ -4,11 +4,14 @@ import {hash} from 'spark-md5';
 import {markdown} from '../../util';
 import styles from './message.css';
 
-import {replyTo, setInfobar} from '../../store';
-
+// components
 import UserInfo from '../user';
 
-export const markdownClick = (e) => {
+// actions
+import {replyTo, setInfobar} from '../../store';
+
+// click handler
+const markdownClick = (e) => {
     e.preventDefault();
     if (!e.target.href) {
         return;

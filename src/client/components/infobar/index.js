@@ -3,13 +3,15 @@ import styles from './infobar.css';
 
 import store$, {setInfobar} from '../../store';
 
-const Infobar = React.createClass({
-    getInitialState() {
-        return {
+export default class Infobar extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             title: 'Extension',
             content: '',
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -20,14 +22,14 @@ const Infobar = React.createClass({
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
-    },
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     hide() {
         setInfobar({});
-    },
+    }
 
     render() {
         return (
@@ -47,7 +49,5 @@ const Infobar = React.createClass({
                 </div>
             </div>
         );
-    },
-});
-
-export default Infobar;
+    }
+}

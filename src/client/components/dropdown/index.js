@@ -2,14 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './dropdown.css';
 
-const Dropdown = React.createClass({
+export default class Dropdown extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.clickHandler = this.handleClick.bind(this);
+    }
+
     componentWillMount() {
-        document.addEventListener('click', this.handleClick, false);
-    },
+        document.addEventListener('click', this.clickHandler, false);
+    }
 
     componentWillUnmount() {
-        document.removeEventListener('click', this.handleClick, false);
-    },
+        document.removeEventListener('click', this.clickHandler, false);
+    }
 
     handleClick(e) {
         if (ReactDOM.findDOMNode(this).contains(e.target)) {
@@ -17,11 +23,11 @@ const Dropdown = React.createClass({
         }
 
         this.props.onHide();
-    },
+    }
 
     renderItem(it) {
         return <li key={it.title}><a onClick={() => this.props.onItem(it)}>{it.title}</a></li>;
-    },
+    }
 
     render() {
         const {style, title, items, extItems} = this.props;
@@ -46,7 +52,5 @@ const Dropdown = React.createClass({
                 </div>
             </div>
         );
-    },
-});
-
-export default Dropdown;
+    }
+}

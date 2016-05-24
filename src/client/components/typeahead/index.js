@@ -8,17 +8,19 @@ import {extensions} from '../../extensions';
 const typeaheadExtensions = extensions.filter(ex => ex.type === 'typeahead');
 
 // react component
-const Typeahead = React.createClass({
-    getInitialState() {
+export default class Typeahead extends React.Component {
+    constructor(props) {
+        super(props);
+
         this.typeaheadSubject = new Subject();
 
-        return {
+        this.state = {
             title: 'Typeahead title',
             shouldAppear: false,
             loading: false,
             results: [],
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = _.flatten(typeaheadExtensions
@@ -31,15 +33,15 @@ const Typeahead = React.createClass({
                 .debounce(300)
                 .subscribe(d => this.getTypeahead(d)),
             ]));
-    },
+    }
 
     componentWillReceiveProps({text, currentTeam, currentChannel}) {
         this.typeaheadSubject.onNext({text, currentTeam, currentChannel});
-    },
+    }
 
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     getTypeahead({text, currentTeam, currentChannel}) {
         const extension = typeaheadExtensions.find(ex => ex.check(text));
@@ -64,21 +66,21 @@ const Typeahead = React.createClass({
             currentChannel: currentChannel.id,
         };
         extension.get(context);
-    },
+    }
 
     hide() {
         this.setState({shouldAppear: false, loading: false});
-    },
+    }
 
     handleAction({typeahead, search}) {
-        console.log('handle action:', typeahead, search);
+        // console.log('handle action:', typeahead, search);
         const parts = this.props.input.value.split(' ');
         const last = parts.length - 1;
         parts[last] = parts[last].replace(search, `${typeahead} `);
         this.props.input.value = parts.join(' ');
         this.props.input.focus();
         this.hide();
-    },
+    }
 
     render() {
         if (!this.state.shouldAppear) {
@@ -100,7 +102,5 @@ const Typeahead = React.createClass({
                 {!this.state.loading && this.state.results}
             </div>
         );
-    },
-});
-
-export default Typeahead;
+    }
+}

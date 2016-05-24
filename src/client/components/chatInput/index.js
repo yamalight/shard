@@ -18,15 +18,17 @@ const messageToReplyId = message => {
     return message.id;
 };
 
-const ChatInput = React.createClass({
-    getInitialState() {
-        return {
+export default class ChatInput extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             replyToMessage: null,
             currentTeam: null,
             currentChannel: null,
             text: '',
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -36,10 +38,13 @@ const ChatInput = React.createClass({
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
-    },
+    }
+    componentDidMount() {
+        this._text.focus();
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     sendMessage() {
         const message = this._text.value;
@@ -50,17 +55,17 @@ const ChatInput = React.createClass({
         sendChat({team, channel, message, replyTo});
         // reset value
         this._text.value = '';
-    },
+    }
 
     handleKeyUp(e) {
         this.setState({text: e.target.value});
-    },
+    }
 
     handleKeyPress(e) {
         if (e.key === 'Enter') {
             this.sendMessage();
         }
-    },
+    }
 
     render() {
         return (
@@ -94,16 +99,14 @@ const ChatInput = React.createClass({
                         type="text"
                         placeholder="Write a message..."
                         ref={(t) => { this._text = t; }}
-                        onKeyPress={this.handleKeyPress}
-                        onKeyUp={this.handleKeyUp}
+                        onKeyPress={e => this.handleKeyPress(e)}
+                        onKeyUp={e => this.handleKeyUp(e)}
                     />
-                    <a className="button" onClick={this.sendMessage}>
+                    <a className="button" onClick={() => this.sendMessage()}>
                         <i className="fa fa-paper-plane" />
                     </a>
                 </p>
             </div>
         );
-    },
-});
-
-export default ChatInput;
+    }
+}

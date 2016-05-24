@@ -2,23 +2,28 @@ import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
-import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
 import styles from './sidebar.css';
 
+// components
 import Modal from '../modal';
 import NewChannel from '../newchannel';
 import Invite from '../invite';
 
-const Sidebar = React.createClass({
-    getInitialState() {
-        return {
+// store and actions
+import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
+
+export default class Sidebar extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             currentTeam: {},
             channels: [],
             showCreateChannel: false,
             showInvite: false,
             joinChannel: undefined,
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -26,30 +31,32 @@ const Sidebar = React.createClass({
             .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel', 'channels'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
+            .map(s => {
+                let joinChannel;
+                if (s.currentTeam && s.currentTeam.id) {
+                    joinChannel = 'general';
+                    getChannels({team: s.currentTeam.id});
+                }
+
+                return {
+                    ...s,
+                    joinChannel,
+                };
+            })
             .subscribe(s => this.setState(s)),
-            // request channels once you have team
-            store$
-            .map(s => s.get('currentTeam'))
-            .filter(s => s !== undefined)
-            .distinctUntilChanged()
-            .map(s => s.toJS())
-            .subscribe(currentTeam => {
-                getChannels({team: currentTeam.id});
-                this.setState({joinChannel: 'general'});
-            }),
         ];
-    },
+    }
 
     componentDidUpdate() {
         if (this.state.channels.length && this.state.joinChannel) {
             const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
             this.setChannel(ch);
         }
-    },
+    }
 
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     setChannel(channel) {
         setChannel(channel);
@@ -57,7 +64,7 @@ const Sidebar = React.createClass({
         const ch = _.camelCase(channel.name);
         browserHistory.push(`/channels/${team}/${ch}`);
         this.setState({joinChannel: undefined});
-    },
+    }
 
     closeCreateChannel(refetch = false) {
         // hide modal
@@ -68,18 +75,18 @@ const Sidebar = React.createClass({
         if (refetch) {
             getChannels({team: this.state.currentTeam.id});
         }
-    },
+    }
 
     isCurrent(channel) {
         return this.state.currentChannel && this.state.currentChannel.id === channel.id;
-    },
+    }
 
     invitePeople() {
         this.setState({showInvite: true});
-    },
+    }
     closeInvite() {
         this.setState({showInvite: false});
-    },
+    }
 
     render() {
         return (
@@ -93,7 +100,7 @@ const Sidebar = React.createClass({
                             <a
                                 className={`${styles.teamButton} hint--bottom`}
                                 data-hint="Invite people"
-                                onClick={this.invitePeople}
+                                onClick={() => this.invitePeople()}
                             >
                                 <i className="fa fa-share-square-o" />
                             </a>
@@ -129,18 +136,20 @@ const Sidebar = React.createClass({
                                     >
                                         {channel.name}
                                     </a>
-                                    <ul>
-                                        {channel.subchannels && channel.subchannels.map(ch => (
-                                            <li key={ch.id}>
-                                                <a
-                                                    className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
-                                                    onClick={() => this.setChannel(ch)}
-                                                >
-                                                    {ch.name}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    {channel.subchannels && channel.subchannels.length > 0 && (
+                                        <ul>
+                                            {channel.subchannels.map(ch => (
+                                                <li key={ch.id}>
+                                                    <a
+                                                        className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
+                                                        onClick={() => this.setChannel(ch)}
+                                                    >
+                                                        {ch.name}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -148,21 +157,19 @@ const Sidebar = React.createClass({
                 )}
 
                 {/* Modal for team creation */}
-                <Portal closeOnEsc onClose={this.closeCreateChannel} isOpened={this.state.showCreateChannel}>
-                    <Modal closeAction={this.closeCreateChannel}>
-                        <NewChannel close={this.closeCreateChannel} />
+                <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened={this.state.showCreateChannel}>
+                    <Modal closeAction={() => this.closeCreateChannel()}>
+                        <NewChannel close={(refetch) => this.closeCreateChannel(refetch)} />
                     </Modal>
                 </Portal>
 
                 {/* Modal for team invites */}
-                <Portal closeOnEsc onClose={this.closeInvite} isOpened={this.state.showInvite}>
-                    <Modal closeAction={this.closeInvite}>
-                        <Invite close={this.closeInvite} />
+                <Portal closeOnEsc onClose={() => this.closeInvite()} isOpened={this.state.showInvite}>
+                    <Modal closeAction={() => this.closeInvite()}>
+                        <Invite close={() => this.closeInvite()} />
                     </Modal>
                 </Portal>
             </aside>
         );
-    },
-});
-
-export default Sidebar;
+    }
+}

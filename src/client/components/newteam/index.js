@@ -1,32 +1,35 @@
 import React from 'react';
 import store$, {createTeam} from '../../store';
 
-const NewTeam = React.createClass({
-    getInitialState() {
-        return {};
-    },
+export default class NewTeam extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {};
+    }
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['newTeam'].includes(key)))
+            .map(s => s.get('newTeam'))
+            .filter(team => team !== undefined)
             .distinctUntilChanged()
-            .map(s => s.toJS())
-            .do(s => s.newTeam && this.close(null, true))
-            .subscribe(s => this.setState(s)),
+            .map(team => team.toJS())
+            .do(team => team && this.close(null, true))
+            .subscribe(newTeam => this.setState({newTeam})),
         ];
-    },
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     create() {
         const name = this.input.value;
         createTeam({name});
-    },
+    }
     close(e, refetch = false) {
         this.props.close(refetch);
-    },
+    }
 
     render() {
         return (
@@ -49,12 +52,10 @@ const NewTeam = React.createClass({
                     </div>
                 </div>
                 <footer className="card-footer">
-                    <a className="card-footer-item" onClick={this.create}>Create</a>
-                    <a className="card-footer-item" onClick={this.close}>Cancel</a>
+                    <a className="card-footer-item" onClick={() => this.create()}>Create</a>
+                    <a className="card-footer-item" onClick={e => this.close(e)}>Cancel</a>
                 </footer>
             </div>
         );
-    },
-});
-
-export default NewTeam;
+    }
+}

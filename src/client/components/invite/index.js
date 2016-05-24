@@ -1,25 +1,28 @@
 import React from 'react';
 import store$, {inviteUser} from '../../store';
 
-const Invite = React.createClass({
-    getInitialState() {
-        return {
+export default class Invite extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             currentTeam: {},
             currentChannel: {},
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['currentChannel', 'currentTeam'].includes(key)))
+            .distinctUntilChanged()
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
-    },
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     invite() {
         inviteUser({
@@ -28,11 +31,11 @@ const Invite = React.createClass({
             channel: this.state.currentChannel && this.state.currentChannel.id,
         });
         this.close();
-    },
+    }
 
     close() {
         this.props.close();
-    },
+    }
 
     render() {
         const inviteUrl = `${window.location.origin}/join/${this.state.currentTeam.id}/${this.state.currentChannel.id}`;
@@ -68,12 +71,10 @@ const Invite = React.createClass({
                     </div>
                 </div>
                 <footer className="card-footer">
-                    <a className="card-footer-item" onClick={this.invite}>Invite</a>
-                    <a className="card-footer-item" onClick={this.close}>Cancel</a>
+                    <a className="card-footer-item" onClick={() => this.invite()}>Invite</a>
+                    <a className="card-footer-item" onClick={() => this.close()}>Cancel</a>
                 </footer>
             </div>
         );
-    },
-});
-
-export default Invite;
+    }
+}
