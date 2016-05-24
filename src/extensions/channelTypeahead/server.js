@@ -20,15 +20,15 @@ class ChannelsTypeaheadServer extends ChannelsTypeahead {
                     },
                 })
                 .filter({team: currentTeam})
-                .filter(r => r('name').match(`^${text}`)
-                    .or(r('subchannels').contains(ch => ch('name').match(`^${text}`)))
+                .filter(r => r('name').match(`(?i)^${text}`)
+                    .or(r('subchannels').contains(ch => ch('name').match(`(?i)^${text}`)))
                 )
                 .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)))
                 .run();
 
             const subchannels = channelsWSub.map(ch => ch.subchannels);
             const channels = _.flatten(channelsWSub.concat(subchannels))
-                .filter(ch => (new RegExp(`^${text}`)).test(ch.name));
+                .filter(ch => (new RegExp(`^${text}`, 'i')).test(ch.name));
 
             res.send({channels});
         }));

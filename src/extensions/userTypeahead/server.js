@@ -28,7 +28,7 @@ class UserTypeaheadServer extends UserTypeahead {
             const userIds = users.map(u => u.id);
             const userList = await db.User
                 .getAll(...userIds)
-                .filter(r => r('username').match(`^${text}`))
+                .filter(r => r('username').match(`(?i)^${text}`))
                 .without(['password'])
                 .run();
 
