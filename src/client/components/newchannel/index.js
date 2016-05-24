@@ -2,6 +2,8 @@ import React from 'react';
 import styles from './newchannel.css';
 import store$, {createChannel} from '../../store';
 
+const nameRegex = /^[a-z0-9\s-]+$/i;
+
 export default class NewChannel extends React.Component {
     constructor(props) {
         super(props);
@@ -10,13 +12,14 @@ export default class NewChannel extends React.Component {
             currentTeam: {},
             parentChannel: 'none',
             channels: [],
+            error: undefined,
         };
     }
 
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['newChannel', 'currentTeam', 'channels'].includes(key)))
+            .map(s => s.filter((_, key) => ['newChannel', 'channelError', 'currentTeam', 'channels'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
             .do(s => s.newChannel && this.close(null, true))
@@ -33,11 +36,27 @@ export default class NewChannel extends React.Component {
         }
     }
 
+    validateName(e) {
+        // check that team name is alpha-numeric only
+        if (e.target.value && !nameRegex.test(e.target.value)) {
+            this.setState({error: 'Channel name must be alpha-numberic!'});
+            return;
+        }
+
+        this.setState({error: undefined});
+    }
+
     create() {
         const name = this.nameInput.value;
 
         // do not create empty name channels
         if (!name || !name.length) {
+            return;
+        }
+
+        // check that team name is alpha-numeric only
+        if (!nameRegex.test(name)) {
+            this.setState({error: 'Channel name must be alpha-numberic with spaces and dashes!'});
             return;
         }
 
@@ -47,11 +66,16 @@ export default class NewChannel extends React.Component {
         createChannel({name, description, team, parent});
     }
     close(e, refetch = false) {
+        this.resetError();
         this.props.close(refetch);
     }
 
     parentChange(e) {
         this.setState({parentChannel: e.target.value});
+    }
+
+    resetError() {
+        store$.clear({channelError: undefined});
     }
 
     render() {
@@ -64,14 +88,23 @@ export default class NewChannel extends React.Component {
                 </header>
                 <div className="card-content">
                     <div className="content">
-                        <p className="control">
+                        {this.state.channelError && (
+                            <div className="notification is-danger">
+                                <button className="delete" onClick={() => this.resetError()} />
+                                {this.state.channelError}
+                            </div>
+                        )}
+                        <p className={`control ${this.state.error && 'has-icon has-icon-right'}`}>
                             <input
-                                className="input is-medium"
+                                className={`input is-medium ${this.state.error && 'is-danger'}`}
                                 type="text"
                                 placeholder="Enter new channel name.."
                                 ref={t => { this.nameInput = t; }}
                                 onKeyPress={e => this.handleKey(e)}
+                                onKeyUp={e => this.validateName(e)}
                             />
+                            {this.state.error && <i className="fa fa-warning" />}
+                            {this.state.error && <span className="help is-danger">{this.state.error}</span>}
                         </p>
                         <p className="control">
                             <textarea

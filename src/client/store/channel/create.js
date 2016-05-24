@@ -11,6 +11,6 @@ const channel$ = createChannel.$
     .map(channel => sign(channel))
     .flatMap(channel => post('/api/channels/new', channel))
     .do(res => (res.error ? status('error') : status('finished')))
-    .map(res => (res.error ? ({channelError: res.error}) : ({newChannel: res})));
+    .map(res => (res.error ? ({channelError: res.error}) : ({channelError: undefined, newChannel: res})));
 
 export default channel$;

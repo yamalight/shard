@@ -11,6 +11,23 @@ export default (app) => {
             res.status(400).send({error: 'No channel name given!'});
             return;
         }
+        // do not create non alpha-numeric channels
+        const nameRegex = /^[a-z0-9\s-]+$/i;
+        if (!nameRegex.test(name)) {
+            res.status(400).send({error: 'Channel name must be alpha-numeric with spaces and dashes!'});
+            return;
+        }
+        // do not create duplicate channels under same team & parent
+        let existing = 0;
+        if (parent === 'none') {
+            existing = await Channel.filter({name, team}).count().execute();
+        } else {
+            existing = await Subchannel.filter({name, parentChannel: parent, team}).count().execute();
+        }
+        if (existing > 0) {
+            res.status(400).send({error: 'Channel with that name already exists!'});
+            return;
+        }
         // init channel data
         const data = {
             name,

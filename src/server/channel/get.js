@@ -16,6 +16,7 @@ export default (app) => {
             })
             .filter({team})
             .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)))
+            .orderBy('name')
             .run();
         res.status(200).json(channels);
     }));
