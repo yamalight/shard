@@ -5,14 +5,16 @@ import styles from './join.css';
 
 import store$, {getTeam, joinTeam} from '../../store';
 
-const Join = React.createClass({
-    getInitialState() {
-        const {team, channel} = this.props.params;
-        return {
+export default class Join extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const {team, channel} = props.params;
+        this.state = {
             teamid: team,
             channelid: channel,
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -25,23 +27,23 @@ const Join = React.createClass({
         ];
 
         getTeam({team: this.state.teamid});
-    },
+    }
 
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     joinTeam() {
         joinTeam({team: this.state.teamid, channel: this.state.channelid});
-    },
+    }
 
     goToTeam() {
         browserHistory.push(`/channels/${_.camelCase(this.state.team.name)}`);
-    },
+    }
 
     goHome() {
         browserHistory.push('/channels/@me');
-    },
+    }
 
     render() {
         return (
@@ -71,7 +73,5 @@ const Join = React.createClass({
                 </div>
             </section>
         );
-    },
-});
-
-export default Join;
+    }
+}

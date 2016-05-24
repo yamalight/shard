@@ -10,17 +10,19 @@ import Sidebar from '../../components/sidebar';
 import Chat from '../../components/chat';
 import Infobar from '../../components/infobar';
 
-const Main = React.createClass({
-    getInitialState() {
-        const {channel, team} = this.props.params || {};
-        return {
+export default class Main extends React.Component {
+    constructor(props) {
+        super(props);
+        const {channel, team} = props.params || {};
+
+        this.state = {
             channel,
             team,
             teams: [],
             channels: [],
             showSidebar: true,
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -36,24 +38,24 @@ const Main = React.createClass({
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
-    },
+    }
 
     componentDidMount() {
         this.updateTeamChannel();
-    },
+    }
 
     componentWillReceiveProps({params}) {
         const {channel, team} = params || {};
         this.setState({channel, team});
-    },
+    }
 
     componentDidUpdate() {
         this.updateTeamChannel();
-    },
+    }
 
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     updateTeamChannel() {
         // set team if needed
@@ -68,11 +70,11 @@ const Main = React.createClass({
         if (currentChannel && (!this.state.currentChannel || currentChannel.id !== this.state.currentChannel.id)) {
             setChannel(currentChannel);
         }
-    },
+    }
 
     toggleSidebar() {
         this.setState({showSidebar: !this.state.showSidebar});
-    },
+    }
 
     render() {
         return (
@@ -85,7 +87,5 @@ const Main = React.createClass({
                 </Dock>
             </div>
         );
-    },
-});
-
-export default Main;
+    }
+}
