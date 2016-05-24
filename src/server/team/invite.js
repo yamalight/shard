@@ -56,15 +56,20 @@ export default (app) => {
             return;
         }
 
-        // add user to team
-        team.users.push({id: user.id});
-        await team.save();
+        // add user to team if he's not already there
+        if (!team.users.find(u => u.id === user.id)) {
+            team.users.push({id: user.id});
+            await team.save();
+        }
 
         // add user to channel (if present)
         if (channel) {
             const ch = await Channel.get(channel);
-            ch.users.push({id: user.id});
-            await ch.save();
+            // only add if not already in channel
+            if (!ch.users.find(u => u.id === user.id)) {
+                ch.users.push({id: user.id});
+                await ch.save();
+            }
         }
 
         logger.debug('invited user to team!');

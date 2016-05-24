@@ -23,8 +23,20 @@ export default class NewTeam extends React.Component {
         this.subs.map(s => s.dispose());
     }
 
+    handleKey(e) {
+        if (e.key === 'Enter') {
+            this.create();
+        }
+    }
+
     create() {
         const name = this.input.value;
+
+        // do not create empty name teams
+        if (!name || !name.length) {
+            return;
+        }
+
         createTeam({name});
     }
     close(e, refetch = false) {
@@ -47,6 +59,7 @@ export default class NewTeam extends React.Component {
                                 type="text"
                                 placeholder="Enter new team name.."
                                 ref={t => { this.input = t; }}
+                                onKeyPress={e => this.handleKey(e)}
                             />
                         </p>
                     </div>
