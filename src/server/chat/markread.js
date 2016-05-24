@@ -8,10 +8,18 @@ export default (app) => {
         const {messages, replies} = req.body;
         logger.debug('marking as read:', {messages, replies, user: req.userInfo.username, channel});
         const m = await Message.getAll(...messages)
-            .update({readBy: r.row('readBy').append(req.userInfo.id)})
+            .update({readBy: r.branch(
+                r.row('readBy').contains(req.userInfo.id),
+                r.row('readBy'),
+                r.row('readBy').append(req.userInfo.id)
+            )})
             .run();
         const repl = await Reply.getAll(...replies)
-            .update({readBy: r.row('readBy').append(req.userInfo.id)})
+            .update({readBy: r.branch(
+                r.row('readBy').contains(req.userInfo.id),
+                r.row('readBy'),
+                r.row('readBy').append(req.userInfo.id)
+            )})
             .run();
         logger.debug('marked all as read:', m, repl);
         res.sendStatus(201);
