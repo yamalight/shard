@@ -61,10 +61,10 @@ export default class Join extends React.Component {
                                     join amazing {this.state.team && this.state.team.name} team!
                                 </h2>
 
-                                <a className="button is-medium is-success" onClick={this.joinTeam}>
+                                <a className="button is-medium is-success" onClick={() => this.joinTeam()}>
                                     Yes, let me in!
                                 </a>
-                                <a className={`button ${styles.homeButton}`} onClick={this.goHome}>
+                                <a className={`button ${styles.homeButton}`} onClick={() => this.goHome()}>
                                     No, go home
                                 </a>
                             </div>

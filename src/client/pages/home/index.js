@@ -198,7 +198,7 @@ export default class Home extends React.Component {
                     </div>
                 ) : (
                     <div className="is-flex">
-                        <a className="button is-success" onClick={this.doAuth}>
+                        <a className="button is-success" onClick={() => this.doAuth()}>
                             {this.state.showRegister ? 'Register' : 'Login'}
                         </a>
                         <div className="is-spacer" />
