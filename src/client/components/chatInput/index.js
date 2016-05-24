@@ -49,6 +49,12 @@ export default class ChatInput extends React.Component {
 
     sendMessage() {
         const message = this._text.value;
+
+        // do not send empty messages
+        if (!message || !message.length) {
+            return;
+        }
+
         const team = this.props.currentTeam.id;
         const channel = this.props.currentChannel.id;
         const replyTo = messageToReplyId(this.state.replyToMessage);

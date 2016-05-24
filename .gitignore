@@ -1,5 +1,5 @@
 node_modules
 npm-debug.log
-db
+db/
 docker-compose-deploy.yml
 Makefile

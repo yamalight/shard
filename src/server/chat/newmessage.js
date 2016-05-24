@@ -8,6 +8,11 @@ export default (app) => {
         const channel = req.params.channel;
         const message = _.omit(req.body, ['token']);
         logger.info('new msg:', {message, from: req.userInfo.username, channel});
+        if (!message.message || !message.message.length) {
+            res.sendStatus(204);
+            logger.debug('new message now saved because empty:', message);
+            return;
+        }
         const m = new Message({
             ...message,
             channel,
