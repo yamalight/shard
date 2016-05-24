@@ -3,18 +3,20 @@ import {browserHistory} from 'react-router';
 import styles from './home.css';
 import store$, {registerUser, loginUser} from '../../store';
 
-const Home = React.createClass({
-    getInitialState() {
-        const {query} = this.props.location;
+export default class Home extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const {query} = props.location;
         const {username} = query;
         const emailValid = query.emailValid === 'true';
-        return {
+        this.state = {
             username,
             emailValid,
             showLogin: emailValid,
             showRegister: false,
         };
-    },
+    }
 
     componentWillMount() {
         this.subs = [
@@ -26,14 +28,15 @@ const Home = React.createClass({
                 'authError',
                 'user',
             ].includes(key)))
-            .map(auth => auth.toJS())
+            .distinctUntilChanged()
+            .map(s => s.toJS())
             .do(auth => this.checkAuth(auth))
             .subscribe(auth => this.setState(auth)),
         ];
-    },
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
-    },
+    }
 
     validatePasswords() {
         if (!this.state.showRegister) {
@@ -47,7 +50,13 @@ const Home = React.createClass({
         } else {
             this.setState({error: undefined});
         }
-    },
+    }
+
+    handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            this.doAuth();
+        }
+    }
 
     doAuth() {
         const username = this.username.value;
@@ -65,7 +74,7 @@ const Home = React.createClass({
         }
 
         loginUser({username, password});
-    },
+    }
 
     goHome() {
         const {location} = this.props;
@@ -74,13 +83,13 @@ const Home = React.createClass({
         } else {
             browserHistory.push('/channels/@me');
         }
-    },
+    }
 
     checkAuth(auth) {
         if (auth.authStatus === 'loggedin') {
             this.goHome();
         }
-    },
+    }
 
     renderInput() {
         if (this.state.user.username) {
@@ -146,6 +155,7 @@ const Home = React.createClass({
                         placeholder="Enter your password"
                         ref={(i) => { this.password = i; }}
                         onKeyUp={() => this.validatePasswords()}
+                        onKeyPress={e => this.handleKeyPress(e)}
                     />
                     <i className="fa fa-lock" />
                 </p>
@@ -205,7 +215,7 @@ const Home = React.createClass({
                 )}
             </div>
         );
-    },
+    }
 
     render() {
         const {location} = this.props;
@@ -252,7 +262,5 @@ const Home = React.createClass({
                 </div>
             </section>
         );
-    },
-});
-
-export default Home;
+    }
+}
