@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './newchannel.css';
 import store$, {createChannel} from '../../store';
 
-const nameRegex = /^[a-z0-9\s-]+$/i;
+export const nameRegex = /^[a-z0-9\s-]+$/i;
 
 export default class NewChannel extends React.Component {
     constructor(props) {
@@ -39,7 +39,7 @@ export default class NewChannel extends React.Component {
     validateName(e) {
         // check that team name is alpha-numeric only
         if (e.target.value && !nameRegex.test(e.target.value)) {
-            this.setState({error: 'Channel name must be alpha-numberic!'});
+            this.setState({error: 'Channel name must be alpha-numberic with spaces and dashes!'});
             return;
         }
 

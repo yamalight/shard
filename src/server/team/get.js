@@ -7,6 +7,7 @@ export default (app) => {
         logger.info('getting for teams for', req.userInfo.username);
         const teams = await Team
             .filter(team => team('users').contains(u => u('id').eq(req.userInfo.id)))
+            .orderBy('name')
             .run();
         res.status(200).json(teams);
     }));
