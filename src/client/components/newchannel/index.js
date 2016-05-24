@@ -27,8 +27,20 @@ export default class NewChannel extends React.Component {
         this.subs.map(s => s.dispose());
     }
 
+    handleKey(e) {
+        if (e.key === 'Enter') {
+            this.create();
+        }
+    }
+
     create() {
         const name = this.nameInput.value;
+
+        // do not create empty name channels
+        if (!name || !name.length) {
+            return;
+        }
+
         const description = this.descInput.value;
         const team = this.state.currentTeam.id;
         const parent = this.state.parentChannel;
@@ -58,6 +70,7 @@ export default class NewChannel extends React.Component {
                                 type="text"
                                 placeholder="Enter new channel name.."
                                 ref={t => { this.nameInput = t; }}
+                                onKeyPress={e => this.handleKey(e)}
                             />
                         </p>
                         <p className="control">

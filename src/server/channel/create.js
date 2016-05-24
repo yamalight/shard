@@ -6,7 +6,11 @@ export default (app) => {
     app.post('/api/channels/new', checkAuth, asyncRequest(async (req, res) => {
         const {name, description, team, parent} = req.body;
         logger.info('saving new channel:', {name, description, team, parent}, 'and owner:', req.userInfo.username);
-
+        // do not create channel with empty name
+        if (!name || !name.length) {
+            res.status(400).send({error: 'No channel name given!'});
+            return;
+        }
         // init channel data
         const data = {
             name,

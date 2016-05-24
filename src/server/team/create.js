@@ -6,6 +6,7 @@ export default (app) => {
     app.post('/api/teams/new', checkAuth, asyncRequest(async (req, res) => {
         const {name} = req.body;
         logger.info('saving new team:', {name, owner: req.userInfo.username});
+        // do not create team with empty name
         if (!name || !name.length) {
             res.status(400).send({error: 'No team name given!'});
             return;
