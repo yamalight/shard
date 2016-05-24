@@ -14,14 +14,26 @@ export default class Invite extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['currentChannel', 'currentTeam'].includes(key)))
+            .map(s => s.filter((_, key) => [
+                'currentChannel',
+                'currentTeam',
+                'invited',
+                'teamError',
+            ].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
+            .do(s => s.invited && this.close())
             .subscribe(s => this.setState(s)),
         ];
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    }
+
+    handleKey(e) {
+        if (e.key === 'Enter') {
+            this.invite();
+        }
     }
 
     invite() {
@@ -30,11 +42,15 @@ export default class Invite extends React.Component {
             team: this.state.currentTeam.id,
             channel: this.state.currentChannel && this.state.currentChannel.id,
         });
-        this.close();
     }
 
     close() {
+        this.resetError();
         this.props.close();
+    }
+
+    resetError() {
+        store$.clear({teamError: undefined, invited: false});
     }
 
     render() {
@@ -50,12 +66,19 @@ export default class Invite extends React.Component {
                 </header>
                 <div className="card-content">
                     <div className="content">
+                        {this.state.teamError && (
+                            <div className="notification is-danger">
+                                <button className="delete" onClick={() => this.resetError()} />
+                                {this.state.teamError}
+                            </div>
+                        )}
                         <p className="control">
                             <input
                                 className="input is-medium"
                                 type="text"
                                 placeholder="Enter username to invite.."
                                 ref={t => { this.nameInput = t; }}
+                                onKeyPress={e => this.handleKey(e)}
                             />
                         </p>
                         <p className="control has-icon" onClick={() => this.urlInput.select()}>
