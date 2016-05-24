@@ -11,10 +11,6 @@ const teams$ = getTeams.$
     .map(() => sign({}))
     .flatMap(({token}) => get('/api/teams', token))
     .do(res => (res.error ? status('error') : status('finished')))
-    .map(res => {
-        res.teamError = res.error; // eslint-disable-line
-        return res;
-    })
-    .map(teams => (Array.isArray(teams) ? ({teams}) : ({...teams, teams: []})));
+    .map(teams => (Array.isArray(teams) ? ({teams}) : ({teamError: teams.error, teams: []})));
 
 export default teams$;

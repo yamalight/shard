@@ -48,10 +48,12 @@ export default class Sidebar extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.state.channels.length && this.state.joinChannel) {
-            const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
-            this.setChannel(ch);
-        }
+        setTimeout(() => {
+            if (this.state.channels.length && this.state.joinChannel) {
+                const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
+                this.setChannel(ch);
+            }
+        }, 10);
     }
 
     componentWillUnmount() {

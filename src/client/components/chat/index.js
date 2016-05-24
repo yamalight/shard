@@ -126,8 +126,10 @@ export default class Chat extends React.Component {
     }
 
     scrollToBottom() {
-        const n = ReactDOM.findDOMNode(this.chatContainer);
-        n.scrollTop = n.scrollHeight;
+        setTimeout(() => {
+            const n = ReactDOM.findDOMNode(this.chatContainer);
+            n.scrollTop = n.scrollHeight;
+        }, 10);
     }
 
     sendMessage() {

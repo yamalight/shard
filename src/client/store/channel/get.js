@@ -7,14 +7,11 @@ export const getChannels = createAction();
 
 // map to request
 const channels$ = getChannels.$
+    .distinctUntilChanged()
     .do(() => status('loading'))
     .map(data => sign(data))
     .flatMap(({team, token}) => get(`/api/channels?team=${team}`, token))
-    .do(res => (res.error || !res.channels ? status('error') : status('finished')))
-    .map(res => {
-        res.channelError = res.error; // eslint-disable-line
-        return res;
-    })
-    .map(channels => (Array.isArray(channels) ? ({channels}) : ({...channels, channels: []})));
+    .do(res => (res.error ? status('error') : status('finished')))
+    .map(channels => (Array.isArray(channels) ? ({channels}) : ({channelError: channels.error, channels: []})));
 
 export default channels$;

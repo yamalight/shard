@@ -19,6 +19,8 @@ export default class Teambar extends React.Component {
             teams: [],
             showCreateTeam: false,
         };
+
+        getTeams();
     }
 
     componentWillMount() {
@@ -29,8 +31,6 @@ export default class Teambar extends React.Component {
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
-
-        getTeams();
     }
 
     componentWillUnmount() {

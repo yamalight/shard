@@ -41,7 +41,7 @@ export default class Main extends React.Component {
     }
 
     componentDidMount() {
-        this.updateTeamChannel();
+        setTimeout(() => this.updateTeamChannel(), 50);
     }
 
     componentWillReceiveProps({params}) {
@@ -50,7 +50,7 @@ export default class Main extends React.Component {
     }
 
     componentDidUpdate() {
-        this.updateTeamChannel();
+        setTimeout(() => this.updateTeamChannel(), 50);
     }
 
     componentWillUnmount() {
@@ -82,9 +82,11 @@ export default class Main extends React.Component {
                 <Teambar toggleSidebar={this.toggleSidebar} showSidebar={this.state.showSidebar} />
                 {this.state.showSidebar && <Sidebar />}
                 <Chat />
-                <Dock position="right" isVisible={this.state.infobar && !!this.state.infobar.content}>
-                    <Infobar />
-                </Dock>
+                {this.state.infobar && (
+                    <Dock position="right" isVisible={!!this.state.infobar.content}>
+                        <Infobar />
+                    </Dock>
+                )}
             </div>
         );
     }

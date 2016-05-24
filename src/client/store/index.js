@@ -103,6 +103,7 @@ export {
     setInfobar,
 };
 
-// store.subscribe(s => console.log('state update:', s.toJS()));
+// store.subscribe(s => console.log(`state update:
+// ${JSON.stringify(s.toJS(), null, 4)}`));
 
 export default store;

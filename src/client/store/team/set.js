@@ -5,6 +5,8 @@ export const setTeam = createAction();
 
 // map to request
 const team$ = setTeam.$
-    .map(team => ({currentTeam: team}));
+    .throttle(300)
+    .distinctUntilChanged()
+    .map(currentTeam => ({currentTeam}));
 
 export default team$;
