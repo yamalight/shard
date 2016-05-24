@@ -36,6 +36,7 @@ export default class ChatInput extends React.Component {
             .map(s => s.filter((_, key) => ['replyToMessage', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
+            .do(s => s.replyToMessage && this._text.focus())
             .subscribe(s => this.setState(s)),
         ];
     }
