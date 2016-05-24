@@ -17,7 +17,6 @@ export default class Typeahead extends React.Component {
         this.state = {
             title: 'Typeahead title',
             shouldAppear: false,
-            loading: false,
             results: [],
         };
     }
@@ -25,7 +24,7 @@ export default class Typeahead extends React.Component {
     componentWillMount() {
         this.subs = _.flatten(typeaheadExtensions
             .map(ex => [
-                ex.results.subscribe(res => this.setState({results: res, loading: false})),
+                ex.results.subscribe(res => this.setState({results: res})),
                 ex.actions.subscribe(ctx => this.handleAction(ctx)),
             ])
             .concat([
@@ -55,7 +54,6 @@ export default class Typeahead extends React.Component {
         // show box
         this.setState({
             shouldAppear: true,
-            loading: true,
             title: extension.title,
         });
 
@@ -69,7 +67,7 @@ export default class Typeahead extends React.Component {
     }
 
     hide() {
-        this.setState({shouldAppear: false, loading: false});
+        this.setState({shouldAppear: false});
     }
 
     handleAction({typeahead, search}) {
@@ -92,14 +90,7 @@ export default class Typeahead extends React.Component {
                 <div className="panel-heading">
                     {this.state.title}
                 </div>
-                {this.state.loading && (
-                    <div className="panel-block">
-                        <a className="button is-loading is-fullwidth">
-                            Loading...
-                        </a>
-                    </div>
-                )}
-                {!this.state.loading && this.state.results}
+                {this.state.results}
             </div>
         );
     }
