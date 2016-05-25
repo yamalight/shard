@@ -51,6 +51,7 @@
     "markdown-it-hashtag": "^0.4.0",
     "markdown-it-task-lists": "^1.2.0",
     "marked": "^0.3.5",
+    "moment": "^2.13.0",
     "morgan": "^1.7.0",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.4.1",

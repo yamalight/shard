@@ -31,7 +31,7 @@ const markdownClick = (e) => {
 };
 
 const Message = (m) => (m.layout === 'short' ? (
-    <article className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
+    <article id={`message-${m.id}`} className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
         <p
             className={styles.markdown}
             onClick={markdownClick}
@@ -39,7 +39,7 @@ const Message = (m) => (m.layout === 'short' ? (
         />
     </article>
 ) : (
-    <article className="media">
+    <article id={`message-${m.id}`} className="media">
         <figure className="media-left">
             <p className="image is-64x64">
                 <img src={`http://www.gravatar.com/avatar/${hash(m.user.email)}`} alt="avatar" />

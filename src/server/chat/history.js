@@ -3,18 +3,21 @@ import {logger, asyncRequest} from '../util';
 import {Message, r} from '../db';
 import {userFields, messageJoin} from './dbconf';
 
+const HISTORY_LIMIT = 20;
+
 export default (app) => {
     app.get('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
-        const channel = req.params.channel;
-        logger.info('getting history for channel:', channel);
+        const startFrom = req.query.startFrom ? new Date(parseInt(req.query.startFrom, 10)) : new Date();
+        const {channel} = req.params;
+        logger.info('getting history for channel:', channel, 'starting from:', startFrom);
         const historyReverse = await Message
             .orderBy(r.desc('time'))
             .getJoin(messageJoin)
-            .filter({channel})
+            .filter(row => row('channel').eq(channel).and(row('time').lt(startFrom)))
             .merge(c => ({
                 readBy: c('readBy').map(it => r.table('User').get(it).pluck(userFields)),
             }))
-            .limit(10)
+            .limit(HISTORY_LIMIT)
             .execute();
         const history = historyReverse.reverse().map(msg => ({
             ...msg,

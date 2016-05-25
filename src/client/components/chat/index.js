@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Subject} from 'rx';
+import {DOM} from 'rx-dom';
 import styles from './chat.css';
 
 // components
@@ -24,8 +25,11 @@ export default class Chat extends React.Component {
         this.state = {
             currentChannel: {},
             requestedForChannel: undefined,
+            scrollToMessage: 'end',
+            shouldScroll: false,
             messages: [],
             history: [],
+            allMessages: [],
         };
     }
 
@@ -40,12 +44,15 @@ export default class Chat extends React.Component {
             // map history
             .map(({history = [], ...rest}) => ({
                 ...rest,
-                allMessages: history.filter(s => s !== undefined)
+                shouldScroll: true,
+                allMessages: this.state.allMessages.concat(
+                    history.filter(s => s !== undefined)
                     .reduce(reduceShortMessages, [])
                     .map(({replies, ...message}) => ({
                         ...message,
                         replies: replies.reduce(reduceShortMessages, []),
-                    })),
+                    }))
+                ).sort((m1, m2) => new Date(m1.time) - new Date(m2.time)),
             }))
             // say we need to mark new unread
             .do(() => this.unreadSubj.onNext())
@@ -65,7 +72,7 @@ export default class Chat extends React.Component {
                 // if new message is not a reply - just fit it into allMessages
                 if (!m.replyTo) {
                     const allMessages = reduceShortMessages(oldMessages, m);
-                    this.setState({allMessages});
+                    this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
                     return;
                 }
 
@@ -81,7 +88,7 @@ export default class Chat extends React.Component {
                     };
                 });
 
-                this.setState({allMessages});
+                this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
             }),
 
             // mark unread as read
@@ -90,8 +97,31 @@ export default class Chat extends React.Component {
             .subscribe(() => this.markUnread()),
         ];
     }
+    componentDidMount() {
+        this.subs.push(
+            // listen for scrolling to top
+            DOM.scroll(this.chatContainer)
+            .debounce(300)
+            .map(e => e.target.scrollTop)
+            .filter(scrollTop => scrollTop === 0)
+            .filter(() => this.state.allMessages && this.state.allMessages[0] !== undefined)
+            .map(() => new Date(this.state.allMessages[0].time).getTime())
+            .distinctUntilChanged()
+            .subscribe(timestamp => {
+                // construct request
+                const params = {
+                    team: this.state.currentTeam.id,
+                    channel: this.state.currentChannel.id,
+                    timestamp,
+                };
+                // say we need to scroll to the message after update
+                this.setState({scrollToMessage: this.state.allMessages[0].id, shouldScroll: false});
+                getHistory(params);
+            }),
+        );
+    }
     componentDidUpdate() {
-        this.scrollToBottom();
+        this.scrollToMessage();
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
@@ -125,11 +155,34 @@ export default class Chat extends React.Component {
         }
     }
 
-    scrollToBottom() {
+    scrollToMessage() {
+        const {scrollToMessage, shouldScroll} = this.state;
+        if (!shouldScroll || scrollToMessage === undefined || !this.state.allMessages.length) {
+            return;
+        }
+
+        // get element
+        const n = ReactDOM.findDOMNode(this.chatContainer);
+        const scrollOffset = n.scrollHeight - n.scrollTop - n.offsetHeight;
+
+        if (scrollToMessage === 'end') {
+            setTimeout(() => {
+                // only scroll if user is near bottom
+                if (n.scrollTop === 0 || scrollOffset < 100) {
+                    n.scrollTop = n.scrollHeight;
+                }
+                this.setState({scrollToMessage: undefined});
+            }, 0);
+            return;
+        }
+
         setTimeout(() => {
-            const n = ReactDOM.findDOMNode(this.chatContainer);
-            n.scrollTop = n.scrollHeight;
-        }, 10);
+            const el = n.querySelector(`#message-${this.state.scrollToMessage}`);
+            if (el) {
+                el.scrollIntoView();
+            }
+            this.setState({scrollToMessage: undefined});
+        }, 0);
     }
 
     sendMessage() {

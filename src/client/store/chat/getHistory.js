@@ -9,7 +9,13 @@ export const getHistory = createAction();
 const history$ = getHistory.$
     .do(() => status('loading'))
     .map(data => sign(data))
-    .flatMap(({team, channel, token}) => get(`/api/chat/${team}/${channel}`, token))
+    .map(({team, channel, token, timestamp}) => ({
+        token,
+        url: timestamp ?
+            `/api/chat/${team}/${channel}?startFrom=${timestamp}` :
+            `/api/chat/${team}/${channel}`,
+    }))
+    .flatMap(({url, token}) => get(url, token))
     .do(res => (res.error || !res.history ? status('error') : status('finished')))
     .map(res => {
         res.chatError = res.error; // eslint-disable-line
