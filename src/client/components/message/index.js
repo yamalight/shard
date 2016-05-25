@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {browserHistory} from 'react-router';
 import {hash} from 'spark-md5';
 import {markdown} from '../../util';
@@ -30,6 +31,20 @@ const markdownClick = (e) => {
     browserHistory.push(path);
 };
 
+// time formatting
+const formatTime = (time) => {
+    const t = moment(time);
+
+    // if older than 1 day, format as date
+    const yesterday = moment().day(-1);
+    if (t.isBefore(yesterday)) {
+        return t.format('llll');
+    }
+
+    // otherwise return relative string
+    return t.fromNow();
+};
+
 const Message = (m) => (m.layout === 'short' ? (
     <article id={`message-${m.id}`} className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
         <p
@@ -48,7 +63,7 @@ const Message = (m) => (m.layout === 'short' ? (
         <div className="media-content">
             <div className={`content ${styles.content} ${m.isNew ? 'is-new' : ''}`}>
                 <div className={styles.header}>
-                    <strong>{m.user.username} <small>{m.time}</small></strong>
+                    <strong>{m.user.username} <small>{formatTime(m.time)}</small></strong>
                     <span className={styles.headerSeparator} />
                     {m.layout !== 'plain' && (
                         <div className="navbar-left">
