@@ -1,4 +1,15 @@
-export const reduceShortMessages = (result = [], message) => {
+import Push from 'push.js';
+
+const notify = ({notifyAboutNew = false, team, channel, message} = {}) => {
+    if (notifyAboutNew) {
+        Push.create(`Shard: ${team.name}#${channel.name}`, {
+            body: `@${message.user.username}: ${message.message}`,
+            timeout: 3000,
+        });
+    }
+};
+
+export const reduceShortMessages = (result = [], message, notifyConfig = {}) => {
     const lastIndex = result.length - 1;
     if (lastIndex < 0) {
         return [message];
@@ -38,8 +49,10 @@ export const reduceShortMessages = (result = [], message) => {
             lastMessage.moreMessages = [];
         }
         lastMessage.moreMessages.push(message);
+        notify({...notifyConfig, message});
     } else {
         result.push(message);
+        notify({...notifyConfig, message});
     }
 
     return result;
