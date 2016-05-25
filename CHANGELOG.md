@@ -1,4 +1,14 @@
 
+0.3.0 / 2016-05-25
+==================
+
+  * add desktop notifications about new unread messages
+  * only mark unread if user is active
+  * add autosizable multiline input
+  * use momentjs for better timestamp formatting
+  * allow loading previous messages from history
+  * add babel-react-optimize for production
+
 0.2.0 / 2016-05-24
 ==================
 
