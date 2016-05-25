@@ -15,7 +15,7 @@ import Dropdown from '../dropdown';
 import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar, markRead} from '../../store';
 
 // utils
-import {reduceShortMessages} from '../../util';
+import {reduceShortMessages, focus} from '../../util';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -102,6 +102,23 @@ export default class Chat extends React.Component {
                 });
 
                 this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
+            }),
+
+            // focus
+            focus
+            .startWith({active: true})
+            .subscribe(({active}) => {
+                // reschedule markUnread flag
+                let rescheduleMarkUnread = false;
+                if (!this._userActive) {
+                    rescheduleMarkUnread = true;
+                }
+                // update active state
+                this._userActive = active;
+                // reschedule markUnread if needed
+                if (rescheduleMarkUnread) {
+                    this.unreadSubj.onNext();
+                }
             }),
 
             // mark unread as read
@@ -216,6 +233,10 @@ export default class Chat extends React.Component {
     }
 
     markUnread() {
+        if (!this._userActive) {
+            return;
+        }
+
         const messages = _.flatten(this.state.allMessages.concat(this.state.allMessages.map(m => m.moreMessages)))
             .filter(msg => msg !== undefined)
             .filter(msg => msg.isNew)
