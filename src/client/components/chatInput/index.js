@@ -1,10 +1,13 @@
 import React from 'react';
 import styles from './chatInput.css';
+import Textarea from 'react-textarea-autosize';
 
-import store$, {sendChat, resetReply} from '../../store';
-
+// components
 import Message from '../message';
 import Typeahead from '../typeahead';
+
+// store and actions
+import store$, {sendChat, resetReply} from '../../store';
 
 const messageToReplyId = message => {
     if (!message) {
@@ -69,7 +72,8 @@ export default class ChatInput extends React.Component {
     }
 
     handleKeyPress(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             this.sendMessage();
         }
     }
@@ -98,13 +102,12 @@ export default class ChatInput extends React.Component {
                 <div className="panel">
                     <Typeahead {...this.state} input={this._text} />
 
-                    <p className="control has-addons">
-                        <a className="button">
+                    <p className={`control has-addons ${styles.stretchControl}`}>
+                        <a className={`button ${styles.clipButton}`}>
                             <i className="fa fa-paperclip" />
                         </a>
-                        <input
-                            className="input"
-                            type="text"
+                        <Textarea
+                            className={`textarea ${styles.inputArea}`}
                             placeholder="Write a message..."
                             ref={(t) => { this._text = t; }}
                             onKeyPress={e => this.handleKeyPress(e)}
