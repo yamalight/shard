@@ -51,6 +51,9 @@ module.exports = {
                         development: {
                             presets: ['react-hmre'],
                         },
+                        production: {
+                            presets: ['react-optimize'],
+                        },
                     },
                 },
             },
