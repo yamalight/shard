@@ -16,10 +16,6 @@ const history$ = getHistory.$
             `/api/chat/${team}/${channel}`,
     }))
     .flatMap(({url, token}) => get(url, token))
-    .do(res => (res.error || !res.history ? status('error') : status('finished')))
-    .map(res => {
-        res.chatError = res.error; // eslint-disable-line
-        return res;
-    });
+    .do(res => (res.error || !res.history ? status('error') : status('finished')));
 
 export default history$;

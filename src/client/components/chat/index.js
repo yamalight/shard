@@ -37,13 +37,26 @@ export default class Chat extends React.Component {
         this.subs = [
             // get initial data
             store$
-            .map(s => s.filter((v, key) => ['history', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
+            // reset all messages on changes
+            .map(s => ({
+                ...s,
+                allMessages: [],
+            }))
             .do(s => this.initSocket(s))
+            // store to state
+            .subscribe(s => this.setState(s)),
+
+            // listen for history messages
+            store$
+            .map(s => s.get('history'))
+            .filter(s => s !== undefined)
+            .distinctUntilChanged()
+            .map(s => s.toJS())
             // map history
-            .map(({history = [], ...rest}) => ({
-                ...rest,
+            .map(history => ({
                 shouldScroll: true,
                 allMessages: this.state.allMessages.concat(
                     history.filter(s => s !== undefined)
