@@ -79,7 +79,7 @@ export default class Main extends React.Component {
     render() {
         return (
             <div className={styles.app}>
-                <Teambar toggleSidebar={this.toggleSidebar} showSidebar={this.state.showSidebar} />
+                <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={this.state.showSidebar} />
                 {this.state.showSidebar && <Sidebar />}
                 <Chat />
                 {this.state.infobar && (
