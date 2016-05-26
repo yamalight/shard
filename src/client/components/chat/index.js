@@ -164,7 +164,7 @@ export default class Chat extends React.Component {
     }
 
     initSocket(s) {
-        if (s.currentTeam && s.currentChannel) {
+        if (s.currentTeam && s.currentTeam.id && s.currentChannel && s.currentChannel.id) {
             // if already opened for this chat - ignore action
             if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
                 return;

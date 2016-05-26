@@ -5,6 +5,9 @@ export const resetChannels = createAction();
 
 // map to request
 const channel$ = resetChannels.$
-    .map(() => ({channels: []}));
+    .map(() => ({
+        channels: [],
+        currentChannel: {},
+    }));
 
 export default channel$;
