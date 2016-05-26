@@ -1,4 +1,16 @@
 
+0.4.0 / 2016-05-26
+==================
+
+  * allow using arrow keys to select typeahead result
+  * limit typeahead size
+  * basic slash commands support
+  * show chat input only if channel is selected
+  * add basic userbar component and logout button
+  * channel names are now lowercase unique
+  * correctly de-authorize on token expiration
+  * variety of minor bugfixes
+
 0.3.0 / 2016-05-25
 ==================
 
