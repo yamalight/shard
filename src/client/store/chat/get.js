@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {createAction} from 'rxstate';
 import status from './status';
 import {chatSockets} from './connect';
@@ -8,7 +7,7 @@ export const getChat = createAction();
 
 // map to socket
 const chat$ = getChat.$
-    .do(() => status('connecting'))
+    .do(() => status('loading'))
     .flatMap(({team, channel}) => chatSockets[team + channel]
         .map(e => JSON.parse(e.data))
         .map(messages => ({messages}))

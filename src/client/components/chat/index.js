@@ -30,11 +30,19 @@ export default class Chat extends React.Component {
             messages: [],
             history: [],
             allMessages: [],
+            chatStatus: undefined,
         };
     }
 
     componentWillMount() {
         this.subs = [
+            // status
+            store$
+            .map(s => s.filter((v, key) => ['chatStatus'].includes(key)))
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .map(s => s.toJS())
+            .subscribe(s => this.setState(s)),
+
             // get initial data
             store$
             .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel'].includes(key)))
@@ -299,7 +307,12 @@ export default class Chat extends React.Component {
                 </nav>
 
                 <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                    {this.state.allMessages && this.state.allMessages.length === 0 && 'No messages yet!'}
+                    {this.state.chatStatus === 'loading' && 'Loading...'}
+
+                    {this.state.chatStatus !== 'loading' &&
+                        this.state.allMessages &&
+                        this.state.allMessages.length === 0 && 'No messages yet!'}
+
                     {this.state.allMessages && this.state.allMessages.map(m => (
                         <Message key={m.id} {...m} />
                     ))}
