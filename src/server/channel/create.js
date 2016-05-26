@@ -20,9 +20,22 @@ export default (app) => {
         // do not create duplicate channels under same team & parent
         let existing = 0;
         if (parent === 'none') {
-            existing = await Channel.filter({name, team}).count().execute();
+            existing = await Channel
+                .filter(row =>
+                    row('team').eq(team)
+                    .and(row('name').downcase().eq(name.toLowerCase()))
+                )
+                .count()
+                .execute();
         } else {
-            existing = await Subchannel.filter({name, parentChannel: parent, team}).count().execute();
+            existing = await Subchannel
+                .filter(row =>
+                    row('parentChannel').eq(parent)
+                    .and(row('team').eq(team))
+                    .and(row('name').downcase().eq(name.toLowerCase()))
+                )
+                .count()
+                .execute();
         }
         if (existing > 0) {
             res.status(400).send({error: 'Channel with that name already exists!'});
