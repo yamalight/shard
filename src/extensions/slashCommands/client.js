@@ -15,7 +15,7 @@ class SlashCommandsClient extends SlashCommands {
     }
 
     check(text) {
-        return text.length > 1 && /^\//.test(text) && !/\s/.test(text);
+        return text.length >= 1 && /^\//.test(text) && !/\s/.test(text);
     }
 
     get({text, currentTeam, currentChannel}) {
