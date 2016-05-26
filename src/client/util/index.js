@@ -6,3 +6,4 @@ export {markdown} from './marked';
 export {reduceShortMessages} from './reduceShortMessages';
 export {requireAuth} from './requireAuth';
 export {focus} from './focus';
+export {logout} from './logout';

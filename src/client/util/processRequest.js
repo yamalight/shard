@@ -1,6 +1,5 @@
-import {browserHistory} from 'react-router';
 import {Observable} from 'rx';
-import {resetAuth} from '../store';
+import {logout} from './logout';
 
 const {just} = Observable;
 
@@ -18,15 +17,6 @@ export const processRequest = (req) => req.map(res => {
 ))
 .do((res) => {
     if (res && res.status === 401) {
-        // reset auth
-        resetAuth();
-        // redirect to home with error
-        browserHistory.push({
-            url: '/',
-            state: {
-                error: res.error,
-                relogin: true,
-            },
-        });
+        logout(res.error);
     }
 });

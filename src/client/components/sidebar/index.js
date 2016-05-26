@@ -8,6 +8,7 @@ import styles from './sidebar.css';
 import Modal from '../modal';
 import NewChannel from '../newchannel';
 import Invite from '../invite';
+import Userbar from '../userbar';
 
 // store and actions
 import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
@@ -180,6 +181,11 @@ export default class Sidebar extends React.Component {
                         </ul>
                     </div>
                 )}
+
+                <div className="is-spacer" />
+
+                {/* Userbar */}
+                <Userbar />
 
                 {/* Modal for channel creation */}
                 <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened={this.state.showCreateChannel}>
