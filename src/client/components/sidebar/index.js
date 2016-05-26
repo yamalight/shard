@@ -27,19 +27,29 @@ export default class Sidebar extends React.Component {
 
     componentWillMount() {
         this.subs = [
+            // status sub
+            store$
+            .map(s => s.filter((v, key) => ['channelStatus'].includes(key)))
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .map(s => s.toJS())
+            .subscribe(s => this.setState(s)),
+
+            // data sub
             store$
             .map(s => s.filter((v, key) => [
                 'currentTeam',
                 'currentChannel',
                 'channels',
-                'channelStatus',
             ].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => {
-                let joinChannel;
+                let joinChannel = this.state.joinChannel;
                 // request new channels if team changed
-                if (s.currentTeam && s.currentTeam.id && this.state.currentTeam.id !== s.currentTeam.id) {
+                if (s.currentTeam && s.currentTeam.id &&
+                    this.state.currentTeam.id !== s.currentTeam.id &&
+                    this.state.joinChannel !== 'general'
+                ) {
                     joinChannel = 'general';
                     getChannels({team: s.currentTeam.id});
                 }
