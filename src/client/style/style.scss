@@ -77,3 +77,8 @@ html, body, #container {
 .is-new {
     background-color: rgba(151, 205, 118, 0.3);
 }
+
+// typeahead item
+.typeahead-item {
+    display: flex !important;
+}

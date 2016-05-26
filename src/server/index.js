@@ -40,6 +40,9 @@ expressWs(app);
 // setup webpack
 setupWebpack(app);
 
+// setup extensions
+setupExtensions(app);
+
 // setup auth API
 setupAuthAPI(app);
 // setup team API
@@ -48,8 +51,6 @@ setupTeamAPI(app);
 setupChannelAPI(app);
 // setup chat API
 setupChatAPI(app);
-// setup extensions
-setupExtensions(app);
 
 // serve static content
 app.use(express.static(join(__dirname, '..', 'client')));

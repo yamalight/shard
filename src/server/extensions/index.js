@@ -14,5 +14,9 @@ export default (app) => {
         return new Ex({route, db, util});
     });
 
-    logger.debug('inited extensions:', currentExtensions);
+    // save to app to let other parts access them
+    app.set('currentExtensions', currentExtensions);
+
+    // log inited extensions
+    logger.debug('inited extensions:', currentExtensions.map(ex => ex.constructor.name));
 };

@@ -34,8 +34,10 @@ export const socket = {
 // extensions
 import userTypeahead from './src/extensions/userTypeahead/server';
 import channelTypeahead from './src/extensions/channelTypeahead/server';
+import slashCommands from './src/extensions/slashCommands/server';
 
 export const extensions = _.flatten([
     userTypeahead,
     channelTypeahead,
+    slashCommands,
 ]);
