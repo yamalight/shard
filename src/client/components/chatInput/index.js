@@ -1,3 +1,4 @@
+import {Subject} from 'rx';
 import React from 'react';
 import styles from './chatInput.css';
 import Textarea from 'react-textarea-autosize';
@@ -24,6 +25,8 @@ const messageToReplyId = message => {
 export default class ChatInput extends React.Component {
     constructor(props) {
         super(props);
+
+        this.typeaheadAction = new Subject();
 
         this.state = {
             replyToMessage: null,
@@ -71,6 +74,15 @@ export default class ChatInput extends React.Component {
         this.setState({text: e.target.value});
     }
 
+    handleKeyDown(e) {
+        // handle up-down
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || (e.key === 'Enter' && this._typeahead.state.shouldAppear)) {
+            e.preventDefault();
+            this.typeaheadAction.onNext(e.key);
+            return;
+        }
+    }
+
     handleKeyPress(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -100,7 +112,12 @@ export default class ChatInput extends React.Component {
                 )}
 
                 <div className="panel">
-                    <Typeahead {...this.state} input={this._text} />
+                    <Typeahead
+                        {...this.state}
+                        ref={t => { this._typeahead = t; }}
+                        action={this.typeaheadAction}
+                        input={this._text}
+                    />
 
                     <p className={`control has-addons ${styles.stretchControl}`}>
                         <a className={`button ${styles.clipButton}`}>
@@ -112,6 +129,7 @@ export default class ChatInput extends React.Component {
                             ref={(t) => { this._text = t; }}
                             onKeyPress={e => this.handleKeyPress(e)}
                             onKeyUp={e => this.handleKeyUp(e)}
+                            onKeyDown={e => this.handleKeyDown(e)}
                         />
                         <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
                             <i className="fa fa-paper-plane" />

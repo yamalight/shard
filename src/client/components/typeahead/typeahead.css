@@ -2,3 +2,11 @@
     max-height: 400px;
     overflow: auto;
 }
+
+.typeahead :global(.panel-block) {
+    display: flex !important;
+}
+
+.active {
+    background-color: #E6E6E6;
+}
