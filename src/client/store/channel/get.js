@@ -9,10 +9,11 @@ export const getChannels = createAction();
 
 // map to request
 const channels$ = getChannels.$
-    .distinctUntilChanged()
+    // only continue if new team or force refetch
+    .distinctUntilChanged(data => data, (a, b) => a.team === b.team || !!b.refetch)
     .do(() => status('loading'))
-    .do(() => resetChannels())
-    .do(() => resetHistory())
+    .do(({refetch}) => !refetch && resetChannels())
+    .do(({refetch}) => !refetch && resetHistory())
     .map(data => sign(data))
     .flatMap(({team, token}) => get(`/api/channels?team=${team}`, token))
     .do(res => (res.error ? status('error') : status('finished')))

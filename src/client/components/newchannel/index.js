@@ -22,7 +22,7 @@ export default class NewChannel extends React.Component {
             .map(s => s.filter((_, key) => ['newChannel', 'channelError', 'currentTeam', 'channels'].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
-            .do(s => s.newChannel && this.close(null, true))
+            .do(s => s.newChannel && this.close(true))
             .subscribe(s => this.setState(s)),
         ];
     }
@@ -65,7 +65,7 @@ export default class NewChannel extends React.Component {
         const parent = this.state.parentChannel;
         createChannel({name, description, team, parent});
     }
-    close(e, refetch = false) {
+    close(refetch = false) {
         this.resetError();
         this.props.close(refetch);
     }
@@ -130,7 +130,7 @@ export default class NewChannel extends React.Component {
                 </div>
                 <footer className="card-footer">
                     <a className="card-footer-item" onClick={() => this.create()}>Create</a>
-                    <a className="card-footer-item" onClick={e => this.close(e)}>Cancel</a>
+                    <a className="card-footer-item" onClick={() => this.close()}>Cancel</a>
                 </footer>
             </div>
         );

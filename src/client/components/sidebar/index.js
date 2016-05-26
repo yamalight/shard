@@ -38,7 +38,8 @@ export default class Sidebar extends React.Component {
             .map(s => s.toJS())
             .map(s => {
                 let joinChannel;
-                if (s.currentTeam && s.currentTeam.id) {
+                // request new channels if team changed
+                if (s.currentTeam && s.currentTeam.id && this.state.currentTeam.id !== s.currentTeam.id) {
                     joinChannel = 'general';
                     getChannels({team: s.currentTeam.id});
                 }
@@ -80,7 +81,7 @@ export default class Sidebar extends React.Component {
         resetNewChannel();
         // refetch channels if needed
         if (refetch) {
-            getChannels({team: this.state.currentTeam.id});
+            getChannels({team: this.state.currentTeam.id, refetch});
         }
     }
 
@@ -170,7 +171,7 @@ export default class Sidebar extends React.Component {
                     </div>
                 )}
 
-                {/* Modal for team creation */}
+                {/* Modal for channel creation */}
                 <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened={this.state.showCreateChannel}>
                     <Modal closeAction={() => this.closeCreateChannel()}>
                         <NewChannel close={(refetch) => this.closeCreateChannel(refetch)} />
