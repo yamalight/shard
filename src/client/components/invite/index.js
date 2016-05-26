@@ -20,7 +20,7 @@ export default class Invite extends React.Component {
                 'invited',
                 'teamError',
             ].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .do(s => s.invited && this.close())
             .subscribe(s => this.setState(s)),

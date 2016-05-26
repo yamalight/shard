@@ -20,7 +20,7 @@ export default class NewChannel extends React.Component {
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['newChannel', 'channelError', 'currentTeam', 'channels'].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .do(s => s.newChannel && this.close(true))
             .subscribe(s => this.setState(s)),

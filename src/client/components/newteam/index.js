@@ -13,7 +13,7 @@ export default class NewTeam extends React.Component {
         this.subs = [
             store$
             .map(s => s.filter((_, key) => ['newTeam', 'teamError'].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .do(s => s.newTeam && this.close(null, true))
             .subscribe(s => this.setState(s)),

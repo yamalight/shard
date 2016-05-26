@@ -18,7 +18,7 @@ export default class Infobar extends React.Component {
             store$
             .map(s => s.get('infobar'))
             .filter(s => s !== undefined)
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];

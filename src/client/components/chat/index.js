@@ -38,7 +38,7 @@ export default class Chat extends React.Component {
             // get initial data
             store$
             .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel'].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             // reset all messages on changes
             .map(s => ({
@@ -53,7 +53,7 @@ export default class Chat extends React.Component {
             store$
             .map(s => s.get('history'))
             .filter(s => s !== undefined)
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             // map history
             .map(history => ({
@@ -76,7 +76,7 @@ export default class Chat extends React.Component {
             store$
             .map(s => s.get('messages'))
             .filter(s => s !== undefined)
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(m => {
                 const {allMessages: oldMessages} = this.state;

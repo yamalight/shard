@@ -27,7 +27,7 @@ export default class Teambar extends React.Component {
         this.subs = [
             store$
             .map(s => s.filter((v, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
-            .distinctUntilChanged()
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
