@@ -7,13 +7,15 @@ export default class Home extends React.Component {
     constructor(props) {
         super(props);
 
-        const {query} = props.location;
+        const {query, state} = props.location;
+        const {error: redirectError, relogin} = state || {};
         const {username} = query;
         const emailValid = query.emailValid === 'true';
         this.state = {
             username,
             emailValid,
-            showLogin: emailValid,
+            redirectError,
+            showLogin: emailValid || relogin,
             showRegister: false,
         };
     }
@@ -33,6 +35,9 @@ export default class Home extends React.Component {
             .do(auth => this.checkAuth(auth))
             .subscribe(auth => this.setState(auth)),
         ];
+
+        // clear history state and query to remove any old errors or messages
+        browserHistory.push({query: {}, state: {}});
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
@@ -92,7 +97,7 @@ export default class Home extends React.Component {
     }
 
     renderInput() {
-        if (this.state.user.username) {
+        if (this.state.user && this.state.user.username) {
             return (
                 <div className="has-text-centered">
                     <a
@@ -235,6 +240,11 @@ export default class Home extends React.Component {
                             <div className="notification is-success">
                                 Your email is now validated and account is active!
                                 You can now log in using the form below.
+                            </div>
+                        )}
+                        {this.state.redirectError && (
+                            <div className="notification is-danger">
+                                {this.state.redirectError}
                             </div>
                         )}
                         <div className="columns">

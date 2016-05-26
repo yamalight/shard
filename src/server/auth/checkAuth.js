@@ -18,7 +18,10 @@ export const checkStringToken = async (token) => {
         // FIXME ignoreExpiration
         decoded = jwt.verify(token, jwtconf.secret, {ignoreExpiration: process.env.NODE_ENV !== 'production'});
     } catch (e) {
-        logger.error('Error decoding token', e);
+        logger.error('Error decoding token', e.name);
+        if (e.name === 'TokenExpiredError') {
+            throw new Error('Oops, looks like your authentication is expired! Please log in again.');
+        }
         throw e;
     }
     logger.debug('decoded: ', decoded);
@@ -44,6 +47,6 @@ export default async (req, res, next) => {
         req.userInfo = user; // eslint-disable-line
         return next();
     } catch (e) {
-        return next(e);
+        return res.status(401).send({error: e.message});
     }
 };

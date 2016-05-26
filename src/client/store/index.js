@@ -7,6 +7,7 @@ import defaultState from './defaultState';
 import authStatus from './auth/status';
 import register$, {registerUser} from './auth/register';
 import login$, {loginUser} from './auth/login';
+import resetAuth$, {resetAuth} from './auth/resetAuth';
 
 // team actions
 import teamStatus from './team/status';
@@ -46,6 +47,7 @@ const streams = [
     authStatus.$,
     register$,
     login$,
+    resetAuth$,
     // team streams
     teamStatus.$,
     getTeams$,
@@ -81,6 +83,7 @@ export {
     // auth
     registerUser,
     loginUser,
+    resetAuth,
     // team
     getTeams,
     getTeam,
