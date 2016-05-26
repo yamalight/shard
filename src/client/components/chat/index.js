@@ -317,9 +317,12 @@ export default class Chat extends React.Component {
                         <Message key={m.id} {...m} />
                     ))}
                 </div>
-                <div className={styles.footer}>
-                    <ChatInput {...this.state} />
-                </div>
+
+                {this.state.currentChannel.name && (
+                    <div className={styles.footer}>
+                        <ChatInput {...this.state} />
+                    </div>
+                )}
             </div>
         );
     }
