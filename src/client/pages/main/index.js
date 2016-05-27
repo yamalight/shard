@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
-import Dock from 'react-dock';
+// import Dock from 'react-dock';
 import styles from './main.css';
 
-import store$, {setTeam, setChannel} from '../../store';
+import store$, {setTeam} from '../../store';
 
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
@@ -48,7 +48,10 @@ export default class Main extends React.Component {
 
     componentWillReceiveProps({params}) {
         const {channel, team} = params || {};
-        this.setState({channel, team});
+        // only update if needed
+        if (channel !== this.state.channel || team !== this.state.team) {
+            this.setState({channel, team});
+        }
     }
 
     componentDidUpdate() {
@@ -65,13 +68,6 @@ export default class Main extends React.Component {
         if (currentTeam && (!this.state.currentTeam || currentTeam.id !== this.state.currentTeam.id)) {
             setTeam(currentTeam);
         }
-
-        // set channel if present
-        const currentChannel = _.flatten(this.state.channels.concat(this.state.channels.map(ch => ch.subchannels)))
-            .find(c => _.camelCase(c.name) === this.state.channel);
-        if (currentChannel && (!this.state.currentChannel || currentChannel.id !== this.state.currentChannel.id)) {
-            setChannel(currentChannel);
-        }
     }
 
     toggleSidebar() {
@@ -84,7 +80,7 @@ export default class Main extends React.Component {
                 {/* COL1: Teambar with teams */}
                 <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={this.state.showSidebar} />
                 {/* COL2: Sidebar with channels, team menu, user info */}
-                {this.state.showSidebar && <Sidebar />}
+                {this.state.showSidebar && <Sidebar joinChannel={this.state.channel} />}
                 {/* COL3: Chat header, chat messages, inline infobar and chat input */}
                 <div className={`column is-flex ${styles.mainarea}`}>
                     <ChatHeader />

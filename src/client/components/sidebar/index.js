@@ -45,14 +45,14 @@ export default class Sidebar extends React.Component {
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => {
-                let joinChannel = this.state.joinChannel;
+                let joinChannel = this.props.joinChannel || this.state.joinChannel;
                 // request new channels if team changed
-                if (s.currentTeam && s.currentTeam.id &&
-                    this.state.currentTeam.id !== s.currentTeam.id &&
-                    this.state.joinChannel !== 'general'
-                ) {
-                    joinChannel = 'general';
+                if (s.currentTeam && s.currentTeam.id && this.state.currentTeam.id !== s.currentTeam.id) {
                     getChannels({team: s.currentTeam.id});
+                    // force set join channel to general on team change
+                    if (!joinChannel) {
+                        joinChannel = 'general';
+                    }
                 }
 
                 return {
@@ -68,7 +68,11 @@ export default class Sidebar extends React.Component {
         setTimeout(() => {
             if (this.state.channels.length && this.state.joinChannel) {
                 const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
-                this.setChannel(ch);
+                if (ch) {
+                    this.setChannel(ch);
+                } else {
+                    this.setState({joinChannel: 'general'});
+                }
             }
         }, 10);
     }
