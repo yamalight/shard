@@ -1,0 +1,46 @@
+.navbar {
+    margin-bottom: 5px !important;
+    min-height: 57px;
+    max-height: 57px;
+    border-bottom: 1px solid #eceeef;
+    box-shadow: 0 2px 0 hsla(200,9%,93%,.25);
+    padding-left: 20px;
+    padding-top: 10px;
+    background-color: #fff;
+}
+
+.navbar :global(.is-disabled) {
+    color: #000;
+}
+
+.navSpacer {
+    flex-grow: 1;
+}
+
+.navMenu {
+    align-items: center;
+}
+
+.title {
+    margin-bottom: 10px !important;
+    font-weight: 600;
+    min-height: 30px;
+}
+
+.separator::after {
+    content: " | ";
+    color: #ccc;
+}
+
+.section {
+    flex: 1;
+    overflow: auto;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.footer {
+    /*height: 34px;*/
+    /*min-height: 34px;*/
+}

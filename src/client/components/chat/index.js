@@ -6,13 +6,10 @@ import {DOM} from 'rx-dom';
 import styles from './chat.css';
 
 // components
-import Description from '../description';
 import Message from '../message/';
-import ChatInput from '../chatInput';
-import Dropdown from '../dropdown';
 
 // store and actions
-import store$, {initChat, closeChat, getChat, getHistory, sendChat, setInfobar, markRead} from '../../store';
+import store$, {initChat, closeChat, getChat, getHistory, markRead} from '../../store';
 
 // utils
 import {reduceShortMessages, focus} from '../../util';
@@ -229,23 +226,6 @@ export default class Chat extends React.Component {
         }, 0);
     }
 
-    sendMessage() {
-        const message = this._text.value;
-        const team = this.state.currentTeam.id;
-        const channel = this.state.currentChannel.id;
-        sendChat({team, channel, message});
-    }
-
-    showMenu() {
-        this.setState({showMenu: true});
-    }
-    handleMenuItem(item) {
-        setInfobar(item);
-    }
-    closeMenu() {
-        this.setState({showMenu: false});
-    }
-
     markUnread() {
         if (!this._userActive) {
             return;
@@ -273,56 +253,17 @@ export default class Chat extends React.Component {
     }
 
     render() {
-        const menuItems = [{
-            title: 'Description',
-            content: <Description text={this.state.currentChannel.description || ''} />,
-        }];
-
         return (
-            <div className={`column is-flex ${styles.mainarea}`}>
-                <nav className={`navbar is-flex ${styles.navbar}`}>
-                    <div className="navbar-item">
-                        <p className={`title channel-name is-flex ${styles.title}`}>
-                            {this.state.currentChannel.name || 'No channel selected'}
-                        </p>
-                    </div>
+            <div ref={c => { this.chatContainer = c; }} className={styles.section}>
+                {this.state.chatStatus === 'loading' && 'Loading...'}
 
-                    <div className={styles.navSpacer} />
+                {this.state.chatStatus !== 'loading' &&
+                    this.state.allMessages &&
+                    this.state.allMessages.length === 0 && 'No messages yet!'}
 
-                    <div className={`navbar-item is-flex ${styles.navMenu}`}>
-                        <a className="card-header-icon" onClick={() => this.showMenu()}>
-                            <i className="fa fa-angle-down" />
-                        </a>
-                    </div>
-
-                    {this.state.showMenu && (
-                        <Dropdown
-                            style={{top: 50, right: 5}}
-                            title="Channel"
-                            items={menuItems}
-                            onItem={it => this.handleMenuItem(it)}
-                            onHide={() => this.closeMenu()}
-                        />
-                    )}
-                </nav>
-
-                <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                    {this.state.chatStatus === 'loading' && 'Loading...'}
-
-                    {this.state.chatStatus !== 'loading' &&
-                        this.state.allMessages &&
-                        this.state.allMessages.length === 0 && 'No messages yet!'}
-
-                    {this.state.allMessages && this.state.allMessages.map(m => (
-                        <Message key={m.id} {...m} />
-                    ))}
-                </div>
-
-                {this.state.currentChannel.name && (
-                    <div className={styles.footer}>
-                        <ChatInput {...this.state} />
-                    </div>
-                )}
+                {this.state.allMessages && this.state.allMessages.map(m => (
+                    <Message key={m.id} {...m} />
+                ))}
             </div>
         );
     }

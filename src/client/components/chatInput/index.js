@@ -61,8 +61,8 @@ export default class ChatInput extends React.Component {
             return;
         }
 
-        const team = this.props.currentTeam.id;
-        const channel = this.props.currentChannel.id;
+        const team = this.state.currentTeam.id;
+        const channel = this.state.currentChannel.id;
         const replyTo = messageToReplyId(this.state.replyToMessage);
         // send
         sendChat({team, channel, message, replyTo});
@@ -91,50 +91,53 @@ export default class ChatInput extends React.Component {
     }
 
     render() {
+        // TODO: removing top div messes up autosuggest sizing, why? D:
         return (
-            <div className={styles.chatInput}>
-                {this.state.replyToMessage && (
-                    <div className="is-flex">
-                        <div className={`is-flex ${styles.replyButton}`}>
-                            <i className="fa fa-reply" />
+            <div>
+                <div className={styles.chatInput}>
+                    {this.state.replyToMessage && (
+                        <div className="is-flex">
+                            <div className={`is-flex ${styles.replyButton}`}>
+                                <i className="fa fa-reply" />
+                            </div>
+                            <div className={styles.replyPreview}>
+                                <Message layout="plain" {...this.state.replyToMessage} hideActions />
+                            </div>
+                            <a
+                                className={`is-flex hint--left ${styles.replyButton}`}
+                                data-hint="Cancel reply"
+                                onClick={() => resetReply()}
+                            >
+                                <i className="fa fa-times" />
+                            </a>
                         </div>
-                        <div className={styles.replyPreview}>
-                            <Message layout="plain" {...this.state.replyToMessage} hideActions />
-                        </div>
-                        <a
-                            className={`is-flex hint--left ${styles.replyButton}`}
-                            data-hint="Cancel reply"
-                            onClick={() => resetReply()}
-                        >
-                            <i className="fa fa-times" />
-                        </a>
-                    </div>
-                )}
+                    )}
 
-                <div className="panel">
-                    <Typeahead
-                        {...this.state}
-                        ref={t => { this._typeahead = t; }}
-                        action={this.typeaheadAction}
-                        input={this._text}
-                    />
-
-                    <p className={`control has-addons ${styles.stretchControl}`}>
-                        <a className={`button ${styles.clipButton}`}>
-                            <i className="fa fa-paperclip" />
-                        </a>
-                        <Textarea
-                            className={`textarea ${styles.inputArea}`}
-                            placeholder="Write a message..."
-                            ref={(t) => { this._text = t; }}
-                            onKeyPress={e => this.handleKeyPress(e)}
-                            onKeyUp={e => this.handleKeyUp(e)}
-                            onKeyDown={e => this.handleKeyDown(e)}
+                    <div className="panel">
+                        <Typeahead
+                            {...this.state}
+                            ref={t => { this._typeahead = t; }}
+                            action={this.typeaheadAction}
+                            input={this._text}
                         />
-                        <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
-                            <i className="fa fa-paper-plane" />
-                        </a>
-                    </p>
+
+                        <p className={`control has-addons ${styles.stretchControl}`}>
+                            <a className={`button ${styles.clipButton}`}>
+                                <i className="fa fa-paperclip" />
+                            </a>
+                            <Textarea
+                                className={`textarea ${styles.inputArea}`}
+                                placeholder="Write a message..."
+                                ref={(t) => { this._text = t; }}
+                                onKeyPress={e => this.handleKeyPress(e)}
+                                onKeyUp={e => this.handleKeyUp(e)}
+                                onKeyDown={e => this.handleKeyDown(e)}
+                            />
+                            <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
+                                <i className="fa fa-paper-plane" />
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         );

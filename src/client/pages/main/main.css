@@ -7,3 +7,17 @@
     overflow: auto;
     display: flex;
 }
+
+.mainarea {
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+}
+
+.section {
+    flex: 1;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}

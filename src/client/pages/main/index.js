@@ -7,7 +7,9 @@ import store$, {setTeam, setChannel} from '../../store';
 
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
+import ChatHeader from '../../components/chatHeader';
 import Chat from '../../components/chat';
+import ChatInput from '../../components/chatInput';
 import Infobar from '../../components/infobar';
 
 export default class Main extends React.Component {
@@ -79,9 +81,19 @@ export default class Main extends React.Component {
     render() {
         return (
             <div className={styles.app}>
+                {/* COL1: Teambar with teams */}
                 <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={this.state.showSidebar} />
+                {/* COL2: Sidebar with channels, team menu, user info */}
                 {this.state.showSidebar && <Sidebar />}
-                <Chat />
+                {/* COL3: Chat header, chat messages, inline infobar and chat input */}
+                <div className={`column is-flex ${styles.mainarea}`}>
+                    <ChatHeader />
+                    <div className={`column is-flex ${styles.section}`}>
+                        <Chat />
+                    </div>
+                    <ChatInput />
+                </div>
+                {/* OVERLAY: infobar using overlay */}
                 {this.state.infobar && (
                     <Dock position="right" isVisible={!!this.state.infobar.content}>
                         <Infobar />

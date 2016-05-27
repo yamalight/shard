@@ -36,7 +36,7 @@ const formatTime = (time) => {
     const t = moment(time);
 
     // if older than 1 day, format as date
-    const yesterday = moment().day(-1);
+    const yesterday = moment().subtract(1, 'day');
     if (t.isBefore(yesterday)) {
         return t.format('llll');
     }
