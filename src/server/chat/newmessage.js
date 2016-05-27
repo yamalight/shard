@@ -9,7 +9,7 @@ export default (app) => {
     const messageExtensions = currentExtensions.filter(ex => ex.type === 'messageHandler');
 
     app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
-        const channel = req.params.channel;
+        const {team, channel} = req.params;
         const message = _.omit(req.body, ['token']);
         logger.info('new msg:', {message, from: req.userInfo.username, channel});
         // validate message
@@ -27,9 +27,11 @@ export default (app) => {
 
         // transform message with matched extensions
         const context = {
+            team,
+            channel,
             user: req.userInfo,
         };
-        const finalMessage = extensions.reduce((sum, ex) => ex.handleMessage(sum, context), message);
+        const finalMessage = await extensions.reduce((sum, ex) => ex.handleMessage(sum, context), message);
         logger.debug('final message after extensions is:', finalMessage);
 
         // if message is false - end without saving

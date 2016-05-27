@@ -23,7 +23,7 @@ export default class SlashCommandsHandlerServer extends SlashCommands {
         return message.length > 1 && /^\//.test(message);
     }
 
-    handleMessage(m, context) {
+    async handleMessage(m, context) {
         const {logger} = this.util;
 
         logger.debug('[slash]: processing message:', m);
@@ -39,6 +39,11 @@ export default class SlashCommandsHandlerServer extends SlashCommands {
         const [, command, args] = results;
         logger.debug(`[slash]: invoking "${command}" with "${args}"`);
 
-        return this.commands[command].execute({message: m, args, ...context});
+        const fullContext = {
+            ...context,
+            db: this.db,
+            util: this.util,
+        };
+        return this.commands[command].execute({message: m, args, ...fullContext});
     }
 }
