@@ -25,8 +25,13 @@ export default class Dropdown extends React.Component {
         this.props.onHide();
     }
 
+    handleItemClick(it) {
+        this.props.onItem(it);
+        this.props.onHide();
+    }
+
     renderItem(it) {
-        return <li key={it.title}><a onClick={() => this.props.onItem(it)}>{it.title}</a></li>;
+        return <li key={it.title}><a onClick={() => this.handleItemClick(it)}>{it.title}</a></li>;
     }
 
     render() {

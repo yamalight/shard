@@ -8,8 +8,8 @@ export default class Infobar extends React.Component {
         super(props);
 
         this.state = {
-            title: 'Extension',
-            content: '',
+            title: 'Infobar',
+            content: 'Loading...',
         };
     }
 
@@ -33,17 +33,17 @@ export default class Infobar extends React.Component {
 
     render() {
         return (
-            <div className={`card is-fullwidth is-flex ${styles.infobar}`}>
+            <div className={`card is-flex ${styles.infobar}`}>
                 <header className="card-header">
                     <p className="card-header-title">
                         {this.state.title}
                     </p>
-                    <a className="card-header-icon" onClick={() => this.hide()}>
+                    {/* <a className="card-header-icon" onClick={() => this.hide()}>
                         <i className="fa fa-times"></i>
-                    </a>
+                    </a> */}
                 </header>
-                <div className="card-content">
-                    <div className="content">
+                <div className={`card-content ${styles.cardContent}`}>
+                    <div className={`content ${styles.content}`}>
                         {this.state.content}
                     </div>
                 </div>

@@ -1,4 +1,13 @@
 .infobar {
     flex-direction: column;
-    height: 100%;
+    box-shadow: none;
+}
+
+.cardContent {
+    flex: 1;
+    display: flex;
+}
+
+.content {
+    flex: 1;
 }

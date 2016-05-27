@@ -90,15 +90,16 @@ export default class Main extends React.Component {
                     <ChatHeader />
                     <div className={`column is-flex ${styles.section}`}>
                         <Chat />
+                        <Infobar />
                     </div>
                     <ChatInput />
                 </div>
                 {/* OVERLAY: infobar using overlay */}
-                {this.state.infobar && (
+                {/* this.state.infobar && (
                     <Dock position="right" isVisible={!!this.state.infobar.content}>
                         <Infobar />
                     </Dock>
-                )}
+                )*/}
             </div>
         );
     }

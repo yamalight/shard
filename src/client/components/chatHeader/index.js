@@ -24,12 +24,28 @@ export default class Chat extends React.Component {
             .map(s => s.filter((v, key) => ['currentChannel'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
+            .map(s => ({
+                ...s,
+                menuItems: this.generateMenuItems(s),
+            }))
+            .do(s => s.menuItems[0] && this.handleMenuItem(s.menuItems[0]))
             // store to state
             .subscribe(s => this.setState(s)),
         ];
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    }
+
+    generateMenuItems(s) {
+        if (!s.currentChannel) {
+            return [];
+        }
+
+        return [{
+            title: 'Description',
+            content: <Description text={s.currentChannel.description || ''} />,
+        }];
     }
 
     showMenu() {
@@ -43,11 +59,6 @@ export default class Chat extends React.Component {
     }
 
     render() {
-        const menuItems = [{
-            title: 'Description',
-            content: <Description text={this.state.currentChannel.description || ''} />,
-        }];
-
         return (
             <nav className={`navbar is-flex ${styles.navbar}`}>
                 <div className="navbar-item">
@@ -68,7 +79,7 @@ export default class Chat extends React.Component {
                     <Dropdown
                         style={{top: 50, right: 5}}
                         title="Channel"
-                        items={menuItems}
+                        items={this.state.menuItems}
                         onItem={it => this.handleMenuItem(it)}
                         onHide={() => this.closeMenu()}
                     />
