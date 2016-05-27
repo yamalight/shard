@@ -1,4 +1,16 @@
 
+0.5.0 / 2016-05-27
+==================
+
+  * add /invite command
+  * add /rename command to rename channels
+  * allow editing description
+  * add fourth column for infobar
+  * split chat component into header, messages and input
+  * correctly scroll to end on channel change
+  * fix channel switching when coming from url
+  * fix display for empty descriptions
+
 0.4.0 / 2016-05-26
 ==================
 
