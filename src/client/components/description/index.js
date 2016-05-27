@@ -91,19 +91,19 @@ export default class Description extends React.Component {
     }
 
     render() {
-        const {currentChannel, edit} = this.state;
+        const {currentChannel, channelStatus, edit} = this.state;
+        const showDescription = !edit && currentChannel && currentChannel.description !== undefined;
+        const description = currentChannel.description && currentChannel.description.length > 0 ?
+            currentChannel.description : 'No description set';
 
         return (
             <div className={`column content ${styles.content}`} onDoubleClick={() => this.enableEdit()}>
-                {!currentChannel.description && 'Loading...'}
+                {channelStatus === 'loading' && 'Loading...'}
 
                 <div
                     ref={md => { this._md = md; }}
                     className={styles.description}
-                    dangerouslySetInnerHTML={{__html:
-                        !edit && currentChannel && currentChannel.description ?
-                            markdown(currentChannel.description) : '',
-                    }}
+                    dangerouslySetInnerHTML={{__html: showDescription ? markdown(description) : ''}}
                 />
 
                 {edit && this.renderEdit()}
