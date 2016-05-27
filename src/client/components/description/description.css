@@ -16,3 +16,13 @@
 .description h6 {
     color: rgba(0,0,0,.44);
 }
+
+.editArea {
+    display: flex;
+    flex-direction: column;
+}
+
+.editButtons {
+    margin-top: 5px;
+    display: flex;
+}

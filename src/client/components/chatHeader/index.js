@@ -44,7 +44,7 @@ export default class Chat extends React.Component {
 
         return [{
             title: 'Description',
-            content: <Description text={s.currentChannel.description || ''} />,
+            content: <Description />,
         }];
     }
 

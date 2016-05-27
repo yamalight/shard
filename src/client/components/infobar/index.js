@@ -34,7 +34,7 @@ export default class Infobar extends React.Component {
     render() {
         return (
             <div className={`card is-flex ${styles.infobar}`}>
-                <header className="card-header">
+                <header className={`card-header ${styles.header}`}>
                     <p className="card-header-title">
                         {this.state.title}
                     </p>
