@@ -2,6 +2,45 @@ import {Team, Channel, User} from '../db';
 import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
+export const inviteToTeam = async ({id, username, channel, userInfo}) => {
+    // check user permissions for invite
+    const team = await Team.get(id);
+    const reqUser = team.users.filter(u => u.id === userInfo.id).pop();
+    logger.debug('got requesting user from team:', reqUser);
+    if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
+        logger.error('insufficient rights!');
+        return {status: 401, body: {error: 'insufficient rights!'}};
+    }
+
+    // find user that's getting invited
+    const users = await User.filter({username}).limit(1).run();
+    const user = users.pop();
+    logger.debug('found user:', user);
+    if (!user) {
+        logger.error('target user not found!');
+        return {status: 401, body: {error: 'user not found!'}};
+    }
+
+    // add user to team if he's not already there
+    if (!team.users.find(u => u.id === user.id)) {
+        team.users.push({id: user.id});
+        await team.save();
+    }
+
+    // add user to channel (if present)
+    if (channel) {
+        const ch = await Channel.get(channel);
+        // only add if not already in channel
+        if (!ch.users.find(u => u.id === user.id)) {
+            ch.users.push({id: user.id});
+            await ch.save();
+        }
+    }
+
+    logger.debug('invited user to team!');
+    return {status: 204, body: undefined};
+};
+
 export default (app) => {
     app.post('/api/teams/:id/join', checkAuth, asyncRequest(async (req, res) => {
         const {id} = req.params;
@@ -36,43 +75,7 @@ export default (app) => {
         const {username, channel} = req.body;
         logger.info('inviting user to channel:', {username, channel});
 
-        // check user permissions for invite
-        const team = await Team.get(id);
-        const reqUser = team.users.filter(u => u.id === req.userInfo.id).pop();
-        logger.debug('got requesting user from team:', reqUser);
-        if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
-            logger.error('insufficient rights!');
-            res.status(401).send({error: 'insufficient rights!'});
-            return;
-        }
-
-        // find user that's getting invited
-        const users = await User.filter({username}).limit(1).run();
-        const user = users.pop();
-        logger.debug('found user:', user);
-        if (!user) {
-            logger.error('target user not found!');
-            res.status(401).send({error: 'user not found!'});
-            return;
-        }
-
-        // add user to team if he's not already there
-        if (!team.users.find(u => u.id === user.id)) {
-            team.users.push({id: user.id});
-            await team.save();
-        }
-
-        // add user to channel (if present)
-        if (channel) {
-            const ch = await Channel.get(channel);
-            // only add if not already in channel
-            if (!ch.users.find(u => u.id === user.id)) {
-                ch.users.push({id: user.id});
-                await ch.save();
-            }
-        }
-
-        logger.debug('invited user to team!');
-        res.sendStatus(204);
+        const {status, body} = await inviteToTeam({id, username, channel, userInfo: req.userInfo});
+        res.status(status).send(body);
     }));
 };
