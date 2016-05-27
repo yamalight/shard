@@ -48,6 +48,7 @@ export default class Chat extends React.Component {
             // reset all messages on changes
             .map(s => ({
                 ...s,
+                scrollToMessage: 'end',
                 allMessages: [],
             }))
             .do(s => this.initSocket(s))
