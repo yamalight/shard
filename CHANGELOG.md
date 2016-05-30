@@ -1,4 +1,11 @@
 
+0.6.0 / 2016-05-30
+==================
+
+  * better message menu
+  * allow editing and deleting channels
+  * load hint.css after bulma to stop it from breaking lists
+
 0.5.0 / 2016-05-27
 ==================
 
