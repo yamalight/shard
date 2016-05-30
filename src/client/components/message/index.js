@@ -108,7 +108,7 @@ export default class Message extends React.Component {
                     onMouseEnter={(e) => this.showMenu(e)}
                     onMouseLeave={(e) => this.hideMenu(e)}
                 >
-                    <div className="media-content">
+                    <div className="media-content content">
                         <p
                             className={styles.markdown}
                             onClick={markdownClick}

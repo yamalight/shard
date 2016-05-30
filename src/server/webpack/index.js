@@ -47,10 +47,8 @@ if (!isProduction) {
             return loader;
         }
 
-        logger.info('patching:', loader.loaders);
         loader.loader = ExtractTextPlugin.extract(loader.loaders.slice(1).join('!')); // eslint-disable-line
         delete loader.loaders; // eslint-disable-line
-        logger.info('patched:', loader);
         return loader;
     });
     // add optimization plugins
