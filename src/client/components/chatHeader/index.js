@@ -1,12 +1,15 @@
 import React from 'react';
+import Portal from 'react-portal';
 import styles from './chat.css';
 
 // components
 import Description from '../description';
 import Dropdown from '../dropdown';
+import Modal from '../modal';
+import EditChannel from '../editchannel';
 
 // store and actions
-import store$, {setInfobar} from '../../store';
+import store$, {setInfobar, getChannels} from '../../store';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -14,6 +17,7 @@ export default class Chat extends React.Component {
 
         this.state = {
             currentChannel: {},
+            showRename: false,
         };
     }
 
@@ -21,7 +25,7 @@ export default class Chat extends React.Component {
         this.subs = [
             // get initial data
             store$
-            .map(s => s.filter((v, key) => ['currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['currentChannel', 'currentTeam'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => ({
@@ -44,15 +48,31 @@ export default class Chat extends React.Component {
 
         return [{
             title: 'Description',
+            type: 'sidebar',
             content: <Description />,
+        }, {
+            title: 'Rename channel',
+            type: 'action',
+            content: () => this.setState({showRename: true}),
         }];
+    }
+
+    closeRename(refetch = false) {
+        this.setState({showRename: false});
+        if (refetch) {
+            getChannels({team: this.state.currentTeam.id, refetch});
+        }
     }
 
     showMenu() {
         this.setState({showMenu: true});
     }
     handleMenuItem(item) {
-        setInfobar(item);
+        if (item.type === 'sidebar') {
+            setInfobar(item);
+        } else if (item.type === 'action') {
+            item.content();
+        }
     }
     closeMenu() {
         this.setState({showMenu: false});
@@ -84,6 +104,13 @@ export default class Chat extends React.Component {
                         onHide={() => this.closeMenu()}
                     />
                 )}
+
+                {/* Modal for channel rename */}
+                <Portal closeOnEsc onClose={() => this.closeRename()} isOpened={this.state.showRename}>
+                    <Modal closeAction={() => this.closeRename()}>
+                        <EditChannel close={refetch => this.closeRename(refetch)} />
+                    </Modal>
+                </Portal>
             </nav>
         );
     }
