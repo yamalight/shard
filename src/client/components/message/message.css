@@ -20,6 +20,10 @@
     flex-direction: column;
 }
 
+.content :global(ul) {
+    list-style: inherit;
+}
+
 .markdown {
 }
 
