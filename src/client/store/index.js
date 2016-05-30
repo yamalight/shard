@@ -27,6 +27,7 @@ import setChannel$, {setChannel} from './channel/set';
 import resetNewChannel$, {resetNewChannel} from './channel/resetNew';
 import resetChannels$, {resetChannels} from './channel/resetChannels';
 import updateChannel$, {updateChannel} from './channel/update';
+import deleteChannel$, {deleteChannel} from './channel/delete';
 
 // chat actions
 import chatStatus from './chat/status';
@@ -66,6 +67,7 @@ const streams = [
     resetNewChannel$,
     resetChannels$,
     updateChannel$,
+    deleteChannel$,
     // chat streams
     chatStatus.$,
     getChat$,
@@ -101,6 +103,7 @@ export {
     resetNewChannel,
     resetChannels,
     updateChannel,
+    deleteChannel,
     // chat
     initChat,
     closeChat,

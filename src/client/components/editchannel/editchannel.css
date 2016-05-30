@@ -5,3 +5,7 @@
 .parentChannel :global(.label) {
     margin-right: 5px;
 }
+
+.forceFlex {
+    display: flex !important;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './editchannel.css';
-import store$, {updateChannel} from '../../store';
+import store$, {updateChannel, deleteChannel} from '../../store';
 
 export const nameRegex = /^[a-z0-9\s-]+$/i;
 
@@ -77,6 +77,9 @@ export default class EditChannel extends React.Component {
         const parent = this.state.parentChannel;
         updateChannel({id, name, description, team, parent});
     }
+    delete() {
+        deleteChannel(this.state.currentChannel);
+    }
     close(refetch = false) {
         this.resetError();
         store$.clear({updatedChannel: undefined});
@@ -98,6 +101,13 @@ export default class EditChannel extends React.Component {
                     <p className="card-header-title">
                         Edit channel
                     </p>
+                    <a
+                        className={`card-header-icon hint--left ${styles.forceFlex}`}
+                        data-hint="Delete channel"
+                        onClick={() => this.delete()}
+                    >
+                        <i className="fa fa-trash" />
+                    </a>
                 </header>
                 <div className="card-content">
                     <div className="content">

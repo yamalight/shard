@@ -51,7 +51,7 @@ export default class Chat extends React.Component {
             type: 'sidebar',
             content: <Description />,
         }, {
-            title: 'Rename channel',
+            title: 'Edit channel',
             type: 'action',
             content: () => this.setState({showRename: true}),
         }];

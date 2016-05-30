@@ -1,5 +1,6 @@
 export {get} from './rxget';
 export {post} from './rxpost';
+export {del} from './rxdelete';
 export {sign} from './sign';
 export {socket} from './rxsocket';
 export {markdown} from './marked';
