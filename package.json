@@ -81,6 +81,7 @@
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-1": "^6.5.0",
     "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "json-loader": "^0.5.4",
     "lodash-webpack-plugin": "^0.9.1",

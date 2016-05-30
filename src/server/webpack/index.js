@@ -2,6 +2,7 @@ import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {logger} from '../util';
 import config from './webpack.config.js';
 
@@ -28,6 +29,32 @@ if (!isProduction) {
     logger.info('production - adding optimization plugins');
     config.devtool = 'cheap-source-map';
     config.debug = false;
+    // extract styles into file
+    config.module.loaders = config.module.loaders
+    .map(loader => {
+        const cssIndex = loader.loaders ? loader.loaders.findIndex(it => it.indexOf('css') !== -1) : -1;
+        if (cssIndex === -1) {
+            return loader;
+        }
+
+        loader.loaders[cssIndex] = loader.loaders[cssIndex].replace('css?', 'css?minimize&'); // eslint-disable-line
+        loader.loaders[cssIndex] = loader.loaders[cssIndex].replace(/^css$/, 'css?minimize'); // eslint-disable-line
+        return loader;
+    })
+    .map(loader => {
+        const style = loader.loaders ? loader.loaders.findIndex(it => it.indexOf('style') !== -1) : -1;
+        if (style === -1) {
+            return loader;
+        }
+
+        logger.info('patching:', loader.loaders);
+        loader.loader = ExtractTextPlugin.extract(loader.loaders.slice(1).join('!')); // eslint-disable-line
+        delete loader.loaders; // eslint-disable-line
+        logger.info('patched:', loader);
+        return loader;
+    });
+    // add optimization plugins
+    config.plugins.push(new ExtractTextPlugin('main.css'));
     config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
     config.plugins.push(new webpack.optimize.DedupePlugin());
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
