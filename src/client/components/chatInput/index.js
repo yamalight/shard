@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {Subject} from 'rx';
 import React from 'react';
 import styles from './chatInput.css';
@@ -39,7 +40,7 @@ export default class ChatInput extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((_, key) => ['replyToMessage', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['replyToMessage', 'currentTeam', 'currentChannel'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .do(s => s.replyToMessage && this._text.focus())
@@ -101,10 +102,14 @@ export default class ChatInput extends React.Component {
                                 <i className="fa fa-reply" />
                             </div>
                             <div className={styles.replyPreview}>
-                                <Message layout="plain" {...this.state.replyToMessage} hideActions />
+                                <Message
+                                    layout="plain"
+                                    hideActions
+                                    {..._.omit(this.state.replyToMessage, ['layout', 'showMenu'])}
+                                />
                             </div>
                             <a
-                                className={`is-flex hint--left ${styles.replyButton}`}
+                                className={`force-flex hint--left ${styles.replyButton}`}
                                 data-hint="Cancel reply"
                                 onClick={() => resetReply()}
                             >

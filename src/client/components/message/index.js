@@ -45,53 +45,115 @@ const formatTime = (time) => {
     return t.fromNow();
 };
 
-const Message = (m) => (m.layout === 'short' ? (
-    <article id={`message-${m.id}`} className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}>
-        <p
-            className={styles.markdown}
-            onClick={markdownClick}
-            dangerouslySetInnerHTML={{__html: markdown(m.message)}}
-        />
-    </article>
-) : (
-    <article id={`message-${m.id}`} className="media">
-        <figure className="media-left">
-            <p className="image is-64x64">
-                <img src={`http://www.gravatar.com/avatar/${hash(m.user.email)}`} alt="avatar" />
-            </p>
-        </figure>
-        <div className="media-content">
-            <div className={`content ${styles.content} ${m.isNew ? 'is-new' : ''}`}>
-                <div className={styles.header}>
-                    <strong>{m.user.username} <small>{formatTime(m.time)}</small></strong>
-                    <span className={styles.headerSeparator} />
-                    {m.layout !== 'plain' && (
-                        <div className="navbar-left">
-                            <a className="navbar-item" onClick={() => replyTo(m)}>
-                                <span className="icon is-small">
-                                    <i className="fa fa-reply"></i>
-                                </span>
-                            </a>
-                            <a className="navbar-item">
-                                <span className="icon is-small"><i className="fa fa-heart"></i></span>
-                            </a>
-                        </div>
-                    )}
-                </div>
-                <p
-                    className={styles.markdown}
-                    onClick={markdownClick}
-                    dangerouslySetInnerHTML={{__html: markdown(m.message)}}
-                />
-            </div>
-            {m.layout !== 'plain' && m.moreMessages && m.moreMessages.map(mm => (
-                <Message layout="short" key={mm.id} {...mm} />
-            ))}
-            {m.layout !== 'plain' && m.replies && m.replies.map(reply => (
-                <Message key={reply.id} {...reply} />
-            ))}
-        </div>
-    </article>
-));
+export default class Message extends React.Component {
+    constructor(props) {
+        super(props);
 
-export default Message;
+        this.state = {
+            ...this.props,
+            showMenu: false,
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState(nextProps);
+    }
+
+    createMenu() {
+        const m = this.state;
+
+        if (m.hideActions || !m.showMenu) {
+            return null;
+        }
+
+        return (
+            <div className="control has-addons">
+                <a
+                    className={`button is-small hint--left ${styles.menuButton}`}
+                    onClick={() => replyTo(m)}
+                    data-hint="Reply"
+                >
+                    <span className={`icon is-small ${styles.menuIcon}`}>
+                        <i className="fa fa-reply" />
+                    </span>
+                </a>
+                {/* TODO: uncomment me when more actions are available
+                <a className={`button is-small hint--left ${styles.menuButton}`} data-hint="Show message menu">
+                    <span className={`icon is-small ${styles.menuIcon}`}>
+                        <i className="fa fa-ellipsis-h" />
+                    </span>
+                </a>
+                */}
+            </div>
+        );
+    }
+
+    showMenu(e) {
+        e.preventDefault();
+        this.setState({showMenu: true});
+    }
+    hideMenu(e) {
+        e.preventDefault();
+        this.setState({showMenu: false});
+    }
+
+    render() {
+        const m = this.state;
+
+        if (m.layout === 'short') {
+            return (
+                <article
+                    id={`message-${m.id}`}
+                    className={`media ${styles.short} ${m.isNew ? 'is-new' : ''}`}
+                    onMouseEnter={(e) => this.showMenu(e)}
+                    onMouseLeave={(e) => this.hideMenu(e)}
+                >
+                    <div className="media-content">
+                        <p
+                            className={styles.markdown}
+                            onClick={markdownClick}
+                            dangerouslySetInnerHTML={{__html: markdown(m.message)}}
+                        />
+                    </div>
+                    <div className="media-right">
+                        {this.createMenu(m)}
+                    </div>
+                </article>
+            );
+        }
+
+        return (
+            <article id={`message-${m.id}`} className="media">
+                <figure className="media-left">
+                    <p className="image is-64x64">
+                        <img src={`http://www.gravatar.com/avatar/${hash(m.user.email)}`} alt="avatar" />
+                    </p>
+                </figure>
+                <div className="media-content">
+                    <div
+                        className={`content ${styles.content} ${m.isNew ? 'is-new' : ''}`}
+                        onMouseEnter={(e) => this.showMenu(e)}
+                        onMouseLeave={(e) => this.hideMenu(e)}
+                    >
+                        <div className={styles.header}>
+                            <strong>{m.user.username} <small>{formatTime(m.time)}</small></strong>
+                            <span className="is-spacer" />
+                            {this.createMenu(m)}
+                        </div>
+                        <p
+                            className={styles.markdown}
+                            onClick={markdownClick}
+                            dangerouslySetInnerHTML={{__html: markdown(m.message)}}
+                        />
+                    </div>
+                    {m.layout !== 'plain' && m.moreMessages && m.moreMessages.map(mm => (
+                        <Message layout="short" key={mm.id} {...mm} />
+                    ))}
+                    {m.layout !== 'plain' && m.replies && m.replies.map(reply => (
+                        <Message key={reply.id} {...reply} />
+                    ))}
+                </div>
+            </article>
+        );
+    }
+}

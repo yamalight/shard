@@ -2,10 +2,7 @@
     display: flex;
     margin-bottom: 0.5em !important;
     align-items: center;
-}
-
-.headerSeparator {
-    flex-grow: 1;
+    min-height: 24px;
 }
 
 .header :global(.navbar) {
@@ -24,11 +21,19 @@
 }
 
 .markdown {
-    /*display: flex;*/
 }
 
 .short {
     border-top: 1px solid rgba(211, 214, 219, 0.25) !important;
     display: flex;
-    flex-direction: column;
+    min-height: 35px;
+}
+
+.menuButton {
+    display: flex !important;
+}
+
+.menuIcon {
+    margin-left: 2px !important;
+    margin-right: 2px !important;
 }

@@ -6,6 +6,7 @@
 .replyPreview {
     padding-top: 4px;
     flex-grow: 1;
+    padding-bottom: 8px;
 }
 
 .replyButton {
