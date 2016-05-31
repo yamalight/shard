@@ -40,6 +40,8 @@ import resetReply$, {resetReply} from './chat/resetReply';
 import markRead$, {markRead} from './chat/markRead';
 import resetHistory$, {resetHistory} from './chat/resetHistory';
 import updateMessage$, {updateMessage} from './chat/update';
+import editLastMessage$, {editLastMessage} from './chat/editLastMessage';
+import editSelectedMessage$, {editSelectedMessage} from './chat/editSelectedMessage';
 
 // infobar actions
 import infobar$, {setInfobar} from './infobar/set';
@@ -79,6 +81,8 @@ const streams = [
     markRead$,
     resetHistory$,
     updateMessage$,
+    editLastMessage$,
+    editSelectedMessage$,
     // infobar streams
     infobar$,
 ];
@@ -117,6 +121,8 @@ export {
     markRead,
     resetHistory,
     updateMessage,
+    editLastMessage,
+    editSelectedMessage,
     // infobar
     setInfobar,
 };

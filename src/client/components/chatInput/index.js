@@ -9,7 +9,7 @@ import Message from '../message';
 import Typeahead from '../typeahead';
 
 // store and actions
-import store$, {sendChat, resetReply} from '../../store';
+import store$, {sendChat, resetReply, editLastMessage} from '../../store';
 
 const messageToReplyId = message => {
     if (!message) {
@@ -78,11 +78,19 @@ export default class ChatInput extends React.Component {
     }
 
     handleKeyDown(e) {
-        // handle up-down
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || (e.key === 'Enter' && this._typeahead.state.shouldAppear)) {
-            e.preventDefault();
-            this.typeaheadAction.onNext(e.key);
+        // handle up-down-enter during typeahead
+        if (this._typeahead.state.shouldAppear) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
+                e.preventDefault();
+                this.typeaheadAction.onNext(e.key);
+            }
             return;
+        }
+
+        // handle up during typing
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            editLastMessage();
         }
     }
 

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Textarea from 'react-textarea-autosize';
@@ -11,7 +12,7 @@ import UserInfo from '../user';
 import Dropdown from '../dropdown';
 
 // actions
-import {replyTo, setInfobar, updateMessage} from '../../store';
+import store$, {replyTo, setInfobar, updateMessage} from '../../store';
 
 // click handler
 const markdownClick = (e) => {
@@ -65,8 +66,33 @@ export default class Message extends React.Component {
         }];
     }
 
+    componentWillMount() {
+        this.subs = [
+            // last message edit requests
+            store$
+            .map(s => s.get('editSelectedMessage'))
+            .filter(m => m !== undefined)
+            .filter(message => message.get('id') === this.state.id)
+            .subscribe(() => {
+                this.beginEdit();
+                // reset
+                store$.clear({editSelectedMessage: undefined});
+            }),
+        ];
+    }
+
     componentWillReceiveProps(nextProps) {
         this.setState(nextProps);
+    }
+
+    componentDidUpdate() {
+        if (this._text) {
+            this._text.focus();
+        }
+    }
+
+    componentWillUnmount() {
+        this.subs.map(s => s.dispose());
     }
 
     createMenu() {

@@ -3,13 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Subject} from 'rx';
 import {DOM} from 'rx-dom';
+import moment from 'moment';
 import styles from './chat.css';
 
 // components
 import Message from '../message/';
 
 // store and actions
-import store$, {initChat, closeChat, getChat, getHistory, markRead} from '../../store';
+import store$, {initChat, closeChat, getChat, getHistory, markRead, editSelectedMessage} from '../../store';
 
 // utils
 import {reduceShortMessages, addReplyMessage, focus} from '../../util';
@@ -17,6 +18,8 @@ import {reduceShortMessages, addReplyMessage, focus} from '../../util';
 export default class Chat extends React.Component {
     constructor(props) {
         super(props);
+
+        const authedUser = JSON.parse(localStorage.getItem('user'));
 
         this.unreadSubj = new Subject();
         this.state = {
@@ -28,6 +31,7 @@ export default class Chat extends React.Component {
             history: [],
             allMessages: [],
             chatStatus: undefined,
+            authedUser,
         };
     }
 
@@ -105,6 +109,38 @@ export default class Chat extends React.Component {
                 const allMessages = addReplyMessage(oldMessages, m, cfg);
 
                 this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
+            }),
+
+            // last message edit requests
+            store$
+            .map(s => s.get('editLastMessage'))
+            .filter(edit => edit)
+            .subscribe(() => {
+                // edit last message
+                const {allMessages, authedUser} = this.state;
+                const ownedByUser = it => it.user.id === authedUser.id;
+                // find top index
+                const topIdx = _.findLastIndex(allMessages, ownedByUser);
+                const top = allMessages[topIdx];
+                const res = [top];
+                // check more message
+                const moreIdx = _.findLastIndex(top.moreMessages, ownedByUser);
+                if (moreIdx !== -1) {
+                    const more = top.moreMessages[moreIdx];
+                    res.push(more);
+                }
+                // check replies
+                const replyIdx = _.findLastIndex(top.replies, ownedByUser);
+                if (replyIdx !== -1) {
+                    const reply = top.replies[replyIdx];
+                    res.push(reply);
+                }
+                // sort by time
+                res.sort((a, b) => moment(a.time).isBefore(moment(b.time)));
+                // scroll to it
+                this.setState({scrollToMessage: res[0].id});
+                // set newest to edit
+                editSelectedMessage(res[0]);
             }),
 
             // focus
