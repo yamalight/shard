@@ -42,3 +42,10 @@
     margin-top: 5px;
     display: flex;
 }
+
+.inputArea {
+    min-width: 0;
+    min-height: 0;
+    resize: none;
+    font-size: 14px !important;
+}

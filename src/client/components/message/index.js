@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Textarea from 'react-textarea-autosize';
@@ -172,6 +171,13 @@ export default class Message extends React.Component {
         this.setState({editing: false});
     }
 
+    handleKeyPress(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.saveEdit();
+        }
+    }
+
     renderContent() {
         const m = this.state;
 
@@ -179,10 +185,13 @@ export default class Message extends React.Component {
             return (
                 <div>
                     <Textarea
-                        className="textarea"
+                        className={`textarea ${styles.inputArea}`}
                         defaultValue={m.message}
                         placeholder="Write a message..."
                         ref={(t) => { this._text = t; }}
+                        minRows={1}
+                        maxRows={6}
+                        onKeyPress={e => this.handleKeyPress(e)}
                     />
                     <div className={styles.editButtons}>
                         <button
