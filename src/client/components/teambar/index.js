@@ -26,7 +26,7 @@ export default class Teambar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['teams', 'newTeam', 'currentTeam'].includes(key)))
+            .map(s => s.filter((v, key) => ['teamStatus', 'teams', 'newTeam', 'currentTeam'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -60,6 +60,14 @@ export default class Teambar extends React.Component {
     render() {
         return (
             <div className={styles.teambar}>
+                {this.state.teamStatus === 'loading' && (
+                    <a className={styles.iconButton}>
+                        <span className="icon is-large icon-loading">
+                            <i className="fa fa-circle"></i>
+                        </span>
+                    </a>
+                )}
+
                 {/*
                 TODO: Uncomment later when DM functionality is implemented
                 <a href="#" className={styles.iconButton}>

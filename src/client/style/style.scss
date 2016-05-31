@@ -87,3 +87,17 @@ html, body, #container {
 .force-flex {
     display: flex !important;
 }
+
+// loader for every element
+.icon-loading:after {
+    border-color: transparent transparent rgba(17,17,17,0.5) rgba(17,17,17,0.5) !important;
+    border: 2px solid #d3d6db;
+    border-radius: 290486px;
+    content: "";
+    display: block;
+    height: 16px;
+    width: 16px;
+    margin-top: -32px;
+    margin-left: 16px;
+    animation: spin-around 500ms infinite linear;
+}
