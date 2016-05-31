@@ -258,7 +258,7 @@ export default class Chat extends React.Component {
                     this.state.allMessages.length === 0 && 'No messages yet!'}
 
                 {this.state.allMessages && this.state.allMessages.map(m => (
-                    <Message key={m.id} {...m} />
+                    <Message key={m.id} team={this.state.currentTeam.id} {...m} />
                 ))}
             </div>
         );

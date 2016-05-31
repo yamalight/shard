@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import Textarea from 'react-textarea-autosize';
 import {browserHistory} from 'react-router';
 import {hash} from 'spark-md5';
 import {markdown} from '../../util';
@@ -7,9 +8,10 @@ import styles from './message.css';
 
 // components
 import UserInfo from '../user';
+import Dropdown from '../dropdown';
 
 // actions
-import {replyTo, setInfobar} from '../../store';
+import {replyTo, setInfobar, updateMessage} from '../../store';
 
 // click handler
 const markdownClick = (e) => {
@@ -49,10 +51,18 @@ export default class Message extends React.Component {
     constructor(props) {
         super(props);
 
+        const authedUser = JSON.parse(localStorage.getItem('user'));
+
         this.state = {
             ...this.props,
             showMenu: false,
+            authedUser,
         };
+
+        this.menuItems = [{
+            title: 'Edit message',
+            action: () => this.beginEdit(),
+        }];
     }
 
     componentWillReceiveProps(nextProps) {
@@ -77,13 +87,26 @@ export default class Message extends React.Component {
                         <i className="fa fa-reply" />
                     </span>
                 </a>
-                {/* TODO: uncomment me when more actions are available
-                <a className={`button is-small hint--left ${styles.menuButton}`} data-hint="Show message menu">
-                    <span className={`icon is-small ${styles.menuIcon}`}>
-                        <i className="fa fa-ellipsis-h" />
-                    </span>
-                </a>
-                */}
+                {m.user.id === m.authedUser.id && (
+                    <a
+                        className={`button is-small hint--left ${styles.menuButton}`}
+                        data-hint="Show message menu"
+                        onClick={(e) => this.openDropdown(e)}
+                    >
+                        <span className={`icon is-small ${styles.menuIcon}`}>
+                            <i className="fa fa-ellipsis-h" />
+                        </span>
+                    </a>
+                )}
+                {m.showDropdown && (
+                    <Dropdown
+                        style={m.menuStyle}
+                        title="Message"
+                        items={this.menuItems}
+                        onItem={it => this.handleMenuItem(it, m)}
+                        onHide={() => this.closeDropdown()}
+                    />
+                )}
             </div>
         );
     }
@@ -94,7 +117,75 @@ export default class Message extends React.Component {
     }
     hideMenu(e) {
         e.preventDefault();
-        this.setState({showMenu: false});
+        this.setState({showMenu: false, showDropdown: false});
+    }
+
+    openDropdown(e) {
+        this.setState({showDropdown: true, menuStyle: {top: e.clientY, left: e.clientX, right: 'auto'}});
+    }
+    closeDropdown() {
+        this.setState({showDropdown: false});
+    }
+    handleMenuItem(it) {
+        it.action();
+    }
+
+    beginEdit() {
+        this.setState({editing: true});
+    }
+    closeEdit() {
+        this.setState({editing: false});
+    }
+    saveEdit() {
+        const newMessage = this._text.value;
+        const m = {
+            ...this.state,
+            message: newMessage,
+        };
+        updateMessage(m);
+        this.setState({editing: false});
+    }
+
+    renderContent() {
+        const m = this.state;
+
+        if (m.editing) {
+            return (
+                <div>
+                    <Textarea
+                        className="textarea"
+                        defaultValue={m.message}
+                        placeholder="Write a message..."
+                        ref={(t) => { this._text = t; }}
+                    />
+                    <div className={styles.editButtons}>
+                        <button
+                            className="button"
+                            disabled={m.channelStatus === 'updating'}
+                            onClick={() => this.closeEdit()}
+                        >
+                            Cancel
+                        </button>
+                        <div className="is-spacer" />
+                        <button
+                            className={`button is-success ${m.channelStatus === 'updating' ? 'is-loading' : ''}`}
+                            disabled={m.channelStatus === 'updating'}
+                            onClick={() => this.saveEdit()}
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <p
+                className={styles.markdown}
+                onClick={markdownClick}
+                dangerouslySetInnerHTML={{__html: markdown(m.message)}}
+            />
+        );
     }
 
     render() {
@@ -140,11 +231,8 @@ export default class Message extends React.Component {
                             <span className="is-spacer" />
                             {this.createMenu(m)}
                         </div>
-                        <p
-                            className={styles.markdown}
-                            onClick={markdownClick}
-                            dangerouslySetInnerHTML={{__html: markdown(m.message)}}
-                        />
+
+                        {this.renderContent()}
                     </div>
                     {m.layout !== 'plain' && m.moreMessages && m.moreMessages.map(mm => (
                         <Message layout="short" key={mm.id} {...mm} />

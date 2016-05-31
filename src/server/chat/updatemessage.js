@@ -8,10 +8,10 @@ import {prepareMessageProcessors} from './processMessage';
 export default (app) => {
     const processMessage = prepareMessageProcessors(app);
 
-    app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
-        const {team, channel} = req.params;
-        const message = _.omit(req.body, ['token']);
-        logger.info('new msg:', {message, from: req.userInfo.username, channel});
+    app.post('/api/chat/:team/:channel/:id', checkAuth, asyncRequest(async (req, res) => {
+        const {id, team, channel} = req.params;
+        const message = _.omit(req.body, ['id', 'token']);
+        logger.info('update msg:', {message, from: req.userInfo.username, channel});
         // validate message
         const {valid, status, error} = validateMessage(message);
         if (!valid) {
@@ -28,14 +28,11 @@ export default (app) => {
         }
 
         // save
-        const m = new Message({
+        const m = await Message.get(id).update({
             ...finalMessage,
             channel,
-            readBy: [req.userInfo.id],
         });
-        m.user = req.userInfo;
-        await m.saveAll({user: true});
-        logger.info('saved new message:', m);
+        logger.info('saved updated message:', m);
         res.sendStatus(201);
     }));
 };

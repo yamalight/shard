@@ -1,17 +1,18 @@
 import _ from 'lodash';
 import checkAuth from '../auth/checkAuth';
 import {logger, asyncRequest} from '../util';
-import {Message} from '../db';
+import {Reply} from '../db';
 import {validateMessage} from './validateMessage';
 import {prepareMessageProcessors} from './processMessage';
 
 export default (app) => {
     const processMessage = prepareMessageProcessors(app);
 
-    app.post('/api/chat/:team/:channel', checkAuth, asyncRequest(async (req, res) => {
-        const {team, channel} = req.params;
+    app.post('/api/chat/:team/:channel/reply/:message/:id', checkAuth, asyncRequest(async (req, res) => {
+        const {id, team, channel} = req.params;
+        const replyTo = req.params.message;
         const message = _.omit(req.body, ['token']);
-        logger.info('new msg:', {message, from: req.userInfo.username, channel});
+        logger.info('update reply: ', {replyTo, message, from: req.userInfo.username, channel});
         // validate message
         const {valid, status, error} = validateMessage(message);
         if (!valid) {
@@ -28,14 +29,12 @@ export default (app) => {
         }
 
         // save
-        const m = new Message({
+        const m = await Reply.get(id).update({
             ...finalMessage,
             channel,
-            readBy: [req.userInfo.id],
+            replyTo,
         });
-        m.user = req.userInfo;
-        await m.saveAll({user: true});
-        logger.info('saved new message:', m);
+        logger.info('saved updated reply:', m);
         res.sendStatus(201);
     }));
 };

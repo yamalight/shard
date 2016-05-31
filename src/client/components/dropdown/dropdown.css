@@ -3,3 +3,12 @@
     right: 0;
     z-index: 100;
 }
+
+.menu ul {
+    list-style: none;
+    margin: inherit;
+}
+
+.menu a {
+    border-bottom: inherit;
+}
