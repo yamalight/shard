@@ -47,7 +47,7 @@ export const reduceShortMessages = (result = [], message, notifyConfig = {}) => 
     const lastMessage = result[lastIndex];
     if (lastMessage.user.id === message.user.id &&
         (!lastMessage.replies || !lastMessage.replies.length) &&
-        !message.replies
+        !(message.replies && message.replies.length > 0)
     ) {
         if (!lastMessage.moreMessages) {
             lastMessage.moreMessages = [];
