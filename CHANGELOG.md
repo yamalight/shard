@@ -1,4 +1,14 @@
 
+0.7.0 / 2016-05-31
+==================
+
+  * allow using arrow up for editing last message
+  * allow editing messages and replies
+  * show loader during team load
+  * correctly handle replies to more messages
+  * do not render chat parts if no channel is selected
+  * extract styles into main.css for production
+
 0.6.0 / 2016-05-30
 ==================
 
