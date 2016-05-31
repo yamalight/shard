@@ -16,7 +16,7 @@ export default class Infobar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.get('infobar'))
+            .map(s => s.filter((v, key) => ['infobar', 'currentChannel'].includes(key)))
             .filter(s => s !== undefined)
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
@@ -32,11 +32,15 @@ export default class Infobar extends React.Component {
     }
 
     render() {
+        if (!this.state.currentChannel || !this.state.currentChannel.id) {
+            return <span />;
+        }
+
         return (
             <div className={`card is-flex ${styles.infobar}`}>
                 <header className={`card-header ${styles.header}`}>
                     <p className="card-header-title">
-                        {this.state.title}
+                        {this.state.infobar.title}
                     </p>
                     {/* <a className="card-header-icon" onClick={() => this.hide()}>
                         <i className="fa fa-times"></i>
@@ -44,7 +48,7 @@ export default class Infobar extends React.Component {
                 </header>
                 <div className={`card-content ${styles.cardContent}`}>
                     <div className={`content ${styles.content}`}>
-                        {this.state.content}
+                        {this.state.infobar.content}
                     </div>
                 </div>
             </div>

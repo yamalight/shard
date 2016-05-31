@@ -48,7 +48,9 @@ export default class ChatInput extends React.Component {
         ];
     }
     componentDidMount() {
-        this._text.focus();
+        if (this._text) {
+            this._text.focus();
+        }
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
@@ -92,6 +94,10 @@ export default class ChatInput extends React.Component {
     }
 
     render() {
+        if (!this.state.currentChannel || !this.state.currentChannel.id) {
+            return <span />;
+        }
+
         // TODO: removing top div messes up autosuggest sizing, why? D:
         return (
             <div>

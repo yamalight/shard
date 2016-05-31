@@ -254,6 +254,10 @@ export default class Chat extends React.Component {
     }
 
     render() {
+        if (!this.state.currentChannel || !this.state.currentChannel.id) {
+            return <span />;
+        }
+
         return (
             <div ref={c => { this.chatContainer = c; }} className={styles.section}>
                 {this.state.chatStatus === 'loading' && 'Loading...'}

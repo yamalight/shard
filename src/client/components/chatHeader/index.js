@@ -89,11 +89,13 @@ export default class Chat extends React.Component {
 
                 <div className={styles.navSpacer} />
 
-                <div className={`navbar-item is-flex ${styles.navMenu}`}>
-                    <a className="card-header-icon" onClick={() => this.showMenu()}>
-                        <i className="fa fa-angle-down" />
-                    </a>
-                </div>
+                {this.state.currentChannel.id && (
+                    <div className={`navbar-item is-flex ${styles.navMenu}`}>
+                        <a className="card-header-icon" onClick={() => this.showMenu()}>
+                            <i className="fa fa-angle-down" />
+                        </a>
+                    </div>
+                )}
 
                 {this.state.showMenu && (
                     <Dropdown
