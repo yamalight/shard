@@ -4,7 +4,7 @@ export {del} from './rxdelete';
 export {sign} from './sign';
 export {socket} from './rxsocket';
 export {markdown} from './marked';
-export {reduceShortMessages} from './reduceShortMessages';
+export {reduceShortMessages, addReplyMessage} from './reduceShortMessages';
 export {requireAuth} from './requireAuth';
 export {focus} from './focus';
 export {logout} from './logout';

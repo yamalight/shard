@@ -12,7 +12,7 @@ import Message from '../message/';
 import store$, {initChat, closeChat, getChat, getHistory, markRead} from '../../store';
 
 // utils
-import {reduceShortMessages, focus} from '../../util';
+import {reduceShortMessages, addReplyMessage, focus} from '../../util';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -102,16 +102,7 @@ export default class Chat extends React.Component {
                 }
 
                 // if it's a reply, find parent and add it there
-                const allMessages = oldMessages.map(msg => {
-                    if (msg.id !== m.replyTo) {
-                        return msg;
-                    }
-
-                    return {
-                        ...msg,
-                        replies: reduceShortMessages(msg.replies, m, cfg),
-                    };
-                });
+                const allMessages = addReplyMessage(oldMessages, m, cfg);
 
                 this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
             }),

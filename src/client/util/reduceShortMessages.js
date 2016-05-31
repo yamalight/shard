@@ -9,6 +9,7 @@ const notify = ({notifyAboutNew = false, team, channel, message} = {}) => {
     }
 };
 
+// upserts message into old messages array
 export const reduceShortMessages = (result = [], message, notifyConfig = {}) => {
     const lastIndex = result.length - 1;
     if (lastIndex < 0) {
@@ -44,7 +45,10 @@ export const reduceShortMessages = (result = [], message, notifyConfig = {}) => 
 
     // check if old message is from same user
     const lastMessage = result[lastIndex];
-    if (lastMessage.user.id === message.user.id && (!lastMessage.replies || !lastMessage.replies.length)) {
+    if (lastMessage.user.id === message.user.id &&
+        (!lastMessage.replies || !lastMessage.replies.length) &&
+        !message.replies
+    ) {
         if (!lastMessage.moreMessages) {
             lastMessage.moreMessages = [];
         }
@@ -53,6 +57,49 @@ export const reduceShortMessages = (result = [], message, notifyConfig = {}) => 
     } else {
         result.push(message);
         notify({...notifyConfig, message});
+    }
+
+    return result;
+};
+
+export const addReplyMessage = (result = [], message, notifyConfig = {}) => {
+    if (result.length === 0) {
+        return result;
+    }
+
+    // try to find same message on top level
+    let oldIndex = result.findIndex(msg => msg.id === message.replyTo);
+    if (oldIndex !== -1) {
+        result[oldIndex].replies = reduceShortMessages( // eslint-disable-line
+            result[oldIndex].replies,
+            message,
+            notifyConfig
+        );
+        return result;
+    }
+
+    // try to find same message in more messages
+    let nestedIndex = -1;
+    oldIndex = result.findIndex(el => {
+        if (!el.moreMessages) {
+            return false;
+        }
+        nestedIndex = el.moreMessages.findIndex(msg => msg.id === message.replyTo);
+        return nestedIndex !== -1;
+    });
+    if (oldIndex !== -1 && nestedIndex !== -1) {
+        const topMsg = result[oldIndex];
+        const oldMsg = result[oldIndex].moreMessages[nestedIndex];
+        oldMsg.replies = reduceShortMessages( // eslint-disable-line
+            result[oldIndex].moreMessages[nestedIndex].replies,
+            message,
+            notifyConfig
+        );
+        // remove from more
+        result[oldIndex].moreMessages.splice(nestedIndex, 1);
+        // replace in top level
+        result.splice(oldIndex, 1, topMsg, oldMsg);
+        return result;
     }
 
     return result;
