@@ -4,8 +4,9 @@ import checkAuth from '../auth/checkAuth';
 
 export default (app) => {
     app.post('/api/channels/new', checkAuth, asyncRequest(async (req, res) => {
-        const {name, description, team, parent} = req.body;
-        logger.info('saving new channel:', {name, description, team, parent}, 'and owner:', req.userInfo.username);
+        const {name, description, team, parent, isPrivate} = req.body;
+        logger.info('saving new channel:', {name, description, team, parent, isPrivate},
+            'and owner:', req.userInfo.username);
         // do not create channel with empty name
         if (!name || !name.length) {
             res.status(400).send({error: 'No channel name given!'});
@@ -46,6 +47,7 @@ export default (app) => {
             name,
             description,
             team,
+            isPrivate,
             users: [{
                 id: req.userInfo.id,
                 access: 'owner',

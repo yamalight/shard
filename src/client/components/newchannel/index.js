@@ -63,7 +63,8 @@ export default class NewChannel extends React.Component {
         const description = this.descInput.value;
         const team = this.state.currentTeam.id;
         const parent = this.state.parentChannel;
-        createChannel({name, description, team, parent});
+        const isPrivate = this._private.checked;
+        createChannel({name, description, team, parent, isPrivate});
     }
     close(refetch = false) {
         this.resetError();
@@ -125,6 +126,16 @@ export default class NewChannel extends React.Component {
                                     ))}
                                 </select>
                             </span>
+                        </p>
+                        <p className="control">
+                            <label className="checkbox">
+                                <input
+                                    className={styles.check}
+                                    type="checkbox"
+                                    ref={p => { this._private = p; }}
+                                />
+                                Private channel
+                            </label>
                         </p>
                     </div>
                 </div>
