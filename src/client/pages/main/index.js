@@ -11,6 +11,7 @@ import ChatHeader from '../../components/chatHeader';
 import Chat from '../../components/chat';
 import ChatInput from '../../components/chatInput';
 import Infobar from '../../components/infobar';
+import CommandPalette from '../../components/commandpalette';
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -96,6 +97,8 @@ export default class Main extends React.Component {
                         <Infobar />
                     </Dock>
                 )*/}
+                {/* OVERLAY: comman palette */}
+                <CommandPalette />
             </div>
         );
     }

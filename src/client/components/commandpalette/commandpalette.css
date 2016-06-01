@@ -1,0 +1,14 @@
+.smallBox {
+    padding: 10px;
+    position: fixed;
+    width: 50%;
+    top: 40%;
+}
+
+.input {
+    margin-bottom: 0 !important;
+}
+
+.active {
+    background-color: #E6E6E6;
+}
