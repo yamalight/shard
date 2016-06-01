@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './newteam.css';
 import {nameRegex} from '../newchannel';
 import store$, {createTeam} from '../../store';
 
@@ -30,7 +31,8 @@ export default class NewTeam extends React.Component {
     }
 
     create() {
-        const name = this.input.value;
+        const name = this._input.value;
+        const isPrivate = this._private.checked;
 
         // do not create empty name teams
         if (!name || !name.length) {
@@ -43,7 +45,7 @@ export default class NewTeam extends React.Component {
             return;
         }
 
-        createTeam({name});
+        createTeam({name, isPrivate});
     }
     close(e, refetch = false) {
         this.resetError();
@@ -85,12 +87,23 @@ export default class NewTeam extends React.Component {
                                 className={`input is-medium ${this.state.error && 'is-danger'}`}
                                 type="text"
                                 placeholder="Enter new team name.."
-                                ref={t => { this.input = t; }}
+                                ref={t => { this._input = t; }}
                                 onKeyPress={e => this.handleKey(e)}
                                 onKeyUp={e => this.validateName(e)}
                             />
                             {this.state.error && <i className="fa fa-warning" />}
                             {this.state.error && <span className="help is-danger">{this.state.error}</span>}
+                        </p>
+                        <p className="control">
+                            <label className="checkbox">
+                                <input
+                                    className={styles.check}
+                                    type="checkbox"
+                                    ref={p => { this._private = p; }}
+                                    defaultChecked
+                                />
+                                Private team
+                            </label>
                         </p>
                     </div>
                 </div>
