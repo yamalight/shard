@@ -1,4 +1,4 @@
-import {Channel} from '../db';
+import {Channel, r} from '../db';
 import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
@@ -16,8 +16,11 @@ export default (app) => {
             })
             .filter({team})
             .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)))
+            .merge(ch => ({
+                team: r.table('Team').get(ch('team')),
+            }))
             .orderBy('name')
-            .run();
+            .execute();
         res.status(200).json(channels);
     }));
 };

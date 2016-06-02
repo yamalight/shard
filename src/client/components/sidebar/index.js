@@ -1,7 +1,5 @@
-import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
-import {browserHistory} from 'react-router';
 import styles from './sidebar.css';
 
 // components
@@ -83,9 +81,6 @@ export default class Sidebar extends React.Component {
 
     setChannel(channel) {
         setChannel(channel);
-        const team = _.camelCase(this.state.currentTeam.name);
-        const ch = _.camelCase(channel.name);
-        browserHistory.push(`/channels/${team}/${ch}`);
         this.setState({joinChannel: undefined});
     }
 
