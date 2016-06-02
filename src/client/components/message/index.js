@@ -218,6 +218,7 @@ export default class Message extends React.Component {
             <p
                 className={styles.markdown}
                 onClick={markdownClick}
+                onDoubleClick={() => m.user.id === m.authedUser.id && this.beginEdit()}
                 dangerouslySetInnerHTML={{__html: markdown(m.message)}}
             />
         );
