@@ -7,9 +7,10 @@ import styles from './teambar.css';
 // components
 import Modal from '../modal';
 import NewTeam from '../newteam';
+import JoinTeam from '../jointeam';
 
 // store and actions
-import store$, {getTeams, setTeam, resetNewTeam} from '../../store';
+import store$, {getTeams, getPublicTeams, setTeam, resetNewTeam} from '../../store';
 
 export default class Teambar extends React.Component {
     constructor(props) {
@@ -17,6 +18,7 @@ export default class Teambar extends React.Component {
 
         this.state = {
             teams: [],
+            showJoinTeam: false,
             showCreateTeam: false,
         };
 
@@ -47,6 +49,20 @@ export default class Teambar extends React.Component {
         this.setState({showCreateTeam: false});
         // reset new team
         resetNewTeam();
+        // refetch teams if needed
+        if (refetch) {
+            getTeams();
+        }
+    }
+
+    showJoinTeam() {
+        getPublicTeams();
+        this.setState({showJoinTeam: true});
+    }
+    closeJoinTeam(refetch) {
+        // hide modal
+        this.setState({showJoinTeam: false});
+
         // refetch teams if needed
         if (refetch) {
             getTeams();
@@ -92,6 +108,9 @@ export default class Teambar extends React.Component {
                         </span>
                     </a>
                 ))}
+
+                <div className={styles.separatorMini} />
+
                 {/* Team create button */}
                 <a
                     className={`${styles.iconButton} ${styles.iconButtonFaded}`}
@@ -99,6 +118,18 @@ export default class Teambar extends React.Component {
                 >
                     <span className="icon is-large hint--right hint--info" data-hint="Create new team">
                         <i className="fa fa-plus-circle"></i>
+                    </span>
+                </a>
+
+                <div className={styles.separatorMini} />
+
+                {/* Join a team button */}
+                <a
+                    className={`${styles.iconButton} ${styles.iconButtonFaded}`}
+                    onClick={() => this.showJoinTeam()}
+                >
+                    <span className="icon is-large hint--right hint--info" data-hint="Join a team">
+                        <i className="fa fa-check-circle"></i>
                     </span>
                 </a>
 
@@ -116,6 +147,13 @@ export default class Teambar extends React.Component {
                 <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened={this.state.showCreateTeam}>
                     <Modal closeAction={() => this.closeCreateTeam()}>
                         <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for joining team */}
+                <Portal closeOnEsc onClose={() => this.closeJoinTeam()} isOpened={this.state.showJoinTeam}>
+                    <Modal closeAction={() => this.closeJoinTeam()}>
+                        <JoinTeam close={refetch => this.closeJoinTeam(refetch)} />
                     </Modal>
                 </Portal>
             </div>

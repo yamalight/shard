@@ -42,6 +42,15 @@
     background: #2e3136;
 }
 
+.separatorMini {
+    display: flex;
+    width: 50%;
+    height: 2px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: #2e3136;
+}
+
 .spacer {
     flex-grow: 1;
 }

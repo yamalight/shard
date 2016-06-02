@@ -18,6 +18,7 @@ import setTeam$, {setTeam} from './team/set';
 import inviteUser$, {inviteUser} from './team/invite';
 import joinTeam$, {joinTeam} from './team/join';
 import resetNewTeam$, {resetNewTeam} from './team/resetNew';
+import getPublicTeams$, {getPublicTeams} from './team/getPublic';
 
 // channel actions
 import channelStatus from './channel/status';
@@ -64,6 +65,7 @@ const streams = [
     inviteUser$,
     joinTeam$,
     resetNewTeam$,
+    getPublicTeams$,
     // channel streams
     channelStatus.$,
     getChannels$,
@@ -106,6 +108,7 @@ export {
     inviteUser,
     joinTeam,
     resetNewTeam,
+    getPublicTeams,
     // channel
     getChannels,
     getPublicChannels,

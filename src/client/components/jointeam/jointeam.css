@@ -1,0 +1,25 @@
+.teamHeader {
+    align-items: center;
+}
+
+.teamHeader :global(.icon) {
+    margin-right: 5px;
+}
+
+.team {
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.team:hover {
+    background: rgba(230, 230, 230, 0.3);
+}
+
+.description h1,
+.description h2,
+.description h3,
+.description h4,
+.description h5,
+.description h6 {
+    color: rgba(0,0,0,.44);
+}
