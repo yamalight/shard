@@ -7,6 +7,7 @@ import Textarea from 'react-textarea-autosize';
 // components
 import Message from '../message';
 import Typeahead from '../typeahead';
+import {handleCommandPaletteEvent} from '../commandpalette';
 
 // store and actions
 import store$, {sendChat, resetReply, editLastMessage} from '../../store';
@@ -78,6 +79,11 @@ export default class ChatInput extends React.Component {
     }
 
     handleKeyDown(e) {
+        // catch command palette event
+        if (handleCommandPaletteEvent(e)) {
+            return;
+        }
+
         // handle up-down-enter during typeahead
         if (this._typeahead.state.shouldAppear) {
             if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {

@@ -13,6 +13,16 @@ import store$ from '../../store';
 // utils
 import {suggestTypeahead} from './suggest';
 
+export const handleCommandPaletteEvent = (e) => {
+    if (e.keyCode === 75 && (e.ctrlKey || e.metaKey)) { // ctrl|meta + K
+        e.preventDefault();
+        Mousetrap.trigger('ctrl+k');
+        return true;
+    }
+
+    return false;
+};
+
 export default class ChatInput extends React.Component {
     constructor(props) {
         super(props);
@@ -20,7 +30,7 @@ export default class ChatInput extends React.Component {
         // bind keys
         Mousetrap.bind(['command+k', 'ctrl+k'], () => {
             this.setState({opened: true});
-            this._text.focus();
+            setTimeout(() => this._text.focus(), 10);
         });
 
         this.typeaheadInput = new Subject();
@@ -36,7 +46,12 @@ export default class ChatInput extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => [
+                'currentTeam',
+                'currentChannel',
+                'teams',
+                'channels',
+            ].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -56,6 +71,7 @@ export default class ChatInput extends React.Component {
     }
 
     close() {
+        this.typeahead('');
         this.setState({opened: false});
     }
 
@@ -83,7 +99,11 @@ export default class ChatInput extends React.Component {
     }
 
     action(it) {
-        it.action({input: this._text});
+        const ctx = {
+            input: this._text,
+            close: () => this.close(),
+        };
+        it.action(ctx);
     }
 
     handleKeyDown(e) {
@@ -122,7 +142,7 @@ export default class ChatInput extends React.Component {
             return;
         }
 
-        const typeahead = suggestTypeahead(command);
+        const typeahead = suggestTypeahead(command, this.state);
         this.setState({typeahead, selectedIndex: 0});
     }
 
