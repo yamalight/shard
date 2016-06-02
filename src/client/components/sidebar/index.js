@@ -7,9 +7,10 @@ import Modal from '../modal';
 import NewChannel from '../newchannel';
 import Invite from '../invite';
 import Userbar from '../userbar';
+import JoinChannel from '../joinchannel';
 
 // store and actions
-import store$, {getChannels, setChannel, resetNewChannel} from '../../store';
+import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel} from '../../store';
 
 export default class Sidebar extends React.Component {
     constructor(props) {
@@ -19,6 +20,7 @@ export default class Sidebar extends React.Component {
             currentTeam: {},
             channels: [],
             showCreateChannel: false,
+            showJoinChannel: false,
             showInvite: false,
             joinChannel: undefined,
         };
@@ -95,6 +97,27 @@ export default class Sidebar extends React.Component {
         }
     }
 
+    showJoinChannel() {
+        getPublicChannels({team: this.state.currentTeam.id});
+        this.setState({showJoinChannel: true});
+    }
+
+    closeJoinChannel(ch) {
+        // refetch channels if needed
+        if (ch) {
+            // hide modal and say we want to join new channel
+            this.setState({showJoinChannel: false});
+            // set channel
+            this.setChannel(ch);
+            // get channels
+            getChannels({team: this.state.currentTeam.id, refetch: true});
+            return;
+        }
+
+        // hide modal
+        this.setState({showJoinChannel: false});
+    }
+
     isCurrent(channel) {
         return this.state.currentChannel && this.state.currentChannel.id === channel.id;
     }
@@ -128,13 +151,20 @@ export default class Sidebar extends React.Component {
 
                 {this.state.currentTeam.name && (
                     <div className={`menu dark-menu ${styles.channels}`}>
-                        <p className="menu-label">
+                        <p className={`menu-label ${styles.channelsHeader}`}>
                             <a
-                                className={styles.channelsHeader}
-                                onClick={() => this.setState({showCreateChannel: true})}
+                                className={`hint--bottom ${styles.channelsLabel}`}
+                                data-hint="Join existing channel"
+                                onClick={() => this.showJoinChannel()}
                             >
                                 Channels
-                                <span className={styles.separator} />
+                            </a>
+                            <span className={styles.separator} />
+                            <a
+                                className="hint--bottom"
+                                data-hint="Create new channel"
+                                onClick={() => this.setState({showCreateChannel: true})}
+                            >
                                 <span className="icon is-small">
                                     <i className="fa fa-plus" />
                                 </span>
@@ -190,6 +220,13 @@ export default class Sidebar extends React.Component {
                 <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened={this.state.showCreateChannel}>
                     <Modal closeAction={() => this.closeCreateChannel()}>
                         <NewChannel close={(refetch) => this.closeCreateChannel(refetch)} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for joining channel */}
+                <Portal closeOnEsc onClose={() => this.closeJoinChannel()} isOpened={this.state.showJoinChannel}>
+                    <Modal closeAction={() => this.closeJoinChannel()}>
+                        <JoinChannel close={(refetch) => this.closeJoinChannel(refetch)} />
                     </Modal>
                 </Portal>
 

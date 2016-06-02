@@ -23,11 +23,13 @@ import resetNewTeam$, {resetNewTeam} from './team/resetNew';
 import channelStatus from './channel/status';
 import createChannel$, {createChannel} from './channel/create';
 import getChannels$, {getChannels} from './channel/get';
+import getPublicChannels$, {getPublicChannels} from './channel/getPublic';
 import setChannel$, {setChannel} from './channel/set';
 import resetNewChannel$, {resetNewChannel} from './channel/resetNew';
 import resetChannels$, {resetChannels} from './channel/resetChannels';
 import updateChannel$, {updateChannel} from './channel/update';
 import deleteChannel$, {deleteChannel} from './channel/delete';
+import joinChannel$, {joinChannel} from './channel/join';
 
 // chat actions
 import chatStatus from './chat/status';
@@ -65,12 +67,14 @@ const streams = [
     // channel streams
     channelStatus.$,
     getChannels$,
+    getPublicChannels$,
     createChannel$,
     setChannel$,
     resetNewChannel$,
     resetChannels$,
     updateChannel$,
     deleteChannel$,
+    joinChannel$,
     // chat streams
     chatStatus.$,
     getChat$,
@@ -104,12 +108,14 @@ export {
     resetNewTeam,
     // channel
     getChannels,
+    getPublicChannels,
     createChannel,
     setChannel,
     resetNewChannel,
     resetChannels,
     updateChannel,
     deleteChannel,
+    joinChannel,
     // chat
     initChat,
     closeChat,
