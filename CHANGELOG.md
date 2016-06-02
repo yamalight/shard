@@ -1,4 +1,12 @@
 
+0.8.0 / 2016-06-02
+==================
+
+  * allow joining public teams and channels
+  * allow using commandpalette to switch channels and teams
+  * allow creating public/private teams and channels
+  * correctly size message edit textarea, allow committing with enter
+
 0.7.0 / 2016-05-31
 ==================
 
