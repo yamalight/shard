@@ -5,6 +5,8 @@ export const combinator = (state, data) => {
         // console.log('*****************************************************')
         // console.log('=================== got updates ===================');
         // console.log(JSON.stringify(updates.toJS(), null, 2));
+        // console.log('=================== old state ===================');
+        // console.log(JSON.stringify(state.toJS(), null, 2));
 
         const mergedState = state.merge(data).delete('updates');
         const newState = updates
@@ -20,10 +22,13 @@ export const combinator = (state, data) => {
                     }
                     // try to find in teams
                     const teamsKey = s.get('teams').findKey(v => v.get('id') === team.get('id'));
-                    if (teamsKey !== -1) {
+                    // if found - update
+                    if (teamsKey) {
                         ns = ns.setIn(['teams', teamsKey],
                             ns.get('teams').find(v => v.get('id') === team.get('id')).merge(team)
                         );
+                    } else { // if not - push new team
+                        ns = ns.set('teams', ns.get('teams').push(team));
                     }
                     return ns;
                 }
