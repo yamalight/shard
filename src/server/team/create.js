@@ -14,7 +14,7 @@ export default (app) => {
         // do not create non alpha-numeric channels
         const nameRegex = /^[a-z0-9\s-]+$/i;
         if (!nameRegex.test(name)) {
-            res.status(400).send({error: 'Channel name must be alpha-numeric with spaces and dashes!'});
+            res.status(400).send({error: 'Team name must be alpha-numeric with spaces and dashes!'});
             return;
         }
         // do not create duplicate channels under same team & parent

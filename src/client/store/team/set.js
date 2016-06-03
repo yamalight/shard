@@ -1,3 +1,5 @@
+import _ from 'lodash';
+import {browserHistory} from 'react-router';
 import {createAction} from 'rxstate';
 import {resetChannels} from '../channel/resetChannels';
 import {resetHistory} from '../chat/resetHistory';
@@ -9,6 +11,7 @@ export const setTeam = createAction();
 const team$ = setTeam.$
     .throttle(300)
     .distinctUntilChanged()
+    .do(team => browserHistory.push(`/channels/${_.camelCase(team.name)}`))
     .do(() => resetChannels())
     .do(() => resetHistory())
     .map(currentTeam => ({currentTeam}));

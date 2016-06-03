@@ -41,7 +41,6 @@ export default class Teambar extends React.Component {
 
     setTeam(team) {
         setTeam(team);
-        browserHistory.push(`/channels/${_.camelCase(team.name)}`);
     }
 
     closeCreateTeam(refetch = false) {

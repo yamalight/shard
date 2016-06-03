@@ -27,11 +27,8 @@ export const updateChannel = async ({id, name, description, team, parent = 'none
     // init channel data
     const data = {
         parent,
+        name,
     };
-    // only update if value is given
-    if (name) {
-        data.name = name;
-    }
     if (description) {
         data.description = description;
     }

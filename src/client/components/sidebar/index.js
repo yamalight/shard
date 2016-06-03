@@ -8,9 +8,11 @@ import NewChannel from '../newchannel';
 import Invite from '../invite';
 import Userbar from '../userbar';
 import JoinChannel from '../joinchannel';
+import Dropdown from '../dropdown';
+import EditTeam from '../editteam';
 
 // store and actions
-import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel} from '../../store';
+import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel, getTeams, setTeam} from '../../store';
 
 export default class Sidebar extends React.Component {
     constructor(props) {
@@ -22,8 +24,17 @@ export default class Sidebar extends React.Component {
             showCreateChannel: false,
             showJoinChannel: false,
             showInvite: false,
+            showEdit: false,
             joinChannel: undefined,
         };
+
+        this.menuItems = [{
+            title: 'Invite people',
+            action: () => this.setState({showInvite: true}),
+        }, {
+            title: 'Edit team',
+            action: () => this.setState({showEdit: true}),
+        }];
     }
 
     componentWillMount() {
@@ -122,11 +133,42 @@ export default class Sidebar extends React.Component {
         return this.state.currentChannel && this.state.currentChannel.id === channel.id;
     }
 
-    invitePeople() {
-        this.setState({showInvite: true});
-    }
     closeInvite() {
         this.setState({showInvite: false});
+    }
+
+    closeEdit(updatedTeam) {
+        this.setState({showEdit: false});
+
+        if (updatedTeam) {
+            setTeam(updatedTeam);
+            // ask for teams reload
+            getTeams();
+            // ask for channels reload
+            getChannels({team: updatedTeam.id, refetch: true});
+        }
+    }
+
+    handleMenuItem(item) {
+        item.action();
+    }
+
+    renderMenu() {
+        if (!this.state.currentTeam.name) {
+            return undefined;
+        }
+
+        return (
+            <a
+                className={styles.teamButton}
+                onClick={(e) => this.setState({
+                    showMenu: true,
+                    menuStyle: {top: e.clientY, left: e.clientX, right: 'auto'},
+                })}
+            >
+                <i className="fa fa-angle-down" />
+            </a>
+        );
     }
 
     render() {
@@ -137,14 +179,17 @@ export default class Sidebar extends React.Component {
                         <span className={styles.teamName}>
                             {this.state.currentTeam.name || 'No team selected'}
                         </span>
-                        {this.state.currentTeam.name && (
-                            <a
-                                className={`${styles.teamButton} hint--bottom`}
-                                data-hint="Invite people"
-                                onClick={() => this.invitePeople()}
-                            >
-                                <i className="fa fa-share-square-o" />
-                            </a>
+
+                        {this.renderMenu()}
+
+                        {this.state.showMenu && (
+                            <Dropdown
+                                style={this.state.menuStyle}
+                                title="Team"
+                                items={this.menuItems}
+                                onItem={it => this.handleMenuItem(it)}
+                                onHide={() => this.setState({showMenu: false})}
+                            />
                         )}
                     </header>
                 </div>
@@ -236,6 +281,13 @@ export default class Sidebar extends React.Component {
                 <Portal closeOnEsc onClose={() => this.closeInvite()} isOpened={this.state.showInvite}>
                     <Modal closeAction={() => this.closeInvite()}>
                         <Invite close={() => this.closeInvite()} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for team edit */}
+                <Portal closeOnEsc onClose={() => this.closeEdit()} isOpened={this.state.showEdit}>
+                    <Modal closeAction={() => this.closeEdit()}>
+                        <EditTeam close={ch => this.closeEdit(ch)} />
                     </Modal>
                 </Portal>
             </aside>
