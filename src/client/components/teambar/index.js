@@ -1,7 +1,5 @@
-import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
-import {browserHistory} from 'react-router';
 import styles from './teambar.css';
 
 // components
@@ -28,7 +26,7 @@ export default class Teambar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['teamStatus', 'teams', 'newTeam', 'currentTeam'].includes(key)))
+            .map(s => s.filter((v, key) => ['teamStatus', 'teams', 'currentTeam'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
@@ -43,29 +41,20 @@ export default class Teambar extends React.Component {
         setTeam(team);
     }
 
-    closeCreateTeam(refetch = false) {
+    closeCreateTeam() {
         // hide dialoge
         this.setState({showCreateTeam: false});
         // reset new team
         resetNewTeam();
-        // refetch teams if needed
-        if (refetch) {
-            getTeams();
-        }
     }
 
     showJoinTeam() {
         getPublicTeams();
         this.setState({showJoinTeam: true});
     }
-    closeJoinTeam(refetch) {
+    closeJoinTeam() {
         // hide modal
         this.setState({showJoinTeam: false});
-
-        // refetch teams if needed
-        if (refetch) {
-            getTeams();
-        }
     }
 
     isCurrent(team) {

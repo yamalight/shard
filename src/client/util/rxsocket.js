@@ -22,7 +22,7 @@ export const socket = (url) => {
     });
 
     // init socket and pipe result to subject
-    const sock = createSocket({url, open, close}).subscribe(m => s.onNext(m));
+    const sock = createSocket({url, open, close}).subscribe(s);
 
     // cleanup when done
     const cleanup = (e) => {

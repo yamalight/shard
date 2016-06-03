@@ -9,7 +9,7 @@ import Modal from '../modal';
 import EditChannel from '../editchannel';
 
 // store and actions
-import store$, {setInfobar, getChannels} from '../../store';
+import store$, {setInfobar} from '../../store';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -57,11 +57,8 @@ export default class Chat extends React.Component {
         }];
     }
 
-    closeRename(refetch = false) {
+    closeRename() {
         this.setState({showRename: false});
-        if (refetch) {
-            getChannels({team: this.state.currentTeam.id, refetch});
-        }
     }
 
     showMenu() {
@@ -110,7 +107,7 @@ export default class Chat extends React.Component {
                 {/* Modal for channel rename */}
                 <Portal closeOnEsc onClose={() => this.closeRename()} isOpened={this.state.showRename}>
                     <Modal closeAction={() => this.closeRename()}>
-                        <EditChannel close={refetch => this.closeRename(refetch)} />
+                        <EditChannel close={ch => this.closeRename(ch)} />
                     </Modal>
                 </Portal>
             </nav>

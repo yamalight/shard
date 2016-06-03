@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
+import {browserHistory} from 'react-router';
 import styles from './sidebar.css';
 
 // components
@@ -13,7 +14,7 @@ import Dropdown from '../dropdown';
 import EditTeam from '../editteam';
 
 // store and actions
-import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel, getTeams, setTeam} from '../../store';
+import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel} from '../../store';
 
 export default class Sidebar extends React.Component {
     constructor(props) {
@@ -99,15 +100,11 @@ export default class Sidebar extends React.Component {
         this.setState({joinChannel: undefined});
     }
 
-    closeCreateChannel(refetch = false) {
+    closeCreateChannel() {
         // hide modal
         this.setState({showCreateChannel: false});
         // reset state
         resetNewChannel();
-        // refetch channels if needed
-        if (refetch) {
-            getChannels({team: this.state.currentTeam.id, refetch});
-        }
     }
 
     showJoinChannel() {
@@ -115,18 +112,7 @@ export default class Sidebar extends React.Component {
         this.setState({showJoinChannel: true});
     }
 
-    closeJoinChannel(ch) {
-        // refetch channels if needed
-        if (ch) {
-            // hide modal and say we want to join new channel
-            this.setState({showJoinChannel: false});
-            // set channel
-            this.setChannel(ch);
-            // get channels
-            getChannels({team: this.state.currentTeam.id, refetch: true});
-            return;
-        }
-
+    closeJoinChannel() {
         // hide modal
         this.setState({showJoinChannel: false});
     }
@@ -139,16 +125,13 @@ export default class Sidebar extends React.Component {
         this.setState({showInvite: false});
     }
 
-    closeEdit(updatedTeam) {
+    closeTeamEdit(team) {
+        // update path
+        const teamName = _.camelCase(team.name);
+        const channel = _.camelCase(this.state.currentChannel.name);
+        browserHistory.push(`/channels/${teamName}/${channel}`);
+        // hide dialogue
         this.setState({showEdit: false});
-
-        if (updatedTeam) {
-            setTeam(updatedTeam);
-            // ask for teams reload
-            getTeams();
-            // ask for channels reload
-            getChannels({team: updatedTeam.id, refetch: true});
-        }
     }
 
     handleMenuItem(item) {
@@ -287,9 +270,9 @@ export default class Sidebar extends React.Component {
                 </Portal>
 
                 {/* Modal for team edit */}
-                <Portal closeOnEsc onClose={() => this.closeEdit()} isOpened={this.state.showEdit}>
-                    <Modal closeAction={() => this.closeEdit()}>
-                        <EditTeam close={ch => this.closeEdit(ch)} />
+                <Portal closeOnEsc onClose={() => this.closeTeamEdit()} isOpened={this.state.showEdit}>
+                    <Modal closeAction={() => this.closeTeamEdit()}>
+                        <EditTeam close={t => this.closeTeamEdit(t)} />
                     </Modal>
                 </Portal>
             </aside>

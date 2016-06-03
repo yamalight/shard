@@ -1,3 +1,5 @@
+import {fromJS} from 'immutable';
+
 // sort by title
 const orderBy = (attr) => (item1, item2) => {
     if (item1.get(attr) < item2.get(attr)) {
@@ -20,14 +22,14 @@ const updateTeam = (s, updates) => {
         ns = ns.set('currentTeam', s.get('currentTeam').merge(team));
     }
     // try to find in teams
-    const teamsKey = ns.get('teams').findKey(v => v.get('id') === team.get('id'));
+    const teamsKey = ns.get('teams', fromJS([])).findKey(v => v.get('id') === team.get('id'));
     // if found - update
-    if (teamsKey) {
+    if (teamsKey !== undefined) {
         ns = ns.setIn(['teams', teamsKey],
             ns.get('teams').find(v => v.get('id') === team.get('id')).merge(team)
         );
     } else { // if not - push new team
-        ns = ns.set('teams', ns.get('teams').push(team).sort(orderBy('name')));
+        ns = ns.set('teams', ns.get('teams', fromJS([])).push(team).sort(orderBy('name')));
     }
     return ns;
 };
@@ -35,7 +37,6 @@ const updateTeam = (s, updates) => {
 // channel update function
 const updateChannel = (s, updates) => {
     const channel = updates.get('channel')
-        .delete('team') // leave team info out
         .delete('subchannels'); // leave subchannels out
     let ns = s;
     // check if it's current channel
@@ -43,13 +44,13 @@ const updateChannel = (s, updates) => {
         ns = s.set('currentChannel', s.get('currentChannel').merge(channel));
     }
     // try to find in channels
-    let chKey = ns.get('channels').findKey(v => v.get('id') === channel.get('id'));
+    let chKey = ns.get('channels', fromJS([])).findKey(v => v.get('id') === channel.get('id'));
     // if found - update
-    if (chKey) {
+    if (chKey !== undefined) {
         ns = ns.setIn(['channels', chKey], ns.getIn(['channels', chKey]).merge(channel));
     } else { // try to find in subchannels
         let sKey = undefined;
-        chKey = ns.get('channels').findKey(ch => {
+        chKey = ns.get('channels', fromJS([])).findKey(ch => {
             const subs = ch.get('subchannels');
             if (!subs) {
                 return false;
@@ -60,6 +61,7 @@ const updateChannel = (s, updates) => {
             }
             return k !== undefined;
         });
+        // if found in subchannel - update that
         if (chKey !== undefined && sKey !== undefined) {
             ns = ns.setIn(['channels', chKey, 'subchannels', sKey],
                 ns.getIn(['channels', chKey, 'subchannels', sKey]).merge(channel)
@@ -67,10 +69,10 @@ const updateChannel = (s, updates) => {
         } else { // if not - push new channel
             // if no parent - add to top level
             if (channel.get('parent') === 'none') {
-                ns = ns.set('channels', ns.get('channels').push(channel).sort(orderBy('name')));
+                ns = ns.set('channels', ns.get('channels', fromJS([])).push(channel).sort(orderBy('name')));
             } else {
-                chKey = ns.get('channels').findKey(v => v.get('id') === channel.get('parent'));
-                if (chKey) {
+                chKey = ns.get('channels', fromJS([])).findKey(v => v.get('id') === channel.get('parent'));
+                if (chKey !== undefined) {
                     ns = ns.setIn(['channels', chKey, 'subchannels'],
                         ns.getIn(['channels', chKey, 'subchannels'], []).push(channel).sort(orderBy('name'))
                     );

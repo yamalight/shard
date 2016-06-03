@@ -47,7 +47,10 @@ export default class Chat extends React.Component {
             // get initial data
             store$
             .map(s => s.filter((v, key) => ['currentTeam', 'currentChannel'].includes(key)))
-            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .distinctUntilChanged(d => d, (a, b) =>
+                a.getIn(['currentTeam', 'id']) === b.getIn(['currentTeam', 'id']) &&
+                a.getIn(['currentChannel', 'id']) === b.getIn(['currentChannel', 'id'])
+            )
             .map(s => s.toJS())
             // reset all messages on changes
             .map(s => ({

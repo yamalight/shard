@@ -7,6 +7,21 @@ export const channelUpdates = async (ws) => {
         .filter(ch => ch('users').contains(u => u('id').eq(ws.userInfo.id)))
         .changes()
         .map(c => c('new_val'))
+        .merge(ch => ({
+            team: r.table('Team').get(ch('team')),
+            subchannels: r.branch(
+                ch('parent') !== 'none',
+                [],
+                r.table('Channel')
+                .filter({parent: ch('id')})
+                .filter(sch => sch('users').contains(u => u('id').eq(ws.userInfo.id)))
+                .merge(sch => ({
+                    team: r.table('Team').get(sch('team')),
+                }))
+                .orderBy('name')
+                .coerceTo('array'),
+            ),
+        }))
         .run();
 
     // pass team updates to user through socket

@@ -54,6 +54,11 @@ export default async (req, res, next) => {
         req.userInfo = user; // eslint-disable-line
         return next();
     } catch (e) {
+        // if ws request - close socket
+        if (req.upgradeReq) {
+            return req.close();
+        }
+        // otherwise - return 401
         return res.status(401).send({error: e.message});
     }
 };

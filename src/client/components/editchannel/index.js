@@ -28,11 +28,7 @@ export default class EditChannel extends React.Component {
             ].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
-            .do(s => {
-                if (s.updatedChannel) {
-                    this.close(true);
-                }
-            })
+            .do(s => s.updatedChannel && this.close(s.updatedChannel))
             .subscribe(s => this.setState(s)),
         ];
     }
@@ -79,10 +75,10 @@ export default class EditChannel extends React.Component {
     delete() {
         deleteChannel(this.state.currentChannel);
     }
-    close(refetch = false) {
+    close(ch) {
         this.resetError();
         store$.clear({updatedChannel: undefined});
-        this.props.close(refetch);
+        this.props.close(ch);
     }
     resetError() {
         store$.clear({channelError: undefined});
