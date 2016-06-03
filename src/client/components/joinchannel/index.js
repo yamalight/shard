@@ -58,10 +58,12 @@ export default class JoinChannel extends React.Component {
                         <p className="is-flex">{ch.name}</p>
                     </div>
                 </header>
-                <div
-                    className={`card-content ${styles.description}`}
-                    dangerouslySetInnerHTML={{__html: markdown(ch.description)}}
-                />
+                {ch.description && ch.description.length > 0 && (
+                    <div
+                        className={`card-content ${styles.description}`}
+                        dangerouslySetInnerHTML={{__html: markdown(ch.description)}}
+                    />
+                )}
             </div>
         );
     }
