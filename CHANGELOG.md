@@ -1,4 +1,16 @@
 
+0.9.0 / 2016-06-03
+==================
+
+  * display team description in join dialogue
+  * allow editing team info and add team descriptions
+  * do not render description in join channels when there is none
+  * focus on chat input on channel switch
+  * reload public channels on subsequent join dialogue opens
+  * show loading indication when loading public teams and channels
+  * rewrite subchannels
+  * allow using double-click to start message edit
+
 0.8.0 / 2016-06-02
 ==================
 
