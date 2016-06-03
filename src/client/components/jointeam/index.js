@@ -21,6 +21,12 @@ export default class JoinTeam extends React.Component {
             .map(s => s.toJS())
             .do(s => s.joinedTeam && this.close(s.joinedTeam))
             .subscribe(s => this.setState(s)),
+
+            // status sub
+            store$
+            .map(s => s.get('teamStatus'))
+            .distinctUntilChanged()
+            .subscribe(status => this.setState({status})),
         ];
     }
     componentWillUnmount() {
@@ -56,6 +62,8 @@ export default class JoinTeam extends React.Component {
     }
 
     render() {
+        const {publicTeams, filterText, status, error} = this.state;
+
         return (
             <div className="card is-fullwidth">
                 <header className="card-header">
@@ -66,24 +74,27 @@ export default class JoinTeam extends React.Component {
                 <div className="card-content">
                     <p className="control">
                         <input
-                            className={`input is-medium ${this.state.error && 'is-danger'}`}
+                            className={`input is-medium ${error && 'is-danger'}`}
                             type="text"
                             placeholder="Search teams"
                             onChange={e => this.handleSearch(e)}
                         />
                     </p>
                     <div className="content">
-                        {this.state.publicTeams.length === 0 && (
+                        {(status === 'loadingPublic' || publicTeams.length === 0) && (
                             <div className="card is-fullwidth">
                                 <div className="card-header">
                                     <div className="card-header-title">
-                                        No unjoined teams found!
+                                        {status === 'loadingPublic' ?
+                                            'Loading...' :
+                                            'No unjoined teams found!'}
                                     </div>
                                 </div>
                             </div>
                         )}
-                        {this.state.publicTeams
-                            .filter(t => t.name.toLowerCase().includes(this.state.filterText))
+                        {status !== 'loadingPublic' &&
+                            publicTeams
+                            .filter(t => t.name.toLowerCase().includes(filterText))
                             .map(t => this.renderTeam(t))}
                     </div>
                 </div>

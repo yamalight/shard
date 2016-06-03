@@ -7,7 +7,7 @@ export const getPublicTeams = createAction();
 
 // map to request
 const teams$ = getPublicTeams.$
-    .do(() => status('loading'))
+    .do(() => status('loadingPublic'))
     .map(() => sign({}))
     .flatMap(({token}) => get('/api/teams/public', token))
     .do(res => (res.error ? status('error') : status('finished')))
