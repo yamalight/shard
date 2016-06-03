@@ -17,6 +17,7 @@ export default (app) => {
                     .merge(sch => ({
                         team: r.table('Team').get(sch('team')),
                     }))
+                    .orderBy('name')
                     .coerceTo('array'),
             }))
             .orderBy('name')
