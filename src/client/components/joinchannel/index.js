@@ -22,6 +22,12 @@ export default class JoinChannel extends React.Component {
             .map(s => s.toJS())
             .do(s => s.joinedChannel && this.close(s.joinedChannel))
             .subscribe(s => this.setState(s)),
+
+            // status sub
+            store$
+            .map(s => s.get('channelStatus'))
+            .distinctUntilChanged()
+            .subscribe(status => this.setState({status})),
         ];
     }
     componentWillUnmount() {
@@ -61,6 +67,8 @@ export default class JoinChannel extends React.Component {
     }
 
     render() {
+        const {error, status, publicChannels, filterText} = this.state;
+
         return (
             <div className="card is-fullwidth">
                 <header className="card-header">
@@ -71,24 +79,27 @@ export default class JoinChannel extends React.Component {
                 <div className="card-content">
                     <p className="control">
                         <input
-                            className={`input is-medium ${this.state.error && 'is-danger'}`}
+                            className={`input is-medium ${error && 'is-danger'}`}
                             type="text"
                             placeholder="Search channels"
                             onChange={e => this.handleSearch(e)}
                         />
                     </p>
                     <div className="content">
-                        {this.state.publicChannels.length === 0 && (
+                        {(status === 'loadingPublic' || publicChannels.length === 0) && (
                             <div className="card is-fullwidth">
                                 <div className="card-header">
                                     <div className="card-header-title">
-                                        No unjoined channels found!
+                                        {status === 'loadingPublic' ?
+                                            'Loading...' :
+                                            'No unjoined channels found!'}
                                     </div>
                                 </div>
                             </div>
                         )}
-                        {this.state.publicChannels
-                            .filter(ch => ch.name.toLowerCase().includes(this.state.filterText))
+                        {status !== 'loadingPublic' &&
+                            publicChannels
+                            .filter(ch => ch.name.toLowerCase().includes(filterText))
                             .map(ch => this.renderChannel(ch))}
                     </div>
                 </div>
