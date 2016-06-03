@@ -1,4 +1,4 @@
-import {Channel, Subchannel} from '../db';
+import {Channel} from '../db';
 import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
@@ -13,9 +13,7 @@ export const updateChannel = async ({id, name, description, team, parent = 'none
         return {status: 400, body: {error: 'Channel name must be alpha-numeric with spaces and dashes!'}};
     }
     // do not update duplicate channels under same team & parent
-    let existing = 0;
-    if (parent === 'none') {
-        existing = await Channel
+    const existing = await Channel
             .filter(row =>
                 row('team').eq(team)
                 .and(row('name').downcase().eq(name.toLowerCase()))
@@ -23,22 +21,13 @@ export const updateChannel = async ({id, name, description, team, parent = 'none
             )
             .count()
             .execute();
-    } else {
-        existing = await Subchannel
-            .filter(row =>
-                row('parentChannel').eq(parent)
-                .and(row('team').eq(team))
-                .and(row('name').downcase().eq(name.toLowerCase()))
-                .and(row('id').ne(id))
-            )
-            .count()
-            .execute();
-    }
     if (existing > 0) {
         return {status: 400, body: {error: 'Channel with that name already exists!'}};
     }
     // init channel data
-    const data = {};
+    const data = {
+        parent,
+    };
     // only update if value is given
     if (name) {
         data.name = name;
@@ -48,17 +37,6 @@ export const updateChannel = async ({id, name, description, team, parent = 'none
     }
     if (team) {
         data.team = team;
-    }
-
-    // check if we need to save subchannel
-    if (parent !== 'none') {
-        logger.debug('saving subchannel!');
-        const subchannel = await Subchannel.get(id).update({
-            ...data,
-            parentChannel: parent,
-        });
-        logger.info('updated subchannel:', subchannel);
-        return {status: 200, body: subchannel};
     }
 
     // otherwise save channel

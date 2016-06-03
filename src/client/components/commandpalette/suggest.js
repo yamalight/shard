@@ -1,4 +1,5 @@
 /* eslint no-param-reassign: 0 */
+import _ from 'lodash';
 import {setTeam, setChannel} from '../../store';
 
 const help = [{
@@ -24,7 +25,8 @@ export const suggestTypeahead = (command, state) => {
 
     if (/^#/.test(command)) {
         const search = command.replace(/^#/, '').toLowerCase();
-        return state.channels.filter(ch => ch.name.toLowerCase().includes(search))
+        return _.flatten(state.channels.concat(state.channels.map(ch => ch.subchannels)))
+            .filter(ch => ch.name.toLowerCase().includes(search))
             .map(ch => ({
                 icon: 'fa-hashtag',
                 name: ch.name,

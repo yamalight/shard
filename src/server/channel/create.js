@@ -1,4 +1,4 @@
-import {Channel, Subchannel} from '../db';
+import {Channel} from '../db';
 import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
@@ -19,25 +19,13 @@ export default (app) => {
             return;
         }
         // do not create duplicate channels under same team & parent
-        let existing = 0;
-        if (parent === 'none') {
-            existing = await Channel
+        const existing = await Channel
                 .filter(row =>
                     row('team').eq(team)
                     .and(row('name').downcase().eq(name.toLowerCase()))
                 )
                 .count()
                 .execute();
-        } else {
-            existing = await Subchannel
-                .filter(row =>
-                    row('parentChannel').eq(parent)
-                    .and(row('team').eq(team))
-                    .and(row('name').downcase().eq(name.toLowerCase()))
-                )
-                .count()
-                .execute();
-        }
         if (existing > 0) {
             res.status(400).send({error: 'Channel with that name already exists!'});
             return;
@@ -48,23 +36,12 @@ export default (app) => {
             description,
             team,
             isPrivate,
+            parent,
             users: [{
                 id: req.userInfo.id,
                 access: 'owner',
             }],
         };
-
-        // check if we need to save subchannel
-        if (parent !== 'none') {
-            logger.debug('saving subchannel!');
-            const subchannel = await Subchannel.save({
-                ...data,
-                parentChannel: parent,
-            });
-            logger.info('saved new subchannel:', subchannel);
-            res.status(200).json(subchannel);
-            return;
-        }
 
         // otherwise save channel
         const channel = await Channel.save(data);

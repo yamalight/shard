@@ -7,17 +7,6 @@ export default (app) => {
         const {team} = req.query;
         logger.info('searching for public channels for', req.userInfo.username, 'and team', team);
         const channels = await Channel
-            .getJoin({
-                subchannels: {
-                    _apply(sequence) {
-                        return sequence.filter(
-                            ch => ch('isPrivate').eq(false).and(
-                                ch('users').contains(u => u('id').eq(req.userInfo.id)).not()
-                            )
-                        );
-                    },
-                },
-            })
             .filter({team, isPrivate: false})
             .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)).not())
             .merge(ch => ({

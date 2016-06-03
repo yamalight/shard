@@ -7,17 +7,17 @@ export default (app) => {
         const {team} = req.query;
         logger.info('searching for channels for', req.userInfo.username, 'and team', team);
         const channels = await Channel
-            .getJoin({
-                subchannels: {
-                    _apply(sequence) {
-                        return sequence.filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)));
-                    },
-                },
-            })
-            .filter({team})
+            .filter({team, parent: 'none'})
             .filter(ch => ch('users').contains(u => u('id').eq(req.userInfo.id)))
             .merge(ch => ({
                 team: r.table('Team').get(ch('team')),
+                subchannels: r.table('Channel')
+                    .filter({team, parent: ch('id')})
+                    .filter(sch => sch('users').contains(u => u('id').eq(req.userInfo.id)))
+                    .merge(sch => ({
+                        team: r.table('Team').get(sch('team')),
+                    }))
+                    .coerceTo('array'),
             }))
             .orderBy('name')
             .execute();

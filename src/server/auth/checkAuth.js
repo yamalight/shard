@@ -28,13 +28,20 @@ export const checkStringToken = async (token) => {
     const {id} = decoded;
     logger.debug('searching for: ', id);
     // find user
-    const user = await User.get(id).run();
+    let user;
+    try {
+        user = await User.get(id).run();
+    } catch (e) {
+        if (e.name !== 'DocumentNotFoundError') {
+            throw e;
+        }
+    }
     if (user) {
         logger.debug('user found!', user);
         return user;
     }
 
-    throw new Error('Not logged in!');
+    throw new Error('You are not logged in or your session is expired!');
 };
 
 // action

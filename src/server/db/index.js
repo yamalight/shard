@@ -10,5 +10,5 @@ export {r};
 // export models
 export {User} from './user';
 export {Team} from './team';
-export {Channel, Subchannel} from './channel';
+export {Channel} from './channel';
 export {Message, Reply} from './message';

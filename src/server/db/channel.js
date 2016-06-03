@@ -5,6 +5,7 @@ const channelSchema = {
     team: type.string().required(),
     description: type.string(),
     isPrivate: type.boolean().default(false).required(),
+    parent: type.string().default('none'),
     users: [{
         id: type.string(),
         access: type.string().enum(['owner', 'admin', 'member']).default('member'),
@@ -12,9 +13,3 @@ const channelSchema = {
 };
 
 export const Channel = thinky.createModel('Channel', channelSchema);
-export const Subchannel = thinky.createModel('Subchannel', {
-    ...channelSchema,
-    parentChannel: type.string().required(),
-});
-
-Channel.hasMany(Subchannel, 'subchannels', 'id', 'parentChannel');

@@ -13,10 +13,7 @@ class UserTypeaheadServer extends UserTypeahead {
             try {
                 channel = await db.Channel.get(currentChannel);
             } catch (e) {
-                if (e.name !== 'DocumentNotFoundError') {
-                    throw e;
-                }
-                channel = await db.Subchannel.get(currentChannel);
+                throw e;
             }
 
             if (!channel) {
