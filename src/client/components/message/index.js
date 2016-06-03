@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Textarea from 'react-textarea-autosize';
-import {browserHistory} from 'react-router';
 import {hash} from 'spark-md5';
 import {markdown} from '../../util';
 import styles from './message.css';
