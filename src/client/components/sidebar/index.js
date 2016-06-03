@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import styles from './sidebar.css';
@@ -78,7 +79,8 @@ export default class Sidebar extends React.Component {
     componentDidUpdate() {
         setTimeout(() => {
             if (this.state.channels.length && this.state.joinChannel) {
-                const ch = this.state.channels.find(c => c.name === this.state.joinChannel);
+                const ch = _.flatten(this.state.channels.concat(this.state.channels.map(c => c.subchannels)))
+                    .find(c => _.camelCase(c.name) === this.state.joinChannel);
                 if (ch) {
                     this.setChannel(ch);
                 } else {
