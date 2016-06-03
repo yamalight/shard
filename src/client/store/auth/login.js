@@ -18,6 +18,8 @@ const login$ = loginUser.$
             res.user = jwtDecode(token); // eslint-disable-line
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(res.user));
+            // reset errors
+            res.teamError = undefined; // eslint-disable-line
         }
         return res;
     })
