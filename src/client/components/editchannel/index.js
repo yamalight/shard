@@ -11,7 +11,6 @@ export default class EditChannel extends React.Component {
         this.state = {
             currentChannel: {},
             currentTeam: {},
-            parentChannel: 'none',
             channels: [],
             error: undefined,
         };
@@ -74,7 +73,7 @@ export default class EditChannel extends React.Component {
         const id = this.state.currentChannel.id;
         const description = this.descInput.value;
         const team = this.state.currentTeam.id;
-        const parent = this.state.parentChannel;
+        const parent = this._parent.value;
         updateChannel({id, name, description, team, parent});
     }
     delete() {
@@ -85,11 +84,6 @@ export default class EditChannel extends React.Component {
         store$.clear({updatedChannel: undefined});
         this.props.close(refetch);
     }
-
-    parentChange(e) {
-        this.setState({parentChannel: e.target.value});
-    }
-
     resetError() {
         store$.clear({channelError: undefined});
     }
@@ -142,8 +136,7 @@ export default class EditChannel extends React.Component {
                             <label className="label">Parent channel:</label>
                             <span className="select">
                                 <select
-                                    onChange={e => this.parentChange(e)}
-                                    value={this.state.parentChannel}
+                                    ref={p => { this._parent = p; }}
                                     defaultValue={this.state.currentChannel.parent}
                                 >
                                     <option value="none">None</option>
