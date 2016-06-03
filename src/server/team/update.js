@@ -31,18 +31,12 @@ export default (app) => {
             return;
         }
 
-        // init team data
-        const data = {
+        // save new team
+        const team = await Team.get(id).update({
             name,
             isPrivate,
-        };
-        // only update if value is given
-        if (description) {
-            data.description = description;
-        }
-
-        // save new team
-        const team = await Team.get(id).update(data);
+            description,
+        });
         logger.debug('updated team:', team);
 
         // send team back

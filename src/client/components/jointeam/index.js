@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './jointeam.css';
+import {markdown} from '../../util';
 import store$, {joinTeam} from '../../store';
 
 export default class JoinTeam extends React.Component {
@@ -57,6 +58,12 @@ export default class JoinTeam extends React.Component {
                         <p className="is-flex">{t.name}</p>
                     </div>
                 </header>
+                {t.description && t.description.length > 0 && (
+                    <div
+                        className={`card-content ${styles.description}`}
+                        dangerouslySetInnerHTML={{__html: markdown(t.description)}}
+                    />
+                )}
             </div>
         );
     }
