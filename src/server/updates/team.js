@@ -12,12 +12,12 @@ export const teamUpdates = async (ws) => {
     // pass team updates to user through socket
     teamStream.each((err, team) => {
         if (err) {
-            logger.error('got err in channel stream:', err);
+            logger.error('got err in team updates stream:', err);
             return;
         }
 
         const result = {team};
-        logger.debug('sending out message:', result);
+        logger.debug('sending out team update message:', result);
         ws.send(JSON.stringify(result));
     });
 

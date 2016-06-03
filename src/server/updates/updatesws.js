@@ -5,6 +5,7 @@ import {socket} from '../../../config';
 
 // actions
 import {teamUpdates} from './team';
+import {channelUpdates} from './channel';
 
 export default (app) => {
     app.ws('/api/updates', checkAuth, asyncRequest(async (ws) => {
@@ -15,6 +16,7 @@ export default (app) => {
 
         // init team stream
         const teamStream = await teamUpdates(ws);
+        const channelStream = await channelUpdates(ws);
 
         // setup pings to keep socket alive
         const pingInterval = setInterval(() => ws.ping(), socket.pingTime);
@@ -23,6 +25,7 @@ export default (app) => {
         const clean = () => {
             logger.debug('cleaning up updates socket!');
             teamStream.close();
+            channelStream.close();
             User.get(ws.userInfo.id).update({status: 'offline'});
             clearInterval(pingInterval);
         };
