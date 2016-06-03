@@ -2,6 +2,27 @@ import {Team, Channel, User} from '../db';
 import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
+export const inviteToChannel = async ({channel, user, userInfo}) => {
+    const ch = await Channel.get(channel);
+    // if channel has parent channel - add to it
+    if (ch.parent !== 'none') {
+        await inviteToChannel({channel: ch.parent, user, userInfo});
+    }
+    // only add if not already in channel
+    if (!ch.users.find(u => u.id === user.id)) {
+        // check user permissions for team invite
+        const reqUser = ch.users.filter(u => u.id === userInfo.id).pop();
+        logger.debug('got requesting user from channel:', reqUser);
+        if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
+            logger.error('insufficient rights!');
+            return {status: 401, body: {error: 'insufficient rights!'}};
+        }
+        // add user to team
+        ch.users.push({id: user.id});
+        await ch.save();
+    }
+};
+
 export const inviteToTeam = async ({id, username, channel, userInfo}) => {
     // find user that's getting invited
     const users = await User.filter({username}).limit(1).run();
@@ -30,20 +51,7 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
 
     // add user to channel (if present)
     if (channel) {
-        const ch = await Channel.get(channel);
-        // only add if not already in channel
-        if (!ch.users.find(u => u.id === user.id)) {
-            // check user permissions for team invite
-            const reqUser = ch.users.filter(u => u.id === userInfo.id).pop();
-            logger.debug('got requesting user from channel:', reqUser);
-            if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
-                logger.error('insufficient rights!');
-                return {status: 401, body: {error: 'insufficient rights!'}};
-            }
-            // add user to team
-            ch.users.push({id: user.id});
-            await ch.save();
-        }
+        await inviteToChannel({channel, user, userInfo});
     }
 
     logger.debug('invited user to team!');
