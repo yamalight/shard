@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Textarea from 'react-textarea-autosize';
@@ -11,27 +12,7 @@ import UserInfo from '../user';
 import Dropdown from '../dropdown';
 
 // actions
-import store$, {replyTo, setInfobar, updateMessage} from '../../store';
-
-// click handler
-const markdownClick = (e) => {
-    e.preventDefault();
-    if (!e.target.href) {
-        return;
-    }
-
-    const link = new URL(e.target.href);
-    const path = link.pathname;
-    if (path.includes('/users/')) {
-        const username = path.replace('/users/', '');
-        setInfobar({
-            title: `Profile: ${username}`,
-            content: <UserInfo username={username} />,
-        });
-        return;
-    }
-    browserHistory.push(path);
-};
+import store$, {replyTo, setInfobar, updateMessage, setChannel} from '../../store';
 
 // time formatting
 const formatTime = (time) => {
@@ -77,6 +58,13 @@ export default class Message extends React.Component {
                 // reset
                 store$.clear({editSelectedMessage: undefined});
             }),
+
+            // channels list
+            store$
+            .map(s => s.filter((v, key) => ['channels'].includes(key)))
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .map(s => s.toJS())
+            .subscribe(s => this.setState(s)),
         ];
     }
 
@@ -92,6 +80,37 @@ export default class Message extends React.Component {
 
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    }
+
+    // click handler
+    markdownClick(e) {
+        e.preventDefault();
+        if (!e.target.href) {
+            return;
+        }
+
+        const link = new URL(e.target.href);
+        const path = link.pathname;
+        // open user info
+        if (path.includes('/users/')) {
+            const username = path.replace('/users/', '');
+            setInfobar({
+                title: `Profile: ${username}`,
+                content: <UserInfo username={username} />,
+            });
+            return;
+        }
+        // navigate to given channel
+        if (path.includes('/channels/')) {
+            const parts = path.split('/');
+            const channelName = parts.pop();
+            const channel = _.flatten(this.state.channels.concat(this.state.channels.map(c => c.subchannels)))
+                .find(ch => _.camelCase(ch.name) === channelName);
+            setChannel(channel);
+            return;
+        }
+        // otherwise just open url in new tab
+        window.open(link, '_blank');
     }
 
     createMenu() {
@@ -217,7 +236,7 @@ export default class Message extends React.Component {
         return (
             <p
                 className={styles.markdown}
-                onClick={markdownClick}
+                onClick={e => this.markdownClick(e)}
                 onDoubleClick={() => m.user.id === m.authedUser.id && this.beginEdit()}
                 dangerouslySetInnerHTML={{__html: markdown(m.message)}}
             />
