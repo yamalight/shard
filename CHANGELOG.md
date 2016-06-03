@@ -1,4 +1,12 @@
 
+0.10.0 / 2016-06-03
+==================
+
+  * add updates stream and handle dynamic team and channel updates
+  * use update socket for dynamic updates, remove polling
+  * check rights for channel and team invites separately
+  * reset auth error on login
+
 0.9.0 / 2016-06-03
 ==================
 
