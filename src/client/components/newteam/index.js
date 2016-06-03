@@ -33,6 +33,7 @@ export default class NewTeam extends React.Component {
     create() {
         const name = this._input.value;
         const isPrivate = this._private.checked;
+        const description = this.descInput.value;
 
         // do not create empty name teams
         if (!name || !name.length) {
@@ -45,7 +46,7 @@ export default class NewTeam extends React.Component {
             return;
         }
 
-        createTeam({name, isPrivate});
+        createTeam({name, description, isPrivate});
     }
     close(e, refetch = false) {
         this.resetError();
@@ -93,6 +94,13 @@ export default class NewTeam extends React.Component {
                             />
                             {this.state.error && <i className="fa fa-warning" />}
                             {this.state.error && <span className="help is-danger">{this.state.error}</span>}
+                        </p>
+                        <p className="control">
+                            <textarea
+                                className="textarea"
+                                placeholder="Enter new team description.."
+                                ref={t => { this.descInput = t; }}
+                            />
                         </p>
                         <p className="control">
                             <label className="checkbox">

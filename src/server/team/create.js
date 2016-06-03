@@ -4,7 +4,7 @@ import checkAuth from '../auth/checkAuth';
 
 export default (app) => {
     app.post('/api/teams/new', checkAuth, asyncRequest(async (req, res) => {
-        const {name, isPrivate} = req.body;
+        const {name, description, isPrivate} = req.body;
         logger.info('saving new team:', {name, isPrivate, owner: req.userInfo.username});
         // do not create team with empty name
         if (!name || !name.length) {
@@ -26,6 +26,7 @@ export default (app) => {
         // save new team
         const team = await Team.save({
             name,
+            description,
             isPrivate,
             users: [{
                 id: req.userInfo.id,
