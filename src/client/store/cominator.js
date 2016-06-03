@@ -50,7 +50,11 @@ const updateChannel = (s, updates) => {
     } else { // try to find in subchannels
         let sKey = undefined;
         chKey = ns.get('channels').findKey(ch => {
-            const k = ch.get('subchannels').findKey(v => v.get('id') === channel.get('id'));
+            const subs = ch.get('subchannels');
+            if (!subs) {
+                return false;
+            }
+            const k = subs.findKey(v => v.get('id') === channel.get('id'));
             if (k !== undefined) {
                 sKey = k;
             }
@@ -61,7 +65,17 @@ const updateChannel = (s, updates) => {
                 ns.getIn(['channels', chKey, 'subchannels', sKey]).merge(channel)
             );
         } else { // if not - push new channel
-            ns = ns.set('channels', ns.get('channels').push(channel).sort(orderBy('name')));
+            // if no parent - add to top level
+            if (channel.get('parent') === 'none') {
+                ns = ns.set('channels', ns.get('channels').push(channel).sort(orderBy('name')));
+            } else {
+                chKey = ns.get('channels').findKey(v => v.get('id') === channel.get('parent'));
+                if (chKey) {
+                    ns = ns.setIn(['channels', chKey, 'subchannels'],
+                        ns.getIn(['channels', chKey, 'subchannels'], []).push(channel).sort(orderBy('name'))
+                    );
+                }
+            }
         }
     }
     return ns;
