@@ -7,8 +7,6 @@ export const getPublicChannels = createAction();
 
 // map to request
 const channels$ = getPublicChannels.$
-    // only continue if new team or force refetch
-    .distinctUntilChanged()
     .do(() => status('loadingPublic'))
     .map(data => sign(data))
     .flatMap(({team, token}) => get(`/api/channels/public?team=${team}`, token))

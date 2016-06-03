@@ -183,7 +183,9 @@ export default class Sidebar extends React.Component {
                                     <a>No channels found! Add one?</a>
                                 </li>
                             )}
-                            {this.state.channels && this.state.channels.map(channel => (
+                            {this.state.channelStatus !== 'loading' &&
+                            this.state.channels &&
+                            this.state.channels.map(channel => (
                                 <li key={channel.id}>
                                     <a
                                         className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
