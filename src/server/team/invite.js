@@ -3,15 +3,6 @@ import {logger, asyncRequest} from '../util';
 import checkAuth from '../auth/checkAuth';
 
 export const inviteToTeam = async ({id, username, channel, userInfo}) => {
-    // check user permissions for invite
-    const team = await Team.get(id);
-    const reqUser = team.users.filter(u => u.id === userInfo.id).pop();
-    logger.debug('got requesting user from team:', reqUser);
-    if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
-        logger.error('insufficient rights!');
-        return {status: 401, body: {error: 'insufficient rights!'}};
-    }
-
     // find user that's getting invited
     const users = await User.filter({username}).limit(1).run();
     const user = users.pop();
@@ -21,8 +12,18 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
         return {status: 401, body: {error: 'user not found!'}};
     }
 
+    // get team
+    const team = await Team.get(id);
     // add user to team if he's not already there
     if (!team.users.find(u => u.id === user.id)) {
+        // check user permissions for team invite
+        const reqUser = team.users.filter(u => u.id === userInfo.id).pop();
+        logger.debug('got requesting user from team:', reqUser);
+        if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
+            logger.error('insufficient rights!');
+            return {status: 401, body: {error: 'insufficient rights!'}};
+        }
+        // add user to team
         team.users.push({id: user.id});
         await team.save();
     }
@@ -32,6 +33,14 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
         const ch = await Channel.get(channel);
         // only add if not already in channel
         if (!ch.users.find(u => u.id === user.id)) {
+            // check user permissions for team invite
+            const reqUser = ch.users.filter(u => u.id === userInfo.id).pop();
+            logger.debug('got requesting user from channel:', reqUser);
+            if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
+                logger.error('insufficient rights!');
+                return {status: 401, body: {error: 'insufficient rights!'}};
+            }
+            // add user to team
             ch.users.push({id: user.id});
             await ch.save();
         }
