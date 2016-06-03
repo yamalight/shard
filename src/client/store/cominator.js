@@ -1,3 +1,16 @@
+// sort by title
+const orderBy = (attr) => (item1, item2) => {
+    if (item1.get(attr) < item2.get(attr)) {
+        return -1;
+    }
+
+    if (item1.get(attr) > item2.get(attr)) {
+        return 1;
+    }
+
+    return 0;
+};
+
 // team update function
 const updateTeam = (s, updates) => {
     const team = updates.get('team');
@@ -14,7 +27,7 @@ const updateTeam = (s, updates) => {
             ns.get('teams').find(v => v.get('id') === team.get('id')).merge(team)
         );
     } else { // if not - push new team
-        ns = ns.set('teams', ns.get('teams').push(team));
+        ns = ns.set('teams', ns.get('teams').push(team).sort(orderBy('name')));
     }
     return ns;
 };
@@ -48,7 +61,7 @@ const updateChannel = (s, updates) => {
                 ns.getIn(['channels', chKey, 'subchannels', sKey]).merge(channel)
             );
         } else { // if not - push new channel
-            ns = ns.set('channels', ns.get('channels').push(channel));
+            ns = ns.set('channels', ns.get('channels').push(channel).sort(orderBy('name')));
         }
     }
     return ns;
