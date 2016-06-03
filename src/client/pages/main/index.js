@@ -3,7 +3,7 @@ import React from 'react';
 // import Dock from 'react-dock';
 import styles from './main.css';
 
-import store$, {setTeam} from '../../store';
+import store$, {setTeam, getUpdates} from '../../store';
 
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
@@ -41,6 +41,8 @@ export default class Main extends React.Component {
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
+
+        getUpdates();
     }
 
     componentDidMount() {

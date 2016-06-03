@@ -10,7 +10,7 @@ const channel$ = updateChannel.$
     .do(() => status('updating'))
     .map(ch => ({
         ...ch,
-        team: ch.team.id ? ch.team.id : ch.team, // map team to id if needed
+        team: ch.team.id,
     }))
     .map(channel => sign(channel))
     .flatMap(channel => post(`/api/channels/${channel.id}`, channel))

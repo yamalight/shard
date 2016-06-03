@@ -3,11 +3,16 @@ import {createStore} from 'rxstate';
 // get defaul state
 import defaultState from './defaultState';
 
+// get custom combinator
+import {combinator} from './cominator';
+
 // plug in auth actions
 import authStatus from './auth/status';
 import register$, {registerUser} from './auth/register';
 import login$, {loginUser} from './auth/login';
 import resetAuth$, {resetAuth} from './auth/resetAuth';
+import {closeUpdates} from './auth/connect';
+import getUpdates$, {getUpdates} from './auth/updates';
 
 // team actions
 import teamStatus from './team/status';
@@ -57,6 +62,7 @@ const streams = [
     register$,
     login$,
     resetAuth$,
+    getUpdates$,
     // team streams
     teamStatus.$,
     getTeams$,
@@ -95,13 +101,15 @@ const streams = [
     infobar$,
 ];
 // create store
-const store = createStore({streams, defaultState});
+const store = createStore({streams, defaultState, combinator});
 
 export {
     // auth
     registerUser,
     loginUser,
     resetAuth,
+    closeUpdates,
+    getUpdates,
     // team
     getTeams,
     getTeam,
@@ -139,7 +147,8 @@ export {
     setInfobar,
 };
 
-// store.subscribe(s => console.log(`state update:
-// ${JSON.stringify(s.toJS(), null, 4)}`));
+// store
+// .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+// .subscribe(s => console.log(JSON.stringify(s.toJS(), null, 2)));
 
 export default store;

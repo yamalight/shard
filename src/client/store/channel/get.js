@@ -10,7 +10,7 @@ export const getChannels = createAction();
 // map to request
 const channels$ = getChannels.$
     // only continue if new team or force refetch
-    .distinctUntilChanged(d => d, (a, b) => a.team === b.team && !b.refetch)
+    .distinctUntilChanged(d => d, (a, b) => a.team.eq(b.team) && !b.refetch)
     .do(() => status('loading'))
     .do(({refetch}) => !refetch && resetChannels())
     .do(({refetch}) => !refetch && resetHistory())

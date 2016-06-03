@@ -23,6 +23,8 @@ import setupChannelAPI from './channel';
 import setupChatAPI from './chat';
 // extensions subsystem
 import setupExtensions from './extensions';
+// updates api
+import setupUpdates from './updates';
 
 // logger
 import {logger} from './util';
@@ -45,6 +47,8 @@ setupExtensions(app);
 
 // setup auth API
 setupAuthAPI(app);
+// setup updates API
+setupUpdates(app);
 // setup team API
 setupTeamAPI(app);
 // setup channel API
