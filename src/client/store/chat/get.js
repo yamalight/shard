@@ -7,11 +7,10 @@ export const getChat = createAction();
 
 // map to socket
 const chat$ = getChat.$
-    .do(() => status('loading'))
     .flatMap(({team, channel}) => chatSockets[team + channel]
         .map(e => JSON.parse(e.data))
         .map(messages => ({messages}))
     )
-    .do(res => (res.error || !res.messsages ? status('error') : status('connected')));
+    .do(res => ((res.error || !res.messsages) && status('error')));
 
 export default chat$;

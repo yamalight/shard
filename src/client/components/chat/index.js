@@ -29,7 +29,7 @@ export default class Chat extends React.Component {
             shouldScroll: false,
             messages: [],
             history: [],
-            allMessages: [],
+            allMessages: undefined,
             chatStatus: undefined,
             authedUser,
         };
@@ -39,10 +39,9 @@ export default class Chat extends React.Component {
         this.subs = [
             // status
             store$
-            .map(s => s.filter((v, key) => ['chatStatus'].includes(key)))
-            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
-            .map(s => s.toJS())
-            .subscribe(s => this.setState(s)),
+            .map(s => s.get('chatStatus'))
+            .distinctUntilChanged()
+            .subscribe(chatStatus => this.setState({chatStatus})),
 
             // get initial data
             store$
@@ -56,7 +55,7 @@ export default class Chat extends React.Component {
             .map(s => ({
                 ...s,
                 scrollToMessage: 'end',
-                allMessages: [],
+                allMessages: undefined,
             }))
             .do(s => this.initSocket(s))
             // store to state
@@ -71,7 +70,7 @@ export default class Chat extends React.Component {
             // map history
             .map(history => ({
                 shouldScroll: true,
-                allMessages: this.state.allMessages.concat(
+                allMessages: (this.state.allMessages || []).concat(
                     history.filter(s => s !== undefined)
                     .reduce(reduceShortMessages, [])
                     .map(({replies, ...message}) => ({
@@ -229,7 +228,8 @@ export default class Chat extends React.Component {
 
     scrollToMessage() {
         const {scrollToMessage, shouldScroll} = this.state;
-        if (!shouldScroll || scrollToMessage === undefined || !this.state.allMessages.length) {
+        if (!shouldScroll || scrollToMessage === undefined ||
+            !this.state.allMessages || !this.state.allMessages.length) {
             return;
         }
 
@@ -258,7 +258,7 @@ export default class Chat extends React.Component {
     }
 
     markUnread() {
-        if (!this._userActive) {
+        if (!this._userActive || !this.state.allMessages) {
             return;
         }
 
@@ -290,7 +290,8 @@ export default class Chat extends React.Component {
 
         return (
             <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                {this.state.chatStatus === 'loading' && 'Loading...'}
+                {this.state.chatStatus === 'loading' ||
+                    !this.state.allMessages && 'Loading...'}
 
                 {this.state.chatStatus !== 'loading' &&
                     this.state.allMessages &&

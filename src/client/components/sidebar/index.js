@@ -48,13 +48,9 @@ export default class Sidebar extends React.Component {
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
 
-            // data sub
+            // team sub
             store$
-            .map(s => s.filter((v, key) => [
-                'currentTeam',
-                'currentChannel',
-                'channels',
-            ].includes(key)))
+            .map(s => s.filter((v, key) => ['currentTeam'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => {
@@ -73,6 +69,16 @@ export default class Sidebar extends React.Component {
                     joinChannel,
                 };
             })
+            .subscribe(s => this.setState(s)),
+
+            // data sub
+            store$
+            .map(s => s.filter((v, key) => [
+                'currentChannel',
+                'channels',
+            ].includes(key)))
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
     }
