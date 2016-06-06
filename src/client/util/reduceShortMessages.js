@@ -1,11 +1,18 @@
-import Push from 'push.js';
+import Noti from 'notifyjs';
+const Notify = Noti.default;
+
+// setup permissions
+if (Notify.needsPermission && Notify.isSupported()) {
+    Notify.requestPermission();
+}
 
 const notify = ({notifyAboutNew = false, team, channel, message} = {}) => {
     if (notifyAboutNew) {
-        Push.create(`Shard: ${team.name}#${channel.name}`, {
+        const notification = new Notify(`Shard: ${team.name}#${channel.name}`, {
             body: `@${message.user.username}: ${message.message}`,
             timeout: 3000,
         });
+        notification.show();
     }
 };
 
