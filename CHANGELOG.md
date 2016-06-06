@@ -1,4 +1,11 @@
 
+0.11.0 / 2016-06-06
+==================
+
+  * add changelog display in app
+  * fix issue with status display during history fetching
+  * fix push notifications
+
 0.10.0 / 2016-06-03
 ==================
 
