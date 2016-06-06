@@ -58,6 +58,10 @@ module.exports = {
                 },
             },
             {
+                test: /\.md$/,
+                loader: 'raw',
+            },
+            {
                 test: /\.json$/,
                 loader: 'json',
             },
