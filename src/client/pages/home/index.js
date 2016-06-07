@@ -250,7 +250,7 @@ export default class Home extends React.Component {
                         <div className="columns">
                             <div className="column is-one-third">
                                 <h1 className="title">
-                                    Shard.
+                                    Shard
                                 </h1>
                                 <h2 className={`subtitle ${styles.subtitle}`}>
                                     All-in-one community platform that's free, secure,
@@ -258,7 +258,7 @@ export default class Home extends React.Component {
                                     Stop paying for Slack and hassling with external services.
                                     Simplify your life.
                                 </h2>
-                                <h2 className="subtitle">You'll never go back.</h2>
+                                <h2 className="subtitle">Communication redefined.</h2>
 
                                 {this.renderInput()}
                             </div>
