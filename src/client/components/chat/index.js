@@ -281,23 +281,28 @@ export default class Chat extends React.Component {
         markRead({team, channel, messages, replies});
     }
 
-    render() {
+    renderBody() {
         if (!this.state.currentChannel || !this.state.currentChannel.id) {
             return <span />;
         }
 
+        if (this.state.chatStatus === 'loading' || !this.state.allMessages) {
+            return 'Loading...';
+        }
+
+        if (this.state.allMessages.length === 0) {
+            return 'No messages yet!';
+        }
+
+        return this.state.allMessages.map(m => (
+            <Message key={m.id} team={this.state.currentTeam.id} {...m} />
+        ));
+    }
+
+    render() {
         return (
             <div ref={c => { this.chatContainer = c; }} className={styles.section}>
-                {this.state.chatStatus === 'loading' ||
-                    !this.state.allMessages && 'Loading...'}
-
-                {this.state.chatStatus !== 'loading' &&
-                    this.state.allMessages &&
-                    this.state.allMessages.length === 0 && 'No messages yet!'}
-
-                {this.state.allMessages && this.state.allMessages.map(m => (
-                    <Message key={m.id} team={this.state.currentTeam.id} {...m} />
-                ))}
+                {this.renderBody()}
             </div>
         );
     }
