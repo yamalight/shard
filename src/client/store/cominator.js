@@ -39,6 +39,10 @@ const updateChannel = (s, updates) => {
     const channel = updates.get('channel')
         .delete('subchannels'); // leave subchannels out
     let ns = s;
+    // check if channel not is for current team - just return
+    if (channel.getIn(['team', 'id']) !== s.getIn(['currentTeam', 'id'])) {
+        return ns;
+    }
     // check if it's current channel
     if (s.getIn(['currentChannel', 'id']) === channel.get('id')) {
         ns = s.set('currentChannel', s.get('currentChannel').merge(channel));
