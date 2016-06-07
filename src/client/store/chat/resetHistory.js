@@ -5,6 +5,6 @@ export const resetHistory = createAction();
 
 // map to socket
 const history$ = resetHistory.$
-    .map(() => ({history: []}));
+    .map(() => ({history: undefined}));
 
 export default history$;

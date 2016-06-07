@@ -27,8 +27,6 @@ export default class Chat extends React.Component {
             requestedForChannel: undefined,
             scrollToMessage: 'end',
             shouldScroll: false,
-            messages: [],
-            history: [],
             allMessages: undefined,
             chatStatus: undefined,
             authedUser,
