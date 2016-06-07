@@ -15,18 +15,18 @@ export const socket = (url) => {
     const s = new Subject();
 
     const open = Observer.create(() => {
-        console.info('socket open');
+        // console.info('socket open');
     });
     const close = Observer.create(() => {
-        console.log('socket is about to close..');
+        // console.log('socket is about to close..');
     });
 
     // init socket and pipe result to subject
     const sock = createSocket({url, open, close}).subscribe(s);
 
     // cleanup when done
-    const cleanup = (e) => {
-        console.log('socket cleanup:', e);
+    const cleanup = () => {
+        // console.log('socket cleanup:', e);
         sock.onCompleted();
     };
     s.subscribe(noop, cleanup, cleanup);
