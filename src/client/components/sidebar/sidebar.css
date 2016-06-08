@@ -47,6 +47,14 @@
     text-transform: none;
 }
 
+.channelName {
+    align-items: center;
+}
+
+.channelIcon {
+    margin-right: 3px;
+}
+
 .teamName {
     flex-grow: 1;
 }

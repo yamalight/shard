@@ -86,7 +86,7 @@ export default class Home extends React.Component {
         if (location.state && location.state.nextPathname) {
             browserHistory.push(location.state.nextPathname);
         } else {
-            browserHistory.push('/channels/@me');
+            browserHistory.push('/channels/me');
         }
     }
 

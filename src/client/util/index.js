@@ -8,3 +8,4 @@ export {reduceShortMessages, addReplyMessage} from './reduceShortMessages';
 export {requireAuth} from './requireAuth';
 export {focus} from './focus';
 export {logout} from './logout';
+export {meTeam} from './meteam';

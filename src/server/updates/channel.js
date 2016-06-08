@@ -1,4 +1,4 @@
-import {logger} from '../util';
+import {logger, meTeam} from '../util';
 import {r} from '../db';
 
 export const channelUpdates = async (ws) => {
@@ -8,7 +8,7 @@ export const channelUpdates = async (ws) => {
         .changes()
         .map(c => c('new_val'))
         .merge(ch => ({
-            team: r.table('Team').get(ch('team')),
+            team: r.table('Team').get(ch('team')).default(meTeam),
             subchannels: r.branch(
                 ch('parent') !== 'none',
                 [],
@@ -20,6 +20,11 @@ export const channelUpdates = async (ws) => {
                 }))
                 .orderBy('name')
                 .coerceTo('array'),
+            ),
+            name: r.branch(
+                ch('type').eq('conversation'),
+                r.table('User').get(ch('users').filter(u => u('id').ne(ws.userInfo.id))(0)('id'))('username'),
+                ch('name')
             ),
         }))
         .run();

@@ -55,6 +55,11 @@ import editSelectedMessage$, {editSelectedMessage} from './chat/editSelectedMess
 // infobar actions
 import infobar$, {setInfobar} from './infobar/set';
 
+// user actions
+import userStatus from './user/status';
+import findUser$, {findUser} from './user/find';
+import startDM$, {startDM} from './user/startdm';
+
 // create an array of action streams for store
 const streams = [
     // auth streams
@@ -99,6 +104,10 @@ const streams = [
     editSelectedMessage$,
     // infobar streams
     infobar$,
+    // user streams
+    userStatus.$,
+    findUser$,
+    startDM$,
 ];
 // create store
 const store = createStore({streams, defaultState, combinator});
@@ -145,6 +154,9 @@ export {
     editSelectedMessage,
     // infobar
     setInfobar,
+    // users
+    findUser,
+    startDM,
 };
 
 // store

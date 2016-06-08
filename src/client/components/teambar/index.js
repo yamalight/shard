@@ -10,6 +10,9 @@ import JoinTeam from '../jointeam';
 // store and actions
 import store$, {getTeams, getPublicTeams, setTeam, resetNewTeam} from '../../store';
 
+// util
+import {meTeam} from '../../util';
+
 export default class Teambar extends React.Component {
     constructor(props) {
         super(props);
@@ -72,16 +75,16 @@ export default class Teambar extends React.Component {
                     </a>
                 )}
 
-                {/*
-                TODO: Uncomment later when DM functionality is implemented
-                <a href="#" className={styles.iconButton}>
+                <a
+                    className={`${styles.iconButton} ${this.isCurrent(meTeam) || styles.iconButtonFaded}`}
+                    onClick={() => setTeam(meTeam)}
+                >
                     <span className="icon is-large hint--right hint--info" data-hint="Direct messages">
                         <i className="fa fa-users"></i>
                     </span>
                 </a>
 
                 <div className={styles.separator} />
-                */}
 
                 {/* Teams list */}
                 {this.state.teams && this.state.teams.map(team => (

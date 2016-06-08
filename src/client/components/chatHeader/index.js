@@ -1,6 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
-import styles from './chat.css';
+import styles from './chatHeader.css';
 
 // components
 import Description from '../description';
@@ -10,6 +10,9 @@ import EditChannel from '../editchannel';
 
 // store and actions
 import store$, {setInfobar} from '../../store';
+
+// utils
+import {meTeam} from '../../util';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -75,12 +78,33 @@ export default class Chat extends React.Component {
         this.setState({showMenu: false});
     }
 
+    renderName() {
+        const {currentChannel, currentTeam} = this.state;
+
+        if (currentTeam && currentChannel.name) {
+            return (
+                <span className={`is-flex ${styles.channelName}`}>
+                    <span className="icon">
+                        <i className={`fa ${currentChannel.type === 'conversation' ? 'fa-user' : 'fa-hashtag'}`} />
+                    </span>
+                    {currentChannel.name}
+                </span>
+            );
+        }
+
+        if (currentTeam && currentTeam.id === meTeam.id) {
+            return 'No conversation selected';
+        }
+
+        return 'No channel selected';
+    }
+
     render() {
         return (
             <nav className={`navbar is-flex ${styles.navbar}`}>
                 <div className="navbar-item">
-                    <p className={`title channel-name is-flex ${styles.title}`}>
-                        {this.state.currentChannel.name || 'No channel selected'}
+                    <p className={`title is-flex ${styles.title}`}>
+                        {this.renderName()}
                     </p>
                 </div>
 

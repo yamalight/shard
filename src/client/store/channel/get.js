@@ -15,7 +15,13 @@ const channels$ = getChannels.$
     .do(({refetch}) => !refetch && resetChannels())
     .do(({refetch}) => !refetch && resetHistory())
     .map(data => sign(data))
-    .flatMap(({team, token}) => get(`/api/channels?team=${team}`, token))
+    .map(data => ({
+        ...data,
+        url: data.type ?
+            `/api/channels?team=${data.team}&type=${data.type}` :
+            `/api/channels?team=${data.team}`,
+    }))
+    .flatMap(({url, token}) => get(url, token))
     .do(res => (res.error ? status('error') : status('finished')))
     .map(channels => (Array.isArray(channels) ? ({channels}) : ({channelError: channels.error, channels: []})));
 

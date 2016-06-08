@@ -12,9 +12,13 @@ import Userbar from '../userbar';
 import JoinChannel from '../joinchannel';
 import Dropdown from '../dropdown';
 import EditTeam from '../editteam';
+import NewConversation from '../newconversation';
 
 // store and actions
 import store$, {getChannels, getPublicChannels, setChannel, resetNewChannel} from '../../store';
+
+// utils
+import {meTeam} from '../../util';
 
 export default class Sidebar extends React.Component {
     constructor(props) {
@@ -24,6 +28,7 @@ export default class Sidebar extends React.Component {
             currentTeam: {},
             channels: [],
             showCreateChannel: false,
+            showCreateDM: false,
             showJoinChannel: false,
             showInvite: false,
             showEdit: false,
@@ -57,10 +62,14 @@ export default class Sidebar extends React.Component {
                 let joinChannel = this.props.joinChannel || this.state.joinChannel;
                 // request new channels if team changed
                 if (s.currentTeam && s.currentTeam.id && this.state.currentTeam.id !== s.currentTeam.id) {
-                    getChannels({team: s.currentTeam.id});
-                    // force set join channel to general on team change
-                    if (!joinChannel) {
-                        joinChannel = 'general';
+                    if (s.currentTeam.id !== meTeam.id) {
+                        getChannels({team: s.currentTeam.id});
+                        // force set join channel to general on team change
+                        if (!joinChannel) {
+                            joinChannel = 'general';
+                        }
+                    } else if (s.currentTeam.id === meTeam.id) {
+                        getChannels({team: '', type: 'conversation'});
                     }
                 }
 
@@ -140,6 +149,14 @@ export default class Sidebar extends React.Component {
         this.setState({showEdit: false});
     }
 
+    showCreateDM() {
+        // getPublicChannels({team: this.state.currentTeam.id});
+        this.setState({showCreateDM: true});
+    }
+    closeCreateDM() {
+        this.setState({showCreateDM: false});
+    }
+
     handleMenuItem(item) {
         item.action();
     }
@@ -162,89 +179,155 @@ export default class Sidebar extends React.Component {
         );
     }
 
-    render() {
-        return (
-            <aside className={styles.sidebar}>
+    renderHeader() {
+        if (this.state.currentTeam.id === '@me') {
+            return (
                 <div className={styles.header}>
                     <header>
                         <span className={styles.teamName}>
-                            {this.state.currentTeam.name || 'No team selected'}
+                            Direct messages
                         </span>
-
-                        {this.renderMenu()}
-
-                        {this.state.showMenu && (
-                            <Dropdown
-                                style={this.state.menuStyle}
-                                title="Team"
-                                items={this.menuItems}
-                                onItem={it => this.handleMenuItem(it)}
-                                onHide={() => this.setState({showMenu: false})}
-                            />
-                        )}
                     </header>
                 </div>
+            );
+        }
+
+        return (
+            <div className={styles.header}>
+                <header>
+                    <span className={styles.teamName}>
+                        {this.state.currentTeam.name || 'No team selected'}
+                    </span>
+
+                    {this.renderMenu()}
+
+                    {this.state.showMenu && (
+                        <Dropdown
+                            style={this.state.menuStyle}
+                            title="Team"
+                            items={this.menuItems}
+                            onItem={it => this.handleMenuItem(it)}
+                            onHide={() => this.setState({showMenu: false})}
+                        />
+                    )}
+                </header>
+            </div>
+        );
+    }
+
+    renderChannelsHeader() {
+        const {currentTeam} = this.state;
+        if (currentTeam.id === meTeam.id) {
+            return (
+                <p className={`menu-label ${styles.channelsHeader}`}>
+                    <a
+                        className={`hint--bottom ${styles.channelsLabel}`}
+                        data-hint="Start new conversation"
+                        onClick={() => this.showCreateDM()}
+                    >
+                        Conversations
+                    </a>
+                </p>
+            );
+        }
+
+        return (
+            <p className={`menu-label ${styles.channelsHeader}`}>
+                <a
+                    className={`hint--bottom ${styles.channelsLabel}`}
+                    data-hint="Join existing channel"
+                    onClick={() => this.showJoinChannel()}
+                >
+                    Channels
+                </a>
+                <span className={styles.separator} />
+                <a
+                    className="hint--bottom"
+                    data-hint="Create new channel"
+                    onClick={() => this.setState({showCreateChannel: true})}
+                >
+                    <span className="icon is-small">
+                        <i className="fa fa-plus" />
+                    </span>
+                </a>
+            </p>
+        );
+    }
+
+    renderLoadingMessage() {
+        if (this.state.channelStatus !== 'loading') {
+            return null;
+        }
+
+        return (
+            <li>
+                <a>Loading...</a>
+            </li>
+        );
+    }
+
+    renderNoChannelsMessage() {
+        const {channelStatus, channels, currentTeam} = this.state;
+
+        if (channelStatus !== 'loading' && channels && channels.length === 0) {
+            return (
+                <li>
+                    <a>{currentTeam.id === meTeam.id ?
+                            'No conversations! Start one?' :
+                            'No channels found! Add one?'}</a>
+                </li>
+            );
+        }
+
+        return null;
+    }
+
+    renderChannels() {
+        if (this.state.channelStatus === 'loading' || !this.state.channels) {
+            return null;
+        }
+
+        return this.state.channels.map(channel => (
+            <li key={channel.id}>
+                <a
+                    className={`force-flex ${styles.channelName} ${this.isCurrent(channel) && 'is-active'}`}
+                    onClick={() => this.setChannel(channel)}
+                >
+                    <span className={`icon is-small ${styles.channelIcon}`}>
+                        <i className={`fa ${channel.type === 'conversation' ? 'fa-user' : 'fa-hashtag'}`} />
+                    </span>
+                    {channel.name}
+                </a>
+                {channel.subchannels && channel.subchannels.length > 0 && (
+                    <ul>
+                        {channel.subchannels.map(ch => (
+                            <li key={ch.id}>
+                                <a
+                                    className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
+                                    onClick={() => this.setChannel(ch)}
+                                >
+                                    {ch.name}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </li>
+        ));
+    }
+
+    render() {
+        return (
+            <aside className={styles.sidebar}>
+                {this.renderHeader()}
 
                 {this.state.currentTeam.name && (
                     <div className={`menu dark-menu ${styles.channels}`}>
-                        <p className={`menu-label ${styles.channelsHeader}`}>
-                            <a
-                                className={`hint--bottom ${styles.channelsLabel}`}
-                                data-hint="Join existing channel"
-                                onClick={() => this.showJoinChannel()}
-                            >
-                                Channels
-                            </a>
-                            <span className={styles.separator} />
-                            <a
-                                className="hint--bottom"
-                                data-hint="Create new channel"
-                                onClick={() => this.setState({showCreateChannel: true})}
-                            >
-                                <span className="icon is-small">
-                                    <i className="fa fa-plus" />
-                                </span>
-                            </a>
-                        </p>
+                        {this.renderChannelsHeader()}
                         <ul className="menu-list">
-                            {this.state.channelStatus === 'loading' && (
-                                <li>
-                                    <a>Loading channels...</a>
-                                </li>
-                            )}
-                            {this.state.channelStatus !== 'loading' &&
-                            this.state.channels &&
-                            this.state.channels.length === 0 && (
-                                <li>
-                                    <a>No channels found! Add one?</a>
-                                </li>
-                            )}
-                            {this.state.channelStatus !== 'loading' &&
-                            this.state.channels &&
-                            this.state.channels.map(channel => (
-                                <li key={channel.id}>
-                                    <a
-                                        className={`channel-name ${this.isCurrent(channel) && 'is-active'}`}
-                                        onClick={() => this.setChannel(channel)}
-                                    >
-                                        {channel.name}
-                                    </a>
-                                    {channel.subchannels && channel.subchannels.length > 0 && (
-                                        <ul>
-                                            {channel.subchannels.map(ch => (
-                                                <li key={ch.id}>
-                                                    <a
-                                                        className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
-                                                        onClick={() => this.setChannel(ch)}
-                                                    >
-                                                        {ch.name}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </li>
-                            ))}
+                            {this.renderLoadingMessage()}
+                            {this.renderNoChannelsMessage()}
+                            {this.renderChannels()}
                         </ul>
                     </div>
                 )}
@@ -279,6 +362,13 @@ export default class Sidebar extends React.Component {
                 <Portal closeOnEsc onClose={() => this.closeTeamEdit()} isOpened={this.state.showEdit}>
                     <Modal closeAction={() => this.closeTeamEdit()}>
                         <EditTeam close={t => this.closeTeamEdit(t)} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for user DM creation */}
+                <Portal closeOnEsc onClose={() => this.closeCreateDM()} isOpened={this.state.showCreateDM}>
+                    <Modal closeAction={() => this.closeCreateDM()}>
+                        <NewConversation close={(refetch) => this.closeCreateDM(refetch)} />
                     </Modal>
                 </Portal>
             </aside>

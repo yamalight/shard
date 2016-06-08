@@ -6,6 +6,7 @@ const channelSchema = {
     description: type.string(),
     isPrivate: type.boolean().default(false).required(),
     parent: type.string().default('none'),
+    type: type.string().enum(['channel', 'conversation']).default('channel'),
     users: [{
         id: type.string(),
         access: type.string().enum(['owner', 'admin', 'member']).default('member'),

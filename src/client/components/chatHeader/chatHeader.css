@@ -27,6 +27,10 @@
     min-height: 30px;
 }
 
+.channelName {
+    align-items: center;
+}
+
 .separator::after {
     content: " | ";
     color: #ccc;

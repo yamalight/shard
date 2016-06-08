@@ -3,8 +3,7 @@ import React from 'react';
 // import Dock from 'react-dock';
 import styles from './main.css';
 
-import store$, {setTeam, getUpdates} from '../../store';
-
+// components
 import Teambar from '../../components/teambar';
 import Sidebar from '../../components/sidebar';
 import ChatHeader from '../../components/chatHeader';
@@ -12,6 +11,12 @@ import Chat from '../../components/chat';
 import ChatInput from '../../components/chatInput';
 import Infobar from '../../components/infobar';
 import CommandPalette from '../../components/commandpalette';
+
+// store and actions
+import store$, {setTeam, getUpdates} from '../../store';
+
+// utils
+import {meTeam} from '../../util';
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -67,7 +72,8 @@ export default class Main extends React.Component {
 
     updateTeamChannel() {
         // set team if needed
-        const currentTeam = this.state.teams.find(t => _.camelCase(t.name) === this.state.team);
+        const currentTeam = this.state.teams.concat([meTeam])
+            .find(t => _.camelCase(t.name) === this.state.team);
         if (currentTeam && (!this.state.currentTeam || currentTeam.id !== this.state.currentTeam.id)) {
             setTeam(currentTeam);
         }
