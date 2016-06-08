@@ -110,7 +110,7 @@ export default class Chat extends React.Component {
 
                 <div className={styles.navSpacer} />
 
-                {this.state.currentChannel.id && (
+                {this.state.currentChannel.id && this.state.currentTeam.id !== meTeam.id && (
                     <div className={`navbar-item is-flex ${styles.navMenu}`}>
                         <a className="card-header-icon" onClick={() => this.showMenu()}>
                             <i className="fa fa-angle-down" />
