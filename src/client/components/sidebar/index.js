@@ -303,9 +303,12 @@ export default class Sidebar extends React.Component {
                         {channel.subchannels.map(ch => (
                             <li key={ch.id}>
                                 <a
-                                    className={`channel-name ${this.isCurrent(ch) && 'is-active'}`}
+                                    className={`force-flex ${styles.channelName} ${this.isCurrent(ch) && 'is-active'}`}
                                     onClick={() => this.setChannel(ch)}
                                 >
+                                    <span className={`icon is-small ${styles.channelIcon}`}>
+                                        <i className="fa fa-hashtag" />
+                                    </span>
                                     {ch.name}
                                 </a>
                             </li>
