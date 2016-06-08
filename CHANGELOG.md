@@ -1,4 +1,14 @@
 
+0.12.0 / 2016-06-08
+==================
+
+  * implement user conversations
+  * do not scale widgets for now at all
+  * fix loading indication issue for empty channels
+  * change tagline
+  * fix fetching older history
+  * correctly handle history cleaning
+
 0.11.0 / 2016-06-06
 ==================
 
