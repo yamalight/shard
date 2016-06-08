@@ -63,7 +63,7 @@ export default class Chat extends React.Component {
             store$
             .map(s => s.get('history'))
             .filter(s => s !== undefined)
-            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b) && a.size !== 0)
             .map(s => s.toJS())
             // map history
             .map(history => ({
