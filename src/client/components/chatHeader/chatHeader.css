@@ -13,10 +13,6 @@
     color: #000;
 }
 
-.navSpacer {
-    flex-grow: 1;
-}
-
 .navMenu {
     align-items: center;
 }

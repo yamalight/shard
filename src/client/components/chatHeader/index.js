@@ -108,7 +108,7 @@ export default class Chat extends React.Component {
                     </p>
                 </div>
 
-                <div className={styles.navSpacer} />
+                <div className="is-spacer" />
 
                 {this.state.currentChannel.id && this.state.currentTeam.id !== meTeam.id && (
                     <div className={`navbar-item is-flex ${styles.navMenu}`}>
