@@ -29,7 +29,7 @@ export const suggestTypeahead = (command, state) => {
         return _.flatten(state.channels.concat(state.channels.map(ch => ch.subchannels)))
             .filter(ch => ch.name.toLowerCase().includes(search))
             .map(ch => ({
-                icon: 'fa-hashtag',
+                icon: ch.type === 'channel' ? 'fa-hashtag' : 'fa-user',
                 name: ch.name,
                 action({close}) {
                     setChannel(ch);
