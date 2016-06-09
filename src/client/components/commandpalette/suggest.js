@@ -1,5 +1,6 @@
 /* eslint no-param-reassign: 0 */
 import _ from 'lodash';
+import {meTeam} from '../../util';
 import {setTeam, setChannel} from '../../store';
 
 const help = [{
@@ -39,7 +40,8 @@ export const suggestTypeahead = (command, state) => {
 
     if (/^%/.test(command)) {
         const search = command.replace(/^%/, '').toLowerCase();
-        return state.teams.filter(t => t.name.toLowerCase().includes(search))
+        return state.teams.concat([meTeam])
+            .filter(t => t.name.toLowerCase().includes(search))
             .map(t => ({
                 icon: 'fa-users',
                 name: t.name,
