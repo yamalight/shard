@@ -29,8 +29,10 @@ export default (app) => {
                     r.table('User').get(ch('users').filter(u => u('id').ne(req.userInfo.id))(0)('id'))('username'),
                     ch('name')
                 ),
+            }))
+            .merge(ch => ({
                 unread: r.table('Unread')
-                    .filter({channel: ch('id'), team: ch('team'), user: req.userInfo.id})
+                    .filter({channel: ch('id'), team: ch('team')('id'), user: req.userInfo.id})
                     .limit(1)(0)
                     .default({count: 0})('count'),
             }))

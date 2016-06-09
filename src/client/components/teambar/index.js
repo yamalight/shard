@@ -64,6 +64,55 @@ export default class Teambar extends React.Component {
         return this.state.currentTeam && this.state.currentTeam.id === team.id;
     }
 
+    renderTeam(team) {
+        // render meTeam if needed
+        if (team.id === meTeam.id) {
+            return [
+                <a
+                    key={team.id}
+                    className={`${styles.iconButton} ${this.isCurrent(meTeam) || styles.iconButtonFaded}`}
+                    onClick={() => setTeam(meTeam)}
+                >
+                    <span className="icon is-large hint--right hint--info" data-hint="Direct messages">
+                        <i className="fa fa-users" />
+                        {team.unread > 0 && (
+                            <span className={`tag is-info is-small ${styles.teamCount}`}>
+                                {team.unread}
+                            </span>
+                        )}
+                    </span>
+                </a>,
+                <div key="separator" className={styles.separator} />,
+            ];
+        }
+
+        return (
+            <a
+                key={team.id}
+                className={`${styles.iconButton} ${this.isCurrent(team) || styles.iconButtonFaded}`}
+                onClick={() => this.setTeam(team)}
+            >
+                <span className="icon is-large hint--right hint--info" data-hint={team.name}>
+                    <i className="fa fa-circle"></i>
+                    <span className={styles.teamLetter}>{team.name[0]}</span>
+                    {team.unread > 0 && (
+                        <span className={`tag is-info is-small ${styles.teamCount}`}>
+                            {team.unread}
+                        </span>
+                    )}
+                </span>
+            </a>
+        );
+    }
+
+    renderTeams() {
+        if (!this.state.teams) {
+            return null;
+        }
+
+        return this.state.teams.map(team => this.renderTeam(team));
+    }
+
     render() {
         return (
             <div className={styles.teambar}>
@@ -75,35 +124,8 @@ export default class Teambar extends React.Component {
                     </a>
                 )}
 
-                <a
-                    className={`${styles.iconButton} ${this.isCurrent(meTeam) || styles.iconButtonFaded}`}
-                    onClick={() => setTeam(meTeam)}
-                >
-                    <span className="icon is-large hint--right hint--info" data-hint="Direct messages">
-                        <i className="fa fa-users"></i>
-                    </span>
-                </a>
-
-                <div className={styles.separator} />
-
                 {/* Teams list */}
-                {this.state.teams && this.state.teams.map(team => (
-                    <a
-                        key={team.id}
-                        className={`${styles.iconButton} ${this.isCurrent(team) || styles.iconButtonFaded}`}
-                        onClick={() => this.setTeam(team)}
-                    >
-                        <span className="icon is-large hint--right hint--info" data-hint={team.name}>
-                            <i className="fa fa-circle"></i>
-                            <span className={styles.teamLetter}>{team.name[0]}</span>
-                            {team.unread > 0 && (
-                                <span className={`tag is-dark is-small ${styles.teamCount}`}>
-                                    {team.unread}
-                                </span>
-                            )}
-                        </span>
-                    </a>
-                ))}
+                {this.renderTeams()}
 
                 <div className={styles.separatorMini} />
 

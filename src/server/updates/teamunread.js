@@ -1,4 +1,4 @@
-import {logger} from '../util';
+import {logger, meTeam} from '../util';
 import {r} from '../db';
 
 export const teamUnread = async (ws) => {
@@ -9,6 +9,7 @@ export const teamUnread = async (ws) => {
         .map(c => c('new_val'))
         .map(c => r.table('Team')
             .get(c('team'))
+            .default(meTeam)
             .merge({
                 unread: c('count'),
             })
