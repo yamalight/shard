@@ -1,4 +1,14 @@
 
+0.13.0 / 2016-06-09
+==================
+
+  * unread counts for team, channels and private conversations
+  * remove unneeded local css class
+  * rename docker db folder to evade names clash with db subfolder
+  * use correct icons for conversations in command palette
+  * add me team to command palette
+  * match full usernames, not just start
+
 0.12.0 / 2016-06-08
 ==================
 
