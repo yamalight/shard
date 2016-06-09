@@ -1,4 +1,4 @@
-import {Channel, r} from '../db';
+import {Channel, Team, r} from '../db';
 import {logger, asyncRequest, meTeam} from '../util';
 import checkAuth from '../auth/checkAuth';
 
@@ -29,6 +29,10 @@ export default (app) => {
                     r.table('User').get(ch('users').filter(u => u('id').ne(req.userInfo.id))(0)('id'))('username'),
                     ch('name')
                 ),
+                unread: r.table('Unread')
+                    .filter({channel: ch('id'), team: ch('team'), user: req.userInfo.id})
+                    .limit(1)(0)
+                    .default({count: 0})('count'),
             }))
             .orderBy('name')
             .execute();

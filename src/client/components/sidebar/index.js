@@ -297,6 +297,12 @@ export default class Sidebar extends React.Component {
                         <i className={`fa ${channel.type === 'conversation' ? 'fa-user' : 'fa-hashtag'}`} />
                     </span>
                     {channel.name}
+                    <span className="is-spacer" />
+                    {channel.unread > 0 && (
+                        <span className="tag is-dark is-small">
+                            {channel.unread}
+                        </span>
+                    )}
                 </a>
                 {channel.subchannels && channel.subchannels.length > 0 && (
                     <ul>

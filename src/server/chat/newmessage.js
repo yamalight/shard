@@ -4,6 +4,7 @@ import {logger, asyncRequest} from '../util';
 import {Message} from '../db';
 import {validateMessage} from './validateMessage';
 import {prepareMessageProcessors} from './processMessage';
+import {changeUnread} from '../unread';
 
 export default (app) => {
     const processMessage = prepareMessageProcessors(app);
@@ -36,6 +37,11 @@ export default (app) => {
         m.user = req.userInfo;
         await m.saveAll({user: true});
         logger.info('saved new message:', m);
+
+        // increment unread
+        await changeUnread({team, channel, user: req.userInfo});
+
+        // send success
         res.sendStatus(201);
     }));
 };

@@ -12,3 +12,4 @@ export {User} from './user';
 export {Team} from './team';
 export {Channel} from './channel';
 export {Message, Reply} from './message';
+export {Unread} from './unread';
