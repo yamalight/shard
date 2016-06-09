@@ -51,6 +51,7 @@
     background: #2e3136;
 }
 
-.spacer {
-    flex-grow: 1;
+.teamCount {
+    position: absolute;
+    left: 30px;
 }

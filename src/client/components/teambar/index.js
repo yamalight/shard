@@ -96,6 +96,11 @@ export default class Teambar extends React.Component {
                         <span className="icon is-large hint--right hint--info" data-hint={team.name}>
                             <i className="fa fa-circle"></i>
                             <span className={styles.teamLetter}>{team.name[0]}</span>
+                            {team.unread > 0 && (
+                                <span className={`tag is-dark is-small ${styles.teamCount}`}>
+                                    {team.unread}
+                                </span>
+                            )}
                         </span>
                     </a>
                 ))}
@@ -126,7 +131,7 @@ export default class Teambar extends React.Component {
 
 
                 {/* Sidebar toggle button */}
-                <div className={styles.spacer} />
+                <div className="is-spacer" />
                 <div className={styles.separator} />
                 <a className={styles.iconButton} onClick={() => this.props.toggleSidebar()}>
                     <span className="icon is-large hint--right hint--info" data-hint="Toggle sidebar">
