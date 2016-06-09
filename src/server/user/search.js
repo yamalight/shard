@@ -7,7 +7,7 @@ export default (app) => {
         logger.info('searching for: ', username);
         // find user
         const users = await User.filter({isEmailValid: true})
-        .filter(u => u('username').match(`(?i)^${username}`))
+        .filter(u => u('username').match(`(?i)${username}`))
         .without(['password', 'verifyId'])
         .run();
 
