@@ -1,4 +1,5 @@
 import {fromJS} from 'immutable';
+import {meTeam} from '../util';
 
 // sort by title
 const orderBy = (attr) => (item1, item2) => {
@@ -29,7 +30,23 @@ const updateTeam = (s, updates) => {
             ns.get('teams').find(v => v.get('id') === team.get('id')).merge(team)
         );
     } else { // if not - push new team
-        ns = ns.set('teams', ns.get('teams', fromJS([])).push(team).sort(orderBy('name')));
+        ns = ns.set('teams',
+            ns.get('teams', fromJS([]))
+                .push(team)
+                .sort(orderBy('name'))
+                // put meTeam on top
+                .sort((team1, team2) => {
+                    if (team1.get('id') === meTeam.id) {
+                        return -1;
+                    }
+
+                    if (team2.get('id') === meTeam.id) {
+                        return 1;
+                    }
+
+                    return 0;
+                })
+        );
     }
     return ns;
 };
