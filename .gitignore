@@ -1,6 +1,6 @@
 node_modules
 npm-debug.log
-db/
+sharddb/
 docker-compose-deploy.yml
 Makefile
 src/client/dist/
