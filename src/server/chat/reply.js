@@ -5,6 +5,7 @@ import {Reply} from '../db';
 import {validateMessage} from './validateMessage';
 import {prepareMessageProcessors} from './processMessage';
 import {changeUnread} from '../unread';
+import {createNotification} from '../notifications';
 
 export default (app) => {
     const processMessage = prepareMessageProcessors(app);
@@ -42,6 +43,9 @@ export default (app) => {
 
         // increment unread
         await changeUnread({team, channel, user: req.userInfo});
+
+        // create notification if needed
+        await createNotification({message: m, team, channel, user: req.userInfo});
 
         res.sendStatus(201);
     }));

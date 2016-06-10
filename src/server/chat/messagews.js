@@ -1,8 +1,7 @@
 import checkAuth from '../auth/checkAuth';
-import {logger, asyncRequest} from '../util';
+import {logger, asyncRequest, userFields} from '../util';
 import {r} from '../db';
 import {socket} from '../../../config';
-import {userFields} from './dbconf';
 
 export default (app) => {
     app.ws('/api/chat/:team/:channel', checkAuth, asyncRequest(async (ws, req) => {

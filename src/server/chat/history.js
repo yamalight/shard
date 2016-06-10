@@ -1,7 +1,6 @@
 import checkAuth from '../auth/checkAuth';
-import {logger, asyncRequest} from '../util';
+import {logger, asyncRequest, userFields, messageJoin} from '../util';
 import {Message, r} from '../db';
-import {userFields, messageJoin} from './dbconf';
 
 const HISTORY_LIMIT = 20;
 

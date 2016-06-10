@@ -27,6 +27,8 @@ import setupExtensions from './extensions';
 import setupUpdates from './updates';
 // users api
 import setupUser from './user';
+// notifications api
+import setupNotifications from './notifications';
 
 // logger
 import {logger} from './util';
@@ -59,6 +61,8 @@ setupChannelAPI(app);
 setupUser(app);
 // setup chat API
 setupChatAPI(app);
+// setup notifications API
+setupNotifications(app);
 
 // serve static content
 app.use(express.static(join(__dirname, '..', 'client')));

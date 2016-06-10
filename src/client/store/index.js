@@ -60,6 +60,10 @@ import userStatus from './user/status';
 import findUser$, {findUser} from './user/find';
 import startDM$, {startDM} from './user/startdm';
 
+// notifications
+import notificationStatus from './notifications/status';
+import notifications$, {getNotifications} from './notifications/get';
+
 // create an array of action streams for store
 const streams = [
     // auth streams
@@ -108,6 +112,9 @@ const streams = [
     userStatus.$,
     findUser$,
     startDM$,
+    // notifications
+    notificationStatus.$,
+    notifications$,
 ];
 // create store
 const store = createStore({streams, defaultState, combinator});
@@ -157,6 +164,8 @@ export {
     // users
     findUser,
     startDM,
+    // notifications
+    getNotifications,
 };
 
 // store

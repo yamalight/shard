@@ -13,7 +13,7 @@ export default class Notifications extends React.Component {
             notifications: undefined,
         };
 
-        // getNotifications();
+        getNotifications();
     }
 
     componentWillMount() {
@@ -45,7 +45,7 @@ export default class Notifications extends React.Component {
                         Loading notifications...
                     </a>
                 )}
-                {this.state.notifications.length === 0 && (
+                {this.state.notifications && this.state.notifications.length === 0 && (
                     <a className="panel-block content">
                         No notifications found!
                     </a>
