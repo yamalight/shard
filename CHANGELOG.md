@@ -1,4 +1,15 @@
 
+0.14.0 / 2016-06-10
+==================
+
+  * implement background push notifications
+  * add basic notifications display widget
+  * allow specifying basic notification settings
+  * basic notifications creation on user messages
+  * disallow negative unread counts
+  * fix error that appeared while closing team edit dialogue
+  * always put me-team on top of list
+
 0.13.0 / 2016-06-09
 ==================
 
