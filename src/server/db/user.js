@@ -9,4 +9,5 @@ export const User = thinky.createModel('User', {
     registered: type.date().default(r.now()),
     status: type.string().default('offline'),
     statusMessage: type.string().default(''),
+    subscriptions: type.array().schema(type.object()).default([]),
 });

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -5,6 +7,7 @@ import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {logger} from '../util';
 import config from './webpack.config.js';
+import {webPush} from '../../../config';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -13,6 +16,7 @@ config.plugins = [
     new webpack.DefinePlugin({
         'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV)},
     }),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.min.js'),
 ];
 
 // if not prod - enable hot reload
@@ -21,15 +25,16 @@ if (!isProduction) {
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
     config.plugins.push(new webpack.NoErrorsPlugin());
     // override entry for hotload
-    config.entry = [
+    config.entry.app = [
         'webpack-hot-middleware/client',
-        config.entry,
+        config.entry.app,
     ];
 } else {
     logger.info('production - adding optimization plugins');
     config.devtool = 'cheap-source-map';
     config.debug = false;
     // extract styles into file
+    const extractCSS = new ExtractTextPlugin('main.css');
     config.module.loaders = config.module.loaders
     .map(loader => {
         const cssIndex = loader.loaders ? loader.loaders.findIndex(it => it.indexOf('css') !== -1) : -1;
@@ -47,12 +52,12 @@ if (!isProduction) {
             return loader;
         }
 
-        loader.loader = ExtractTextPlugin.extract(loader.loaders.slice(1).join('!')); // eslint-disable-line
+        loader.loader = extractCSS.extract(loader.loaders.slice(1).join('!')); // eslint-disable-line
         delete loader.loaders; // eslint-disable-line
         return loader;
     });
     // add optimization plugins
-    config.plugins.push(new ExtractTextPlugin('main.css'));
+    config.plugins.push(extractCSS);
     config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
     config.plugins.push(new webpack.optimize.DedupePlugin());
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
@@ -78,6 +83,24 @@ const statsConf = {
 
 // create express
 export default (app) => {
+    // generate manifest file
+    const manifest = {
+        name: 'Shard',
+        gcm_sender_id: webPush.gcmId,
+    };
+    fs.writeFile(
+        path.join(__dirname, '..', '..', 'client', 'manifest.json'),
+        JSON.stringify(manifest, null, 2),
+        'utf8',
+        (err) => {
+            if (err) {
+                logger.error('error creating manifest:', err);
+                return;
+            }
+
+            logger.debug('created manifest!');
+        }
+    );
     // only user middleware while in dev
     if (!isProduction) {
         app.use(webpackMiddleware(compiler, {

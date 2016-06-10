@@ -31,6 +31,11 @@ export const socket = {
     pingTime: process.env.SHARD_SOCKET_PINGTIME || 30000, // 30s
 };
 
+export const webPush = {
+    gcmKey: process.env.SHARD_GCM_KEY || 'your gcm key here',
+    gcmId: process.env.SHARD_GCM_ID || 'your gcm app id/number here',
+};
+
 // extensions
 import userTypeahead from './src/extensions/userTypeahead/server';
 import channelTypeahead from './src/extensions/channelTypeahead/server';

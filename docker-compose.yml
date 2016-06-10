@@ -24,3 +24,5 @@ services:
       - SHARD_JWT_SECRET=default-jwt-secret
       - SHARD_AUTH_SALT=Jst#ULN9&HD!NZ0g
       - SHARD_SOCKET_PINGTIME=30000
+      - SHARD_GCM_KEY=gcm_key
+      - SHARD_GCM_ID=gcm_id

@@ -21,6 +21,10 @@ import routes from './routes';
 // extensions support
 import './extensions';
 
+// service worker
+import './worker';
+
+// render app
 render((
     <Router history={browserHistory}>
         <Route path="/" component={App}>

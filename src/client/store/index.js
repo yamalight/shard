@@ -63,6 +63,7 @@ import startDM$, {startDM} from './user/startdm';
 // notifications
 import notificationStatus from './notifications/status';
 import notifications$, {getNotifications} from './notifications/get';
+import notificationsReg$, {registerNotifications} from './notifications/register';
 
 // create an array of action streams for store
 const streams = [
@@ -115,6 +116,7 @@ const streams = [
     // notifications
     notificationStatus.$,
     notifications$,
+    notificationsReg$,
 ];
 // create store
 const store = createStore({streams, defaultState, combinator});
@@ -166,6 +168,7 @@ export {
     startDM,
     // notifications
     getNotifications,
+    registerNotifications,
 };
 
 // store

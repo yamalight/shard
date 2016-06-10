@@ -26,7 +26,7 @@ export default (app) => {
             })),
             isNew: msg.readBy.findIndex(el => el.id === req.userInfo.id) === -1,
         }));
-        logger.debug('got message', history);
+        logger.debug('got messages', history.length);
         res.send({history});
     }));
 };
