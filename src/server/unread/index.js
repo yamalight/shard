@@ -32,6 +32,9 @@ export const changeUnread = async ({channel, team, user, mod = 1} = {}) => {
         // update
         const unread = all[0];
         unread.count += mod;
+        if (unread.count < 0) {
+            unread.count = 0;
+        }
         const r = await unread.save();
         logger.debug('updated unread count:', r);
         return r;
