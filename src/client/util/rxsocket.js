@@ -5,7 +5,7 @@ const noop = () => {};
 
 // create a web socket subject
 const createSocket = ({url, open, close}) => DOM.fromWebSocket(
-    `ws://${window.location.host}${url}`,
+    `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}${url}`,
     null,
     open,
     close,

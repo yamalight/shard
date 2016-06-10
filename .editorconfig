@@ -14,6 +14,10 @@ trim_trailing_whitespace = true
 # always insert final newline
 insert_final_newline = true
 
+[Makefile]
+indent_style = tabs
+indent_size = 4
+
 [*.md]
 trim_trailing_whitespace = false
 
