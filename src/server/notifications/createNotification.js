@@ -8,12 +8,12 @@ import {webPush as webPushConfig} from '../../../config';
 webPush.setGCMAPIKey(webPushConfig.gcmKey);
 
 // default notification settings
-const defaultSettings = {
+export const defaultSettings = {
     notifications: 'mentions',
 };
 
 const notifyUser = async ({message, team, channel, user}) => {
-    const set = await Settings.filter({channel, user}).limit(1);
+    const set = await Settings.filter({channel: channel.id, user}).limit(1);
     const settings = set.pop() || defaultSettings;
     logger.debug('got settings for user:', user, 'settings:', settings);
     // if user disabled notifications - die
@@ -28,7 +28,7 @@ const notifyUser = async ({message, team, channel, user}) => {
     if (settings.notifications === 'all') {
         logger.debug('creating notification:', {message, user, team, channel});
         const notifyMessage = `New message in #${_.camelCase(channel.name)} by @${message.user.username}:
-> ${message}`;
+> ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
             user,

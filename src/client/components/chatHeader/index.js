@@ -7,6 +7,7 @@ import Description from '../description';
 import Dropdown from '../dropdown';
 import Modal from '../modal';
 import EditChannel from '../editchannel';
+import NotifySettings from '../notifysettings';
 
 // store and actions
 import store$, {setInfobar} from '../../store';
@@ -21,6 +22,7 @@ export default class Chat extends React.Component {
         this.state = {
             currentChannel: {},
             showRename: false,
+            showNotifications: false,
         };
     }
 
@@ -57,11 +59,18 @@ export default class Chat extends React.Component {
             title: 'Edit channel',
             type: 'action',
             content: () => this.setState({showRename: true}),
+        }, {
+            title: 'Notification settings',
+            type: 'action',
+            content: () => this.setState({showNotifications: true}),
         }];
     }
 
     closeRename() {
         this.setState({showRename: false});
+    }
+    closeNotifications() {
+        this.setState({showNotifications: false});
     }
 
     showMenu() {
@@ -132,6 +141,13 @@ export default class Chat extends React.Component {
                 <Portal closeOnEsc onClose={() => this.closeRename()} isOpened={this.state.showRename}>
                     <Modal closeAction={() => this.closeRename()}>
                         <EditChannel close={ch => this.closeRename(ch)} />
+                    </Modal>
+                </Portal>
+
+                {/* Modal for channel notification settings */}
+                <Portal closeOnEsc onClose={() => this.closeNotifications()} isOpened={this.state.showNotifications}>
+                    <Modal closeAction={() => this.closeNotifications()}>
+                        <NotifySettings close={() => this.closeNotifications()} />
                     </Modal>
                 </Portal>
             </nav>
