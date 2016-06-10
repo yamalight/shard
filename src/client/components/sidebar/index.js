@@ -141,12 +141,18 @@ export default class Sidebar extends React.Component {
     }
 
     closeTeamEdit(team) {
+        // hide dialogue
+        this.setState({showEdit: false});
+
+        // if no team given - don't do anything
+        if (!team) {
+            return;
+        }
+
         // update path
         const teamName = _.camelCase(team.name);
         const channel = _.camelCase(this.state.currentChannel.name);
         browserHistory.push(`/channels/${teamName}/${channel}`);
-        // hide dialogue
-        this.setState({showEdit: false});
     }
 
     showCreateDM() {
