@@ -1,18 +1,18 @@
 import {registerNotifications} from '../store';
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/worker/worker.js')
-    .then(registration => {
-        return registration.pushManager
-            .getSubscription()
-            .then(subscription => {
-                if (subscription) {
-                    return subscription;
-                }
+    navigator.serviceWorker.register('/worker.js');
+    navigator.serviceWorker.ready.then(registration => registration
+        .pushManager
+        .getSubscription()
+        .then(subscription => {
+            if (subscription) {
+                return subscription;
+            }
 
-                return registration.pushManager.subscribe({userVisibleOnly: true});
-            });
-    })
+            return registration.pushManager.subscribe({userVisibleOnly: true});
+        })
+    )
     .then(subscription => {
         const endpoint = subscription.endpoint;
         const rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';

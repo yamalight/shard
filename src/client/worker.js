@@ -1,4 +1,3 @@
-/* global clients */
 const pushWait = 300; // dispatch not more than every 300ms
 let pushTimeout;
 let pushCount = 0;
@@ -11,6 +10,11 @@ const pushLater = function() {
     pushCount = 0;
     self.registration.showNotification('Shard', {body: pushBody, data: pushData});
 };
+
+// skip waiting on install
+self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()));
+// claim all clients on activation
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
 // handle new push notifications
 self.addEventListener('push', (event) => {
@@ -26,8 +30,19 @@ self.addEventListener('push', (event) => {
     if (pushCount > 0) {
         pushBody += `\n\nAnd ${pushCount} more notifications..`;
     }
-    // debounce notification
-    pushTimeout = setTimeout(pushLater, pushWait);
+    // check if clients are visible
+    event.waitUntil(
+        self.clients.matchAll()
+        .then(clientList => {
+            const reurl = new RegExp(`/channels/${payload.team}/${payload.channel}$`, 'i');
+            const sameChannel = clientList.some(client => client.focused && reurl.test(client.url));
+            // if no focused windows with same URL found
+            if (!sameChannel) {
+                // debounce notification
+                pushTimeout = setTimeout(pushLater, pushWait);
+            }
+        })
+    );
 });
 
 // handle notification click
@@ -38,21 +53,22 @@ self.addEventListener('notificationclick', (event) => {
     // get data
     const data = event.notification.data;
     const url = `/channels/${data.team}/${data.channel}`;
+    const reurl = new RegExp(`${url}$`, 'i');
 
     // Now wait for the promise to keep the permission alive.
     // This looks to see if the current is already open and focuses if it is
     event.waitUntil(
-        clients
-        .matchAll({type: 'window'})
+        self.clients
+        .matchAll()
         .then(clientList => {
             for (let i = 0; i < clientList.length; i++) {
                 const client = clientList[i];
-                if (client.url === url && 'focus' in client) {
+                if (reurl.test(client.url) && 'focus' in client) {
                     return client.focus();
                 }
             }
-            if (clients.openWindow) {
-                return clients.openWindow(url);
+            if (self.clients.openWindow) {
+                return self.clients.openWindow(url);
             }
             return false;
         })
