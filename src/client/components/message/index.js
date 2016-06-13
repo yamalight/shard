@@ -267,7 +267,10 @@ export default class Message extends React.Component {
             <article id={`message-${m.id}`} className="media">
                 <figure className="media-left">
                     <p className="image is-64x64">
-                        <img src={`http://www.gravatar.com/avatar/${hash(m.user.email)}`} alt="avatar" />
+                        <img
+                            src={`${window.location.protocol}//www.gravatar.com/avatar/${hash(m.user.email)}`}
+                            alt={m.user.username}
+                        />
                     </p>
                 </figure>
                 <div className="media-content">
