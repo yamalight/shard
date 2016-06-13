@@ -17,7 +17,6 @@ module.exports = {
             'markdown-it-task-lists',
             'moment',
             'mousetrap',
-            'notifyjs',
             'react',
             'react-dom',
             'react-portal',
