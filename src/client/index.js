@@ -22,7 +22,7 @@ import routes from './routes';
 import './extensions';
 
 // service worker
-import './worker';
+import './worker/index.js';
 
 // render app
 render((

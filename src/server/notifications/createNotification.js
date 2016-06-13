@@ -12,6 +12,34 @@ export const defaultSettings = {
     notifications: 'mentions',
 };
 
+const sendPush = async ({u, t, channel, notifyMessage}) => {
+    const res = await Promise.all(
+        u.subscriptions
+        .map(sub => webPush.sendNotification(sub.endpoint, {
+            payload: JSON.stringify({
+                team: _.camelCase(t.name),
+                channel: _.camelCase(channel.name),
+                message: notifyMessage,
+            }),
+            userPublicKey: sub.key,
+            userAuth: sub.authSecret,
+        }))
+    );
+
+    // get failed requests
+    const failed = res
+        .map(r => JSON.parse(r))
+        .map((r, idx) => ({...r, sub: u.subscriptions[idx]}))
+        .filter(r => r.results.some(s => s.error))
+        .map(r => r.sub);
+    const working = _.difference(u.subscriptions, failed);
+    // overwrite current user subscriptions with working only
+    u.subscriptions = working; // eslint-disable-line
+    await u.save();
+
+    return res;
+};
+
 const notifyUser = async ({message, team, channel, user}) => {
     const set = await Settings.filter({channel: channel.id, user}).limit(1);
     const settings = set.pop() || defaultSettings;
@@ -38,19 +66,8 @@ const notifyUser = async ({message, team, channel, user}) => {
         });
         const r = await notification.save();
         // send push to user clients
-        await Promise.all(
-            u.subscriptions
-            .map(sub => webPush.sendNotification(sub.endpoint, {
-                payload: JSON.stringify({
-                    team: _.camelCase(t.name),
-                    channel: _.camelCase(channel.name),
-                    message: notifyMessage,
-                }),
-                userPublicKey: sub.key,
-                userAuth: sub.authSecret,
-            }))
-        );
-        logger.debug('created notification:', r);
+        const res = await sendPush({u, t, channel, notifyMessage});
+        logger.debug('created notification:', r, res);
         return;
     }
     // if user set notifications for mentions - try to find mentioned user
@@ -72,18 +89,7 @@ const notifyUser = async ({message, team, channel, user}) => {
         });
         const r = await notification.save();
         // send push to user clients
-        const res = await Promise.all(
-            u.subscriptions
-            .map(sub => webPush.sendNotification(sub.endpoint, {
-                payload: JSON.stringify({
-                    team: _.camelCase(t.name),
-                    channel: _.camelCase(channel.name),
-                    message: notifyMessage,
-                }),
-                userPublicKey: sub.key,
-                userAuth: sub.authSecret,
-            }))
-        );
+        const res = await sendPush({u, t, channel, notifyMessage});
         logger.debug('created notification:', r, res);
         return;
     }

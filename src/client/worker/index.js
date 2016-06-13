@@ -2,16 +2,11 @@ import {registerNotifications} from '../store';
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/worker.js');
-    navigator.serviceWorker.ready.then(registration => registration
+    navigator.serviceWorker.ready
+    .then(registration => registration
         .pushManager
         .getSubscription()
-        .then(subscription => {
-            if (subscription) {
-                return subscription;
-            }
-
-            return registration.pushManager.subscribe({userVisibleOnly: true});
-        })
+        .then(subscription => subscription || registration.pushManager.subscribe({userVisibleOnly: true}))
     )
     .then(subscription => {
         const endpoint = subscription.endpoint;
