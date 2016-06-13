@@ -92,21 +92,15 @@ export default class Chat extends React.Component {
                 const {allMessages: oldMessages} = this.state;
                 // say we need to mark new unread
                 this.unreadSubj.onNext();
-                // reduce notify config
-                const cfg = {
-                    notifyAboutNew: !this._userActive,
-                    team: this.state.currentTeam,
-                    channel: this.state.currentChannel,
-                };
                 // if new message is not a reply - just fit it into allMessages
                 if (!m.replyTo) {
-                    const allMessages = reduceShortMessages(oldMessages, m, cfg);
+                    const allMessages = reduceShortMessages(oldMessages, m);
                     this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
                     return;
                 }
 
                 // if it's a reply, find parent and add it there
-                const allMessages = addReplyMessage(oldMessages, m, cfg);
+                const allMessages = addReplyMessage(oldMessages, m);
 
                 this.setState({allMessages, scrollToMessage: 'end', shouldScroll: true});
             }),

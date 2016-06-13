@@ -57,7 +57,6 @@
     "mousetrap": "^1.6.0",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.4.2",
-    "notifyjs": "^2.0.2",
     "react": "^15.1.0",
     "react-dock": "^0.2.3",
     "react-dom": "^15.1.0",

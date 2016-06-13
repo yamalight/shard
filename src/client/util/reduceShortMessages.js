@@ -1,23 +1,5 @@
-import Noti from 'notifyjs';
-const Notify = Noti.default;
-
-// setup permissions
-if (Notify.needsPermission && Notify.isSupported()) {
-    Notify.requestPermission();
-}
-
-const notify = ({notifyAboutNew = false, team, channel, message} = {}) => {
-    if (notifyAboutNew) {
-        const notification = new Notify(`Shard: ${team.name}#${channel.name}`, {
-            body: `@${message.user.username}: ${message.message}`,
-            timeout: 3000,
-        });
-        notification.show();
-    }
-};
-
 // upserts message into old messages array
-export const reduceShortMessages = (result = [], message, notifyConfig = {}) => {
+export const reduceShortMessages = (result = [], message) => {
     const lastIndex = result.length - 1;
     if (lastIndex < 0) {
         return [message];
@@ -60,10 +42,8 @@ export const reduceShortMessages = (result = [], message, notifyConfig = {}) => 
             lastMessage.moreMessages = [];
         }
         lastMessage.moreMessages.push(message);
-        notify({...notifyConfig, message});
     } else {
         result.push(message);
-        notify({...notifyConfig, message});
     }
 
     return result;
