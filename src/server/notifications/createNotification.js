@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import webPush from 'web-push';
-import {Notification, Channel, User, Settings} from '../db';
+import {Notification, Team, Channel, User, Settings} from '../db';
 import {logger} from '../util';
 import {webPush as webPushConfig} from '../../../config';
 
@@ -23,6 +23,7 @@ const notifyUser = async ({message, team, channel, user}) => {
     }
     // get user
     const u = await User.get(user);
+    const t = await Team.get(team);
     logger.debug('got target user info:', u);
     // if user set notifications for all - just create new notification:
     if (settings.notifications === 'all') {
@@ -40,7 +41,11 @@ const notifyUser = async ({message, team, channel, user}) => {
         await Promise.all(
             u.subscriptions
             .map(sub => webPush.sendNotification(sub.endpoint, {
-                payload: notifyMessage,
+                payload: JSON.stringify({
+                    team: _.camelCase(t.name),
+                    channel: _.camelCase(channel.name),
+                    message: notifyMessage,
+                }),
                 userPublicKey: sub.key,
                 userAuth: sub.authSecret,
             }))
@@ -70,7 +75,11 @@ const notifyUser = async ({message, team, channel, user}) => {
         const res = await Promise.all(
             u.subscriptions
             .map(sub => webPush.sendNotification(sub.endpoint, {
-                payload: notifyMessage,
+                payload: JSON.stringify({
+                    team: _.camelCase(t.name),
+                    channel: _.camelCase(channel.name),
+                    message: notifyMessage,
+                }),
                 userPublicKey: sub.key,
                 userAuth: sub.authSecret,
             }))
