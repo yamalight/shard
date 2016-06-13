@@ -1,4 +1,18 @@
 
+0.15.0 / 2016-06-13
+==================
+
+  * fix initial unread count setting
+  * remove dead push subscriptions from user profile
+  * remove notifyjs and only use serviceworker for notifications
+  * allow clicking on push notifications to open corresponding channel
+  * debounce notifications and show count when more than one comes in 300ms
+  * only try to register for notifications if request was signed
+  * better no channels message
+  * use correct protocols while on https
+  * use correct dockerignore for local db volume
+  * add gitlab-ci file
+
 0.14.0 / 2016-06-10
 ==================
 
