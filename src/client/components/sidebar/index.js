@@ -276,11 +276,19 @@ export default class Sidebar extends React.Component {
         const {channelStatus, channels, currentTeam} = this.state;
 
         if (channelStatus !== 'loading' && channels && channels.length === 0) {
+            const msg = `You haven\'t joined any ${
+                currentTeam.id === meTeam.id ? 'conversations' : 'channels'
+            }! Join or create one?`;
+
+            const clickFn = () => (
+                currentTeam.id === meTeam.id ?
+                this.showCreateDM() :
+                this.showJoinChannel()
+            );
+
             return (
-                <li>
-                    <a>{currentTeam.id === meTeam.id ?
-                            'No conversations! Start one?' :
-                            'No channels found! Add one?'}</a>
+                <li className="force-flex hint--right" data-hint={msg}>
+                    <a onClick={clickFn}>{msg}</a>
                 </li>
             );
         }
