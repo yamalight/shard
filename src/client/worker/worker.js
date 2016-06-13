@@ -14,7 +14,7 @@ const pushLater = function() {
 
 // handle new push notifications
 self.addEventListener('push', (event) => {
-    const payload = JSON.parse(event.data ? event.data.text() : '{}');
+    const payload = event.data ? event.data.json() : {};
     // if timeout set - clear and incement counter
     if (pushTimeout) {
         clearTimeout(pushTimeout);
@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
     }
     // set body
     pushData = payload;
-    pushBody = payload.message;
+    pushBody = payload.message || 'No notification message :(';
     if (pushCount > 0) {
         pushBody += `\n\nAnd ${pushCount} more notifications..`;
     }
@@ -40,8 +40,7 @@ self.addEventListener('notificationclick', (event) => {
     const url = `/channels/${data.team}/${data.channel}`;
 
     // Now wait for the promise to keep the permission alive.
-    // This looks to see if the current is already open and
-    // focuses if it is
+    // This looks to see if the current is already open and focuses if it is
     event.waitUntil(
         clients
         .matchAll({type: 'window'})
