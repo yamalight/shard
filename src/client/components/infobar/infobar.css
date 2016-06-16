@@ -21,6 +21,5 @@
     position: absolute;
     height: 100%;
     width: 8px;
-    background: #000;
     cursor: col-resize;
 }
