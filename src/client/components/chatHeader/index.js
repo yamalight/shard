@@ -30,14 +30,15 @@ export default class Chat extends React.Component {
         this.subs = [
             // get initial data
             store$
-            .map(s => s.filter((v, key) => ['currentChannel', 'currentTeam'].includes(key)))
+            .map(s => s.filter((v, key) => ['currentChannel', 'infobarType', 'currentTeam'].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => ({
                 ...s,
                 menuItems: this.generateMenuItems(s),
             }))
-            .do(s => s.menuItems[0] && this.handleMenuItem(s.menuItems[0]))
+            // set description sidebar
+            .do(s => s.infobarType === 'sidebar' && s.menuItems[0] && this.handleMenuItem(s.menuItems[0]))
             // store to state
             .subscribe(s => this.setState(s)),
         ];

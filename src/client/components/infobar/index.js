@@ -85,9 +85,9 @@ export default class Infobar extends React.Component {
     }
 
     render() {
-        const {infobarType, currentChannel, width} = this.state;
+        const {infobar, infobarType, currentChannel, width} = this.state;
 
-        if (!currentChannel || !currentChannel.id) {
+        if (!currentChannel || !currentChannel.id || !infobar || !infobar.title || !infobar.content) {
             return <span />;
         }
 
@@ -100,7 +100,7 @@ export default class Infobar extends React.Component {
 
                 <header className={`card-header ${styles.header}`}>
                     <p className="card-header-title">
-                        {this.state.infobar.title}
+                        {infobar.title}
                     </p>
                     <a className="card-header-icon" onClick={() => this.toggleType()}>
                         <i className={`fa ${icon} ${styles.expandButton}`} />
@@ -113,7 +113,7 @@ export default class Infobar extends React.Component {
                 </header>
                 <div className={`card-content ${styles.cardContent}`}>
                     <div className={`content ${styles.content}`}>
-                        {this.state.infobar.content}
+                        {infobar.content}
                     </div>
                 </div>
             </div>

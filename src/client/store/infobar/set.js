@@ -6,6 +6,7 @@ export const setInfobar = createAction();
 
 // map to request
 const infobar$ = setInfobar.$
+    .distinctUntilChanged()
     .map(bar => ({infobar: bar}))
     .do(() => setInfobarVisible(true));
 

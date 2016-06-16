@@ -5,5 +5,5 @@ export default {
     authError: '',
     user: JSON.parse(localStorage.getItem('user') || '{}'),
     token: localStorage.getItem('token'),
-    infobarType: 'sidebar',
+    infobarType: localStorage.getItem('shard.infobar.type') || 'sidebar',
 };
