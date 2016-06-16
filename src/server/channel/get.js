@@ -1,4 +1,4 @@
-import {Channel, Team, r} from '../db';
+import {Channel, r} from '../db';
 import {logger, asyncRequest, meTeam} from '../util';
 import checkAuth from '../auth/checkAuth';
 
@@ -20,7 +20,7 @@ export default (app) => {
                     .filter({team, type, parent: ch('id')})
                     .filter(sch => sch('users').contains(u => u('id').eq(req.userInfo.id)))
                     .merge(sch => ({
-                        team: r.table('Team').get(sch('team')),
+                        team: r.table('Team').get(sch('team')).default(meTeam),
                     }))
                     .orderBy('name')
                     .coerceTo('array'),

@@ -1,5 +1,5 @@
 import {Channel, r} from '../db';
-import {logger, asyncRequest} from '../util';
+import {logger, asyncRequest, meTeam} from '../util';
 import checkAuth from '../auth/checkAuth';
 
 export default (app) => {
@@ -33,7 +33,7 @@ export default (app) => {
         }
 
         // append team info
-        const team = await r.table('Team').get(ch.team);
+        const team = await r.table('Team').get(ch.team).default(meTeam);
         const channel = {
             ...ch,
             team,

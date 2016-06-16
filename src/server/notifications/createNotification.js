@@ -1,15 +1,19 @@
 import _ from 'lodash';
 import webPush from 'web-push';
-import {Notification, Team, Channel, User, Settings} from '../db';
-import {logger} from '../util';
+import {Notification, Channel, User, Settings, r} from '../db';
+import {logger, meTeam} from '../util';
 import {webPush as webPushConfig} from '../../../config';
 
 // set key
 webPush.setGCMAPIKey(webPushConfig.gcmKey);
 
 // default notification settings
-export const defaultSettings = {
-    notifications: 'mentions',
+export const getDefaultSettings = (ch) => {
+    if (ch.type === 'conversation') {
+        return {notifications: 'all'};
+    }
+
+    return {notifications: 'mentions'};
 };
 
 const sendPush = async ({u, t, channel, notifyMessage}) => {
@@ -28,10 +32,10 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
 
     // get failed requests
     const failed = res
-        .map(r => JSON.parse(r))
-        .map((r, idx) => ({...r, sub: u.subscriptions[idx]}))
-        .filter(r => r.results.some(s => s.error))
-        .map(r => r.sub);
+        .map(it => JSON.parse(it))
+        .map((it, idx) => ({...it, sub: u.subscriptions[idx]}))
+        .filter(it => it.results.some(s => s.error))
+        .map(it => it.sub);
     const working = _.difference(u.subscriptions, failed);
     // overwrite current user subscriptions with working only
     u.subscriptions = working; // eslint-disable-line
@@ -42,7 +46,7 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
 
 const notifyUser = async ({message, team, channel, user}) => {
     const set = await Settings.filter({channel: channel.id, user}).limit(1);
-    const settings = set.pop() || defaultSettings;
+    const settings = set.pop() || getDefaultSettings(channel);
     logger.debug('got settings for user:', user, 'settings:', settings);
     // if user disabled notifications - die
     if (settings.notifications === 'none') {
@@ -51,12 +55,17 @@ const notifyUser = async ({message, team, channel, user}) => {
     }
     // get user
     const u = await User.get(user);
-    const t = await Team.get(team);
+    const t = await r.table('Team')
+        .get(team)
+        .default(meTeam)
+        .run();
     logger.debug('got target user info:', u);
     // if user set notifications for all - just create new notification:
     if (settings.notifications === 'all') {
         logger.debug('creating notification:', {message, user, team, channel});
-        const notifyMessage = `New message in #${_.camelCase(channel.name)} by @${message.user.username}:
+        const messageStart = t.id === meTeam.id ?
+            'New private message from' : `New message in #${_.camelCase(channel.name)} by`;
+        const notifyMessage = `${messageStart} @${message.user.username}:
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
@@ -64,10 +73,10 @@ const notifyUser = async ({message, team, channel, user}) => {
             team,
             channel: channel.id,
         });
-        const r = await notification.save();
+        const it = await notification.save();
         // send push to user clients
         const res = await sendPush({u, t, channel, notifyMessage});
-        logger.debug('created notification:', r, res);
+        logger.debug('created notification:', it, res);
         return;
     }
     // if user set notifications for mentions - try to find mentioned user
@@ -79,7 +88,9 @@ const notifyUser = async ({message, team, channel, user}) => {
             return;
         }
         logger.debug('user found, creating notification:', {message, user, team, channel});
-        const notifyMessage = `New mention in #${_.camelCase(channel.name)} by @${message.user.username}:
+        const messageStart = t.id === meTeam.id ?
+            'New private mention from' : `New mention in #${_.camelCase(channel.name)} by`;
+        const notifyMessage = `${messageStart} @${message.user.username}:
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
@@ -87,10 +98,10 @@ const notifyUser = async ({message, team, channel, user}) => {
             team,
             channel: channel.id,
         });
-        const r = await notification.save();
+        const it = await notification.save();
         // send push to user clients
         const res = await sendPush({u, t, channel, notifyMessage});
-        logger.debug('created notification:', r, res);
+        logger.debug('created notification:', it, res);
         return;
     }
 };

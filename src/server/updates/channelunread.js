@@ -18,7 +18,7 @@ export const channelUnread = async (ws) => {
                     .filter({parent: ch('id')})
                     .filter(sch => sch('users').contains(u => u('id').eq(ws.userInfo.id)))
                     .merge(sch => ({
-                        team: r.table('Team').get(sch('team')),
+                        team: r.table('Team').get(sch('team')).default(meTeam),
                     }))
                     .orderBy('name')
                     .coerceTo('array'),
