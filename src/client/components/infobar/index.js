@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './infobar.css';
 
-import store$, {setInfobar} from '../../store';
+import store$, {setInfobarType, setInfobarVisible} from '../../store';
 
 export default class Infobar extends React.Component {
     constructor(props) {
@@ -21,7 +21,7 @@ export default class Infobar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['infobar', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['infobar', 'infobarType', 'currentChannel'].includes(key)))
             .filter(s => s !== undefined)
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
@@ -40,8 +40,16 @@ export default class Infobar extends React.Component {
         window.removeEventListener('mousemove', this.moveHandler);
     }
 
-    hide() {
-        setInfobar({});
+    toggleType() {
+        const type = this.state.infobarType === 'dock' ? 'sidebar' : 'dock';
+        setInfobarType(type);
+        if (type === 'dock') {
+            setInfobarVisible(true);
+        }
+    }
+
+    hideDock() {
+        setInfobarVisible(false);
     }
 
     handleResizeMouseDown() {
@@ -68,25 +76,40 @@ export default class Infobar extends React.Component {
     }
 
     renderResizer() {
+        // only render for sidebar
+        if (this.state.infobarType !== 'sidebar') {
+            return null;
+        }
+
         return <div className={styles.resizer} onMouseDown={() => this.handleResizeMouseDown()} />;
     }
 
     render() {
-        if (!this.state.currentChannel || !this.state.currentChannel.id) {
+        const {infobarType, currentChannel, width} = this.state;
+
+        if (!currentChannel || !currentChannel.id) {
             return <span />;
         }
 
+        const icon = infobarType === 'sidebar' ? 'fa-expand' : 'fa-compress';
+        const style = infobarType === 'sidebar' ? {width} : {width: '100%'};
+
         return (
-            <div className={`card is-flex ${styles.infobar}`} style={{width: this.state.width}}>
+            <div className={`card is-flex ${styles.infobar}`} style={style}>
                 {this.renderResizer()}
 
                 <header className={`card-header ${styles.header}`}>
                     <p className="card-header-title">
                         {this.state.infobar.title}
                     </p>
-                    {/* <a className="card-header-icon" onClick={() => this.hide()}>
-                        <i className="fa fa-times"></i>
-                    </a> */}
+                    <a className="card-header-icon" onClick={() => this.toggleType()}>
+                        <i className={`fa ${icon} ${styles.expandButton}`} />
+                    </a>
+                    {infobarType === 'dock' && (
+                        <a className="card-header-icon" onClick={() => this.hideDock()}>
+                            <i className={`fa fa-times ${styles.expandButton}`} />
+                        </a>
+                    )}
                 </header>
                 <div className={`card-content ${styles.cardContent}`}>
                     <div className={`content ${styles.content}`}>

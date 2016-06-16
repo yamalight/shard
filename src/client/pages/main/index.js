@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-// import Dock from 'react-dock';
+import Dock from 'react-dock';
 import styles from './main.css';
 
 // components
@@ -41,6 +41,8 @@ export default class Main extends React.Component {
                 'currentTeam',
                 'currentChannel',
                 'infobar',
+                'infobarType',
+                'infobarShow',
             ].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
@@ -84,27 +86,29 @@ export default class Main extends React.Component {
     }
 
     render() {
+        const {showSidebar, channel, infobarType, infobarShow} = this.state;
+
         return (
             <div className={styles.app}>
                 {/* COL1: Teambar with teams */}
-                <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={this.state.showSidebar} />
+                <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={showSidebar} />
                 {/* COL2: Sidebar with channels, team menu, user info */}
-                {this.state.showSidebar && <Sidebar joinChannel={this.state.channel} />}
+                {showSidebar && <Sidebar joinChannel={channel} />}
                 {/* COL3: Chat header, chat messages, inline infobar and chat input */}
                 <div className={`column is-flex ${styles.mainarea}`}>
                     <ChatHeader />
                     <div className={`column is-flex ${styles.section}`}>
                         <Chat />
-                        <Infobar />
+                        {infobarType === 'sidebar' && <Infobar />}
                     </div>
                     <ChatInput />
                 </div>
                 {/* OVERLAY: infobar using overlay */}
-                {/* this.state.infobar && (
-                    <Dock position="right" isVisible={!!this.state.infobar.content}>
+                {infobarType === 'dock' && (
+                    <Dock position="right" isVisible={infobarShow}>
                         <Infobar />
                     </Dock>
-                )*/}
+                )}
                 {/* OVERLAY: comman palette */}
                 <CommandPalette />
             </div>

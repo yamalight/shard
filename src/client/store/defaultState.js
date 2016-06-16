@@ -5,4 +5,5 @@ export default {
     authError: '',
     user: JSON.parse(localStorage.getItem('user') || '{}'),
     token: localStorage.getItem('token'),
+    infobarType: 'sidebar',
 };

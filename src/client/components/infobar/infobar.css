@@ -23,3 +23,8 @@
     width: 8px;
     cursor: col-resize;
 }
+
+.expandButton {
+    color: #000;
+    font-size: 16px;
+}

@@ -54,6 +54,8 @@ import editSelectedMessage$, {editSelectedMessage} from './chat/editSelectedMess
 
 // infobar actions
 import infobar$, {setInfobar} from './infobar/set';
+import infobarType$, {setInfobarType} from './infobar/type';
+import infobarShow$, {setInfobarVisible} from './infobar/show';
 
 // user actions
 import userStatus from './user/status';
@@ -111,6 +113,8 @@ const streams = [
     editSelectedMessage$,
     // infobar streams
     infobar$,
+    infobarType$,
+    infobarShow$,
     // user streams
     userStatus.$,
     findUser$,
@@ -167,6 +171,8 @@ export {
     editSelectedMessage,
     // infobar
     setInfobar,
+    setInfobarType,
+    setInfobarVisible,
     // users
     findUser,
     startDM,
