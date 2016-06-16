@@ -12,7 +12,8 @@ export default (app) => {
                 team: r.table('Team').get(n('team')).default(meTeam),
                 channel: r.table('Channel').get(n('channel')),
             }))
-            .orderBy('time')
+            .orderBy(r.desc('time'))
+            .limit(20)
             .execute();
         res.status(200).json({notifications});
     }));
