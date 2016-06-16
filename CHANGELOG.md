@@ -1,4 +1,11 @@
 
+0.16.0 / 2016-06-16
+==================
+
+  * allow switching between sidebar and dock and persist choice for user
+  * allow resizing infobar
+  * correctly sort notifications and limit them to last 20
+
 0.15.0 / 2016-06-13
 ==================
 
