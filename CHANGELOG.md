@@ -1,4 +1,24 @@
 
+0.17.0 / 2016-06-17
+==================
+
+  * basic messages multiselect
+  * embedding messages (prepared for forward functionality)
+  * basic password reset functionality
+  * allow editing notification settings for private conversations
+  * fix creation of notifications for private conversations
+  * add way to see who read the message
+  * hide attach button until attachments are implemented
+  * change page title on channel/team switch
+  * autofocus on username input after selecting login/register
+  * correctly filter out self from notification targets
+  * correctly clear auth/register errors on switch
+  * re-focus on input after saving edit too
+  * allow using esc to cancel edit and re-focus on input afterwards
+  * only use arrow up to edit when input is not multiline
+  * do not start editing when no owned messages available
+  * default private conversation notifications to "all"
+
 0.16.0 / 2016-06-16
 ==================
 
