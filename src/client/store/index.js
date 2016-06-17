@@ -13,6 +13,7 @@ import login$, {loginUser} from './auth/login';
 import resetAuth$, {resetAuth} from './auth/resetAuth';
 import {closeUpdates} from './auth/connect';
 import getUpdates$, {getUpdates} from './auth/updates';
+import passReset$, {resetPassword} from './auth/resetPassword';
 
 // team actions
 import teamStatus from './team/status';
@@ -78,6 +79,7 @@ const streams = [
     login$,
     resetAuth$,
     getUpdates$,
+    passReset$,
     // team streams
     teamStatus.$,
     getTeams$,
@@ -138,6 +140,7 @@ export {
     resetAuth,
     closeUpdates,
     getUpdates,
+    resetPassword,
     // team
     getTeams,
     getTeam,

@@ -1,6 +1,13 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
+import Portal from 'react-portal';
 import styles from './home.css';
+
+// components
+import Modal from '../../components/modal';
+import ResetPassword from '../../components/resetpassword';
+
+// store and actions
 import store$, {registerUser, loginUser} from '../../store';
 
 export default class Home extends React.Component {
@@ -11,12 +18,15 @@ export default class Home extends React.Component {
         const {error: redirectError, relogin} = state || {};
         const {username} = query;
         const emailValid = query.emailValid === 'true';
+        const passReset = query.passwordReset === 'true';
         this.state = {
             username,
             emailValid,
+            passReset,
             redirectError,
-            showLogin: emailValid || relogin,
+            showLogin: emailValid || relogin || passReset,
             showRegister: false,
+            showPasswordReset: false,
         };
     }
 
@@ -29,6 +39,7 @@ export default class Home extends React.Component {
                 'registerMessage',
                 'authError',
                 'user',
+                'passresetMessage',
             ].includes(key)))
             .distinctUntilChanged()
             .map(s => s.toJS())
@@ -124,6 +135,10 @@ export default class Home extends React.Component {
             showLogin: this.state.showRegister,
             showRegister: !this.state.showRegister,
         });
+    }
+
+    closePassReset() {
+        this.setState({showPasswordReset: false});
     }
 
     renderInput() {
@@ -246,6 +261,13 @@ export default class Home extends React.Component {
                         </a>
                     </div>
                 )}
+                {!this.state.error && !this.state.showRegister && (
+                    <div className={`is-flex ${styles.forgotPassword}`}>
+                        <a className="button is-link" onClick={() => this.setState({showPasswordReset: true})}>
+                            Help, I forgot my password!
+                        </a>
+                    </div>
+                )}
             </div>
         );
     }
@@ -267,6 +289,17 @@ export default class Home extends React.Component {
                             <div className="notification is-success">
                                 Your email is now validated and account is active!
                                 You can now log in using the form below.
+                            </div>
+                        )}
+                        {this.state.username && this.state.passReset && (
+                            <div className="notification is-success">
+                                Your password has been reset!
+                                You can now log in using the form below.
+                            </div>
+                        )}
+                        {this.state.passresetMessage && (
+                            <div className="notification is-success">
+                                Your password has been reset! {this.state.passresetMessage}
                             </div>
                         )}
                         {this.state.redirectError && (
@@ -298,6 +331,13 @@ export default class Home extends React.Component {
                         </div>
                     </div>
                 </div>
+
+                {/* Modal for password recovery */}
+                <Portal closeOnEsc onClose={() => this.closePassReset()} isOpened={this.state.showPasswordReset}>
+                    <Modal closeAction={() => this.closePassReset()}>
+                        <ResetPassword close={() => this.closePassReset()} />
+                    </Modal>
+                </Portal>
             </section>
         );
     }
