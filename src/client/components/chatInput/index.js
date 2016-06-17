@@ -94,7 +94,7 @@ export default class ChatInput extends React.Component {
         }
 
         // handle up during typing
-        if (e.key === 'ArrowUp') {
+        if (e.key === 'ArrowUp' && !e.target.value.includes('\n')) {
             e.preventDefault();
             editLastMessage();
         }
