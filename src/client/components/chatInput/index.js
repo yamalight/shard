@@ -157,9 +157,10 @@ export default class ChatInput extends React.Component {
                         />
 
                         <p className={`control has-addons ${styles.stretchControl}`}>
+                            {/* TODO: uncomment me when implemented
                             <a className={`button ${styles.clipButton}`}>
                                 <i className="fa fa-paperclip" />
-                            </a>
+                            </a> */}
                             <Textarea
                                 className={`textarea ${styles.inputArea}`}
                                 placeholder="Write a message..."
