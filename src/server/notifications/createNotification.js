@@ -17,14 +17,29 @@ export const getDefaultSettings = (ch) => {
 };
 
 const sendPush = async ({u, t, channel, notifyMessage}) => {
+    // get channel name
+    let channelName = channel.name;
+    // if channel is conversation - get other user's name
+    if (channel.type === 'conversation') {
+        const uid = channel.users.filter(usr => usr.id !== u.id)[0].id;
+        logger.debug('getting user:', uid);
+        // if it is - use other user's name
+        const user = await r.table('User').get(uid).run();
+        logger.debug('got user:', user);
+        channelName = user.username;
+    }
+
+    const payload = {
+        team: _.camelCase(t.name),
+        channel: _.camelCase(channelName),
+        message: notifyMessage,
+    };
+    logger.debug('pushing payload:', payload);
+
     const res = await Promise.all(
         u.subscriptions
         .map(sub => webPush.sendNotification(sub.endpoint, {
-            payload: JSON.stringify({
-                team: _.camelCase(t.name),
-                channel: _.camelCase(channel.name),
-                message: notifyMessage,
-            }),
+            payload: JSON.stringify(payload),
             userPublicKey: sub.key,
             userAuth: sub.authSecret,
         }))
@@ -69,7 +84,7 @@ const notifyUser = async ({message, team, channel, user}) => {
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
-            user,
+            user: message.user.id,
             team,
             channel: channel.id,
         });
@@ -94,7 +109,7 @@ const notifyUser = async ({message, team, channel, user}) => {
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
-            user,
+            user: message.user.id,
             team,
             channel: channel.id,
         });
