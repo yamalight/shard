@@ -66,6 +66,10 @@ export default class Home extends React.Component {
     doAuth() {
         const username = this.username.value;
         const password = this.password.value;
+        // clear old errors
+        store$.clear({authError: null, registerError: null});
+
+        // check if registration
         if (this.state.showRegister) {
             const passwordRepeat = this.passwordRepeat.value;
             const email = this.email.value;
@@ -96,6 +100,24 @@ export default class Home extends React.Component {
         }
     }
 
+    showRegister() {
+        store$.clear({authError: null, registerError: null});
+        this.setState({showRegister: true});
+    }
+
+    showLogin() {
+        store$.clear({authError: null, registerError: null});
+        this.setState({showLogin: true});
+    }
+
+    toggleRegisterLogin() {
+        store$.clear({authError: null, registerError: null});
+        this.setState({
+            showLogin: this.state.showRegister,
+            showRegister: !this.state.showRegister,
+        });
+    }
+
     renderInput() {
         if (this.state.user && this.state.user.username) {
             return (
@@ -115,14 +137,14 @@ export default class Home extends React.Component {
                 <div className="has-text-centered">
                     <a
                         className="button is-success is-large"
-                        onClick={() => this.setState({showRegister: true})}
+                        onClick={() => this.showRegister()}
                     >
                         Try it now
                     </a>
                     <br />
                     <a
                         className="button is-link"
-                        onClick={() => this.setState({showLogin: true})}
+                        onClick={() => this.showLogin()}
                     >
                         I already have an account..
                     </a>
@@ -210,10 +232,7 @@ export default class Home extends React.Component {
                         <div className="is-spacer" />
                         <a
                             className="button"
-                            onClick={() => this.setState({
-                                showLogin: this.state.showRegister,
-                                showRegister: !this.state.showRegister,
-                            })}
+                            onClick={() => this.toggleRegisterLogin()}
                         >
                             {this.state.showRegister ? 'Let me login!' : 'I want to register!'}
                         </a>
