@@ -48,23 +48,34 @@ export default class Chat extends React.Component {
     }
 
     generateMenuItems(s) {
-        if (!s.currentChannel) {
+        if (!s.currentChannel || !s.currentTeam) {
             return [];
         }
 
-        return [{
+        const items = [{
             title: 'Description',
             type: 'sidebar',
             content: <Description />,
-        }, {
-            title: 'Edit channel',
-            type: 'action',
-            content: () => this.setState({showRename: true}),
         }, {
             title: 'Notification settings',
             type: 'action',
             content: () => this.setState({showNotifications: true}),
         }];
+
+        // if it's private conversation - return
+        if (s.currentTeam.id === meTeam.id) {
+            return items;
+        }
+
+        // otherwise add edit button
+        return [
+            ...items,
+            {
+                title: 'Edit channel',
+                type: 'action',
+                content: () => this.setState({showRename: true}),
+            },
+        ];
     }
 
     closeRename() {
@@ -120,7 +131,7 @@ export default class Chat extends React.Component {
 
                 <div className="is-spacer" />
 
-                {this.state.currentChannel.id && this.state.currentTeam.id !== meTeam.id && (
+                {this.state.currentChannel.id && (
                     <div className={`navbar-item is-flex ${styles.navMenu}`}>
                         <a className="card-header-icon" onClick={() => this.showMenu()}>
                             <i className="fa fa-angle-down" />
