@@ -14,6 +14,7 @@ const team$ = setTeam.$
     .do(team => browserHistory.push(`/channels/${_.camelCase(team.name)}`))
     .do(() => resetChannels())
     .do(() => resetHistory())
+    .do(team => { document.title = `Shard: ${team.name}`; })
     .map(currentTeam => ({currentTeam}));
 
 export default team$;
