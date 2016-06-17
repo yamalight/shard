@@ -11,7 +11,7 @@ import UserInfo from '../user';
 import Dropdown from '../dropdown';
 
 // actions
-import store$, {replyTo, setInfobar, updateMessage, setChannel, focusInput} from '../../store';
+import store$, {replyTo, setInfobar, updateMessage, selectMessage, setChannel, focusInput} from '../../store';
 
 // time formatting
 const formatTime = (time) => {
@@ -33,6 +33,8 @@ export default class Message extends React.Component {
 
         const authedUser = JSON.parse(localStorage.getItem('user'));
 
+        this.message = this.props;
+
         this.state = {
             ...this.props,
             showMenu: false,
@@ -43,6 +45,9 @@ export default class Message extends React.Component {
         this.menuItems = [{
             title: 'Read by users',
             action: () => this.showReadBy(),
+        }, {
+            title: 'Select',
+            action: () => this.select(),
         }];
 
         if (this.state.user.id === this.state.authedUser.id) {
@@ -174,7 +179,9 @@ export default class Message extends React.Component {
         this.setState({showMenu: true});
     }
     hideMenu(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
         this.setState({showMenu: false, showDropdown: false, showReadBy: false});
     }
 
@@ -227,6 +234,21 @@ export default class Message extends React.Component {
         this.setState({showReadBy: false});
     }
 
+    select() {
+        selectMessage({
+            ...this.message,
+            selected: true,
+        });
+        this.hideMenu();
+    }
+
+    deselect() {
+        selectMessage({
+            ...this.message,
+            selected: false,
+        });
+    }
+
     renderContent() {
         const m = this.state;
 
@@ -274,6 +296,22 @@ export default class Message extends React.Component {
         );
     }
 
+    renderSelect() {
+        const m = this.state;
+
+        if (!m.selected) {
+            return null;
+        }
+
+        return (
+            <span className={`is-flex control ${styles.select}`}>
+                <label className="checkbox">
+                    <input type="checkbox" checked={m.selected} onChange={() => this.deselect()} />
+                </label>
+            </span>
+        );
+    }
+
     render() {
         const m = this.state;
 
@@ -291,6 +329,7 @@ export default class Message extends React.Component {
                     <div className="media-right">
                         {this.createMenu(m)}
                     </div>
+                    {this.renderSelect()}
                 </article>
             );
         }
@@ -313,6 +352,7 @@ export default class Message extends React.Component {
                     >
                         <div className={styles.header}>
                             <strong>{m.user.username} <small>{formatTime(m.time)}</small></strong>
+                            {this.renderSelect()}
                             <span className="is-spacer" />
                             {this.createMenu(m)}
                         </div>
@@ -320,10 +360,17 @@ export default class Message extends React.Component {
                         {this.renderContent()}
                     </div>
                     {m.layout !== 'plain' && m.moreMessages && m.moreMessages.map(mm => (
-                        <Message layout="short" key={mm.id} {...mm} />
+                        <Message
+                            key={mm.id}
+                            layout="short"
+                            {...mm}
+                        />
                     ))}
                     {m.layout !== 'plain' && m.replies && m.replies.map(reply => (
-                        <Message key={reply.id} {...reply} />
+                        <Message
+                            key={reply.id}
+                            {...reply}
+                        />
                     ))}
                 </div>
             </article>

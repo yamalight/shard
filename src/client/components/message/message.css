@@ -49,3 +49,8 @@
     resize: none;
     font-size: 14px !important;
 }
+
+.select {
+    margin-left: 10px;
+    margin-bottom: 0 !important;
+}

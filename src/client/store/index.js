@@ -53,6 +53,7 @@ import updateMessage$, {updateMessage} from './chat/update';
 import editLastMessage$, {editLastMessage} from './chat/editLastMessage';
 import editSelectedMessage$, {editSelectedMessage} from './chat/editSelectedMessage';
 import focusInput$, {focusInput} from './chat/focusInput';
+import selectedMessages$, {selectMessage} from './chat/selectMessage';
 
 // infobar actions
 import infobar$, {setInfobar} from './infobar/set';
@@ -115,6 +116,7 @@ const streams = [
     editLastMessage$,
     editSelectedMessage$,
     focusInput$,
+    selectedMessages$,
     // infobar streams
     infobar$,
     infobarType$,
@@ -175,6 +177,7 @@ export {
     editLastMessage,
     editSelectedMessage,
     focusInput,
+    selectMessage,
     // infobar
     setInfobar,
     setInfobarType,

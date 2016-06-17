@@ -23,13 +23,13 @@ export default class Chat extends React.Component {
 
         this.unreadSubj = new Subject();
         this.state = {
+            authedUser,
             currentChannel: {},
             requestedForChannel: undefined,
             scrollToMessage: 'end',
             shouldScroll: false,
             allMessages: undefined,
             chatStatus: undefined,
-            authedUser,
         };
     }
 
@@ -138,6 +138,25 @@ export default class Chat extends React.Component {
                 this.setState({scrollToMessage: res[0].id});
                 // set newest to edit
                 editSelectedMessage(res[0]);
+            }),
+
+            // message selection
+            store$
+            .map(s => s.get('selectedMessage'))
+            .filter(s => s !== undefined)
+            .distinctUntilChanged(d => d, (a, b) => a.equals(b))
+            .map(s => s.toJS())
+            .subscribe(m => {
+                const {allMessages: oldMessages} = this.state;
+                // if new message is not a reply - just fit it into allMessages
+                if (!m.replyTo) {
+                    const allMessages = reduceShortMessages(oldMessages, m);
+                    this.setState({allMessages});
+                    return;
+                }
+                // if it's a reply, find parent and add it there
+                const allMessages = addReplyMessage(oldMessages, m);
+                this.setState({allMessages});
             }),
 
             // focus
@@ -292,7 +311,11 @@ export default class Chat extends React.Component {
         }
 
         return this.state.allMessages.map(m => (
-            <Message key={m.id} team={this.state.currentTeam.id} {...m} />
+            <Message
+                key={m.id}
+                team={this.state.currentTeam.id}
+                {...m}
+            />
         ));
     }
 
