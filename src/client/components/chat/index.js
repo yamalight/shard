@@ -116,6 +116,9 @@ export default class Chat extends React.Component {
                 // find top index
                 const topIdx = _.findLastIndex(allMessages, ownedByUser);
                 const top = allMessages[topIdx];
+                if (!top) {
+                    return;
+                }
                 const res = [top];
                 // check more message
                 const moreIdx = _.findLastIndex(top.moreMessages, ownedByUser);
