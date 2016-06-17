@@ -10,7 +10,15 @@ import styles from './chat.css';
 import Message from '../message/';
 
 // store and actions
-import store$, {initChat, closeChat, getChat, getHistory, markRead, editSelectedMessage} from '../../store';
+import store$, {
+    initChat,
+    closeChat,
+    getChat,
+    getHistory,
+    markRead,
+    editSelectedMessage,
+    setSelected,
+} from '../../store';
 
 // utils
 import {reduceShortMessages, addReplyMessage, focus} from '../../util';
@@ -157,6 +165,22 @@ export default class Chat extends React.Component {
                 // if it's a reply, find parent and add it there
                 const allMessages = addReplyMessage(oldMessages, m);
                 this.setState({allMessages});
+            }),
+
+            // listen for request to get selected
+            store$
+            .map(s => s.get('getSelectedMessages'))
+            .filter(s => s > 0)
+            .distinctUntilChanged()
+            .subscribe(() => {
+                const {allMessages} = this.state;
+                const selected = _.flatten(allMessages
+                    .concat(allMessages.filter(m => m.moreMessages).map(m => m.moreMessages))
+                    .concat(allMessages.filter(m => m.replies).map(m => m.replies)))
+                    .filter(m => m.selected);
+
+                // dispatch
+                setSelected(selected);
             }),
 
             // focus

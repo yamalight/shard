@@ -11,7 +11,14 @@ import UserInfo from '../user';
 import Dropdown from '../dropdown';
 
 // actions
-import store$, {replyTo, setInfobar, updateMessage, selectMessage, setChannel, focusInput} from '../../store';
+import store$, {
+    replyTo,
+    setInfobar,
+    updateMessage,
+    selectMessage,
+    setChannel,
+    focusInput,
+} from '../../store';
 
 // time formatting
 const formatTime = (time) => {
