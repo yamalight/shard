@@ -41,12 +41,16 @@ export default class Message extends React.Component {
         };
 
         this.menuItems = [{
-            title: 'Edit message',
-            action: () => this.beginEdit(),
-        }, {
             title: 'Read by users',
             action: () => this.showReadBy(),
         }];
+
+        if (this.state.user.id === this.state.authedUser.id) {
+            this.menuItems.push({
+                title: 'Edit message',
+                action: () => this.beginEdit(),
+            });
+        }
     }
 
     componentWillMount() {
@@ -134,17 +138,15 @@ export default class Message extends React.Component {
                         <i className="fa fa-reply" />
                     </span>
                 </a>
-                {m.user.id === m.authedUser.id && (
-                    <a
-                        className={`button is-small hint--left ${styles.menuButton}`}
-                        data-hint="Show message menu"
-                        onClick={(e) => this.openDropdown(e)}
-                    >
-                        <span className={`icon is-small ${styles.menuIcon}`}>
-                            <i className="fa fa-ellipsis-h" />
-                        </span>
-                    </a>
-                )}
+                <a
+                    className={`button is-small hint--left ${styles.menuButton}`}
+                    data-hint="Show message menu"
+                    onClick={(e) => this.openDropdown(e)}
+                >
+                    <span className={`icon is-small ${styles.menuIcon}`}>
+                        <i className="fa fa-ellipsis-h" />
+                    </span>
+                </a>
                 {m.showDropdown && (
                     <Dropdown
                         style={m.menuStyle}
