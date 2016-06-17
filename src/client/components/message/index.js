@@ -36,12 +36,16 @@ export default class Message extends React.Component {
         this.state = {
             ...this.props,
             showMenu: false,
+            showReadBy: false,
             authedUser,
         };
 
         this.menuItems = [{
             title: 'Edit message',
             action: () => this.beginEdit(),
+        }, {
+            title: 'Read by users',
+            action: () => this.showReadBy(),
         }];
     }
 
@@ -150,6 +154,15 @@ export default class Message extends React.Component {
                         onHide={() => this.closeDropdown()}
                     />
                 )}
+                {m.showReadBy && (
+                    <Dropdown
+                        style={m.menuStyle}
+                        title="Read by users"
+                        items={this.state.readBy.map(u => ({title: u.username}))}
+                        onItem={() => {}}
+                        onHide={() => this.closeReadBy()}
+                    />
+                )}
             </div>
         );
     }
@@ -160,7 +173,7 @@ export default class Message extends React.Component {
     }
     hideMenu(e) {
         e.preventDefault();
-        this.setState({showMenu: false, showDropdown: false});
+        this.setState({showMenu: false, showDropdown: false, showReadBy: false});
     }
 
     openDropdown(e) {
@@ -203,6 +216,13 @@ export default class Message extends React.Component {
             e.preventDefault();
             this.saveEdit();
         }
+    }
+
+    showReadBy() {
+        this.setState({showReadBy: true});
+    }
+    closeReadBy() {
+        this.setState({showReadBy: false});
     }
 
     renderContent() {
