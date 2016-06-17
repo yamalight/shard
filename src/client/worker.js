@@ -52,8 +52,11 @@ self.addEventListener('notificationclick', (event) => {
 
     // get data
     const data = event.notification.data;
-    const url = `/channels/${data.team}/${data.channel}`;
-    const reurl = new RegExp(`${url}$`, 'i');
+    let url = '/channels/';
+    if (data && data.team && data.channel) {
+        url = `/channels/${data.team}/${data.channel}`;
+    }
+    const reurl = new RegExp(`${url}`, 'i');
 
     // Now wait for the promise to keep the permission alive.
     // This looks to see if the current is already open and focuses if it is
