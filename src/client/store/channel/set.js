@@ -15,7 +15,7 @@ const channel$ = setChannel.$
         const ch = _.camelCase(channel.name);
         browserHistory.push(`/channels/${team}/${ch}`);
     })
-    .do(ch => { document.title = `Shard: ${ch.team.name === 'me' ? 'Private' : ch.team.me} - ${ch.name}`; })
+    .do(ch => { document.title = `Shard: ${ch.team.name === 'me' ? 'Private' : ch.team.name} - ${ch.name}`; })
     // update store
     .map(channel => ({currentChannel: channel}));
 
