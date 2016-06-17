@@ -39,6 +39,14 @@ export default class Home extends React.Component {
         // clear history state and query to remove any old errors or messages
         browserHistory.push({query: {}, state: {}});
     }
+
+    componentDidUpdate() {
+        // focus on username input if needed
+        if ((this.state.showLogin || this.state.showRegister) && this.username) {
+            this.username.focus();
+        }
+    }
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     }
