@@ -46,15 +46,25 @@ export default class ChatInput extends React.Component {
             .map(s => s.toJS())
             .do(() => this._text && this._text.focus())
             .subscribe(s => this.setState(s)),
+
+            // listen for focus requests
+            store$
+            .map(s => s.get('focusInput'))
+            .distinctUntilChanged()
+            .subscribe(() => this.focusInput()),
         ];
     }
     componentDidMount() {
-        if (this._text) {
-            this._text.focus();
-        }
+        this.focusInput();
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+    }
+
+    focusInput() {
+        if (this._text) {
+            this._text.focus();
+        }
     }
 
     sendMessage() {

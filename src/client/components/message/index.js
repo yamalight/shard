@@ -11,7 +11,7 @@ import UserInfo from '../user';
 import Dropdown from '../dropdown';
 
 // actions
-import store$, {replyTo, setInfobar, updateMessage, setChannel} from '../../store';
+import store$, {replyTo, setInfobar, updateMessage, setChannel, focusInput} from '../../store';
 
 // time formatting
 const formatTime = (time) => {
@@ -178,6 +178,7 @@ export default class Message extends React.Component {
     }
     closeEdit() {
         this.setState({editing: false});
+        focusInput();
     }
     saveEdit() {
         const newMessage = this._text.value;
@@ -187,6 +188,13 @@ export default class Message extends React.Component {
         };
         updateMessage(m);
         this.setState({editing: false});
+    }
+
+    handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            this.closeEdit();
+        }
     }
 
     handleKeyPress(e) {
@@ -210,6 +218,7 @@ export default class Message extends React.Component {
                         minRows={1}
                         maxRows={6}
                         onKeyPress={e => this.handleKeyPress(e)}
+                        onKeyDown={e => this.handleKeyDown(e)}
                     />
                     <div className={styles.editButtons}>
                         <button
