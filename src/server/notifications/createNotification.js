@@ -111,7 +111,7 @@ export const createNotification = async ({message, team, channel, user}) => {
     const ch = await Channel.get(channel);
     logger.debug('processing notification for:', ch, user, message);
     // get list of users who are not current user
-    const users = ch.users.filter(u => u.id !== user);
+    const users = ch.users.filter(u => u.id !== user.id);
     logger.debug('users to be notified:', users);
     // notify all users according to their preferences
     return Promise.all(users.map(u => u.id).map(id => notifyUser({message, team, channel: ch, user: id})));
