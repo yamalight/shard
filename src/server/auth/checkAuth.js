@@ -4,7 +4,8 @@ import {User} from '../db';
 import {jwtconf} from '../../../config';
 
 // token from request
-export const requestToToken = (req) => req.body.token || req.query.token || req.headers['x-access-token'];
+export const requestToToken = (req) => req.body.token ||
+    req.query.token || req.headers['x-access-token'] || req.cookies.id_token;
 
 export const checkStringToken = async (token) => {
     logger.debug('checking token: ', token);

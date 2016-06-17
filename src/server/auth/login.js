@@ -10,9 +10,9 @@ export default (app) => {
         logger.info('searching for: ', username, password);
         // find user
         const users = await User.filter({username, password})
-            .without(['password'])
+            .without(['password', 'verifyId', 'subscriptions', 'passwordReset'])
             .limit(1)
-            .run();
+            .execute();
         const user = users.pop();
         // check if user was found
         if (!user) {
@@ -30,6 +30,9 @@ export default (app) => {
         logger.info('got user: ', user);
         // generate token
         const token = jwt.sign(user, jwtconf.secret, {expiresIn: '1d'});
+        // set cookie
+        res.cookie('id_token', token, {expires: new Date(token.exp), httpOnly: true});
+        // send token
         res.status(200).json({token});
     }));
 };

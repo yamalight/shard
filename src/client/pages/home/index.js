@@ -53,7 +53,7 @@ export default class Home extends React.Component {
 
     componentDidUpdate() {
         // focus on username input if needed
-        if ((this.state.showLogin || this.state.showRegister) && this.username) {
+        if ((this.state.showLogin || this.state.showRegister) && this.username && this.username.value.length === 0) {
             this.username.focus();
         }
     }

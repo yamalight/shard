@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 // logging
 import morgan from 'morgan';
+// cookies
+import cookieParser from 'cookie-parser';
 // config
 import * as config from '../../config';
 // db
@@ -29,6 +31,8 @@ import setupUpdates from './updates';
 import setupUser from './user';
 // notifications api
 import setupNotifications from './notifications';
+// embeds api
+import setupEmbeds from './embed';
 
 // logger
 import {logger} from './util';
@@ -40,6 +44,8 @@ app.use(morgan('combined', {stream: logger.stream}));
 // body parsing
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+// cookies
+app.use(cookieParser());
 // add socket support
 expressWs(app);
 
@@ -63,6 +69,8 @@ setupUser(app);
 setupChatAPI(app);
 // setup notifications API
 setupNotifications(app);
+// setup embeds API
+setupEmbeds(app);
 
 // serve static content
 app.use(express.static(join(__dirname, '..', 'client')));
