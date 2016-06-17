@@ -188,6 +188,7 @@ export default class Message extends React.Component {
         };
         updateMessage(m);
         this.setState({editing: false});
+        focusInput();
     }
 
     handleKeyDown(e) {
