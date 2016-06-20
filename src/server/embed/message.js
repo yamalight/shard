@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import checkAuth from '../auth/checkAuth';
 import moment from 'moment';
 import {hash} from 'spark-md5';
 import {logger, asyncRequest} from '../util';
-import {Message, Channel, User} from '../db';
+import {Message, Channel, User, Team} from '../db';
 
 // TODO: split into separate package?
 import {markdown} from './markdown';
@@ -33,18 +34,24 @@ export default (app) => {
         const message = await Message.get(id);
         const user = await User.get(message.userId);
         const channel = await Channel.get(message.channel);
+        const team = await Team.get(channel.team);
 
         // if user is not in the channel and channel is not public
         if (channel.isPrivate && !channel.users.find(u => u.id === req.userInfo.id)) {
             return res.status(401).send({error: 'You don\'t have rights to see this message!'});
         }
 
+        const teamUrl = `/channels/${_.camelCase(team.name)}`;
+        const chanUrl = `${teamUrl}/${_.camelCase(channel.name)}`;
         const html = `<html>
             <head>
                 <title>Shard: Message by ${user.username} in #${channel.name}</title>
                 <style>${style}</style>
             </head>
             <body>
+                <div class="header">
+                    Message from <a href="${teamUrl}">${team.name}</a> in <a href="${chanUrl}">#${channel.name}</a>
+                </div>
                 <article class="media">
                     <figure class="media-left">
                         <p class="image is-64x64">

@@ -46,7 +46,9 @@ import getChat$, {getChat} from './chat/get';
 import getHistory$, {getHistory} from './chat/getHistory';
 import sendChat$, {sendChat} from './chat/send';
 import replyTo$, {replyTo} from './chat/replyTo';
+import forwardMessage$, {forwardMessage} from './chat/forwardMessage';
 import resetReply$, {resetReply} from './chat/resetReply';
+import resetForward$, {resetForward} from './chat/resetForward';
 import markRead$, {markRead} from './chat/markRead';
 import resetHistory$, {resetHistory} from './chat/resetHistory';
 import updateMessage$, {updateMessage} from './chat/update';
@@ -111,7 +113,9 @@ const streams = [
     getHistory$,
     sendChat$,
     replyTo$,
+    forwardMessage$,
     resetReply$,
+    resetForward$,
     markRead$,
     resetHistory$,
     updateMessage$,
@@ -174,7 +178,9 @@ export {
     getHistory,
     sendChat,
     replyTo,
+    forwardMessage,
     resetReply,
+    resetForward,
     markRead,
     resetHistory,
     updateMessage,

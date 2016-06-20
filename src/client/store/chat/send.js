@@ -2,6 +2,7 @@ import {createAction} from 'rxstate';
 import status from './status';
 import {post, sign} from '../../util';
 import {resetReply} from './resetReply';
+import {resetForward} from './resetForward';
 
 // create action
 export const sendChat = createAction();
@@ -18,6 +19,7 @@ const sendChat$ = sendChat.$
     }))
     .flatMap(({message, url, token}) => post(url, {message, token}))
     .do(() => resetReply())
+    .do(() => resetForward())
     .do(res => (res.error ? status('error') : status('messageSent')));
 
 export default sendChat$;

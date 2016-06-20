@@ -13,6 +13,7 @@ import Dropdown from '../dropdown';
 // actions
 import store$, {
     replyTo,
+    forwardMessage,
     setInfobar,
     updateMessage,
     selectMessage,
@@ -55,6 +56,9 @@ export default class Message extends React.Component {
         }, {
             title: 'Select',
             action: () => this.select(),
+        }, {
+            title: 'Forward',
+            action: () => this.forward(),
         }];
 
         if (this.state.user.id === this.state.authedUser.id) {
@@ -246,6 +250,10 @@ export default class Message extends React.Component {
             ...this.message,
             selected: true,
         });
+        this.hideMenu();
+    }
+    forward() {
+        forwardMessage(this.message);
         this.hideMenu();
     }
 

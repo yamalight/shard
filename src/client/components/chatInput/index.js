@@ -10,7 +10,7 @@ import Typeahead from '../typeahead';
 import {handleCommandPaletteEvent} from '../commandpalette';
 
 // store and actions
-import store$, {sendChat, resetReply, editLastMessage} from '../../store';
+import store$, {sendChat, resetReply, resetForward, editLastMessage} from '../../store';
 
 const messageToReplyId = message => {
     if (!message) {
@@ -41,7 +41,12 @@ export default class ChatInput extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['replyToMessage', 'currentTeam', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => [
+                'replyToMessage',
+                'forwardMessage',
+                'currentTeam',
+                'currentChannel',
+            ].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .do(() => this._text && this._text.focus())
@@ -54,9 +59,6 @@ export default class ChatInput extends React.Component {
             .subscribe(() => this.focusInput()),
         ];
     }
-    componentDidMount() {
-        this.focusInput();
-    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     }
@@ -68,7 +70,10 @@ export default class ChatInput extends React.Component {
     }
 
     sendMessage() {
-        const message = this._text.value;
+        const forwardMessage = this.state.forwardMessage ?
+            `%%% widget=/api/message/${this.state.forwardMessage.id}/embed` :
+            '';
+        const message = `${this._text.value}\n${forwardMessage}`;
 
         // do not send empty messages
         if (!message || !message.length) {
@@ -117,6 +122,54 @@ export default class ChatInput extends React.Component {
         }
     }
 
+    resetReferenceMessage() {
+        if (this.state.replyToMessage) {
+            resetReply();
+        }
+
+        if (this.state.forwardMessage) {
+            resetForward();
+        }
+    }
+
+    // renders reference message - reply or forward message
+    renderReferenceMessage() {
+        if (!this.state.replyToMessage && !this.state.forwardMessage) {
+            return null;
+        }
+
+        let message = this.state.replyToMessage;
+        let kind = 'reply';
+        let icon = 'reply';
+        if (!message) {
+            message = this.state.forwardMessage;
+            kind = 'forward';
+            icon = 'arrow-right';
+        }
+
+        return (
+            <div className="is-flex">
+                <div className={`is-flex ${styles.replyButton}`}>
+                    <i className={`fa fa-${icon}`} />
+                </div>
+                <div className={styles.replyPreview}>
+                    <Message
+                        layout="plain"
+                        hideActions
+                        {..._.omit(message, ['layout', 'showMenu'])}
+                    />
+                </div>
+                <a
+                    className={`force-flex hint--left ${styles.replyButton}`}
+                    data-hint={`Cancel ${kind}`}
+                    onClick={() => this.resetReferenceMessage()}
+                >
+                    <i className="fa fa-times" />
+                </a>
+            </div>
+        );
+    }
+
     render() {
         if (!this.state.currentChannel || !this.state.currentChannel.id) {
             return <span />;
@@ -126,27 +179,7 @@ export default class ChatInput extends React.Component {
         return (
             <div>
                 <div className={styles.chatInput}>
-                    {this.state.replyToMessage && (
-                        <div className="is-flex">
-                            <div className={`is-flex ${styles.replyButton}`}>
-                                <i className="fa fa-reply" />
-                            </div>
-                            <div className={styles.replyPreview}>
-                                <Message
-                                    layout="plain"
-                                    hideActions
-                                    {..._.omit(this.state.replyToMessage, ['layout', 'showMenu'])}
-                                />
-                            </div>
-                            <a
-                                className={`force-flex hint--left ${styles.replyButton}`}
-                                data-hint="Cancel reply"
-                                onClick={() => resetReply()}
-                            >
-                                <i className="fa fa-times" />
-                            </a>
-                        </div>
-                    )}
+                    {this.renderReferenceMessage()}
 
                     <div className="panel">
                         <Typeahead
