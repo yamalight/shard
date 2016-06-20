@@ -10,7 +10,6 @@ class UsersSidebarClient extends UsersSidebar {
 
     constructor(utils) {
         super();
-        console.log(utils);
         this.utils = utils;
     }
 

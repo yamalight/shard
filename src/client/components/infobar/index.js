@@ -1,4 +1,5 @@
 import React from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './infobar.css';
 
 import store$, {setInfobarType, setInfobarVisible} from '../../store';
@@ -25,6 +26,10 @@ export default class Infobar extends React.Component {
             .filter(s => s !== undefined)
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
+            .map(s => {
+                const infobarContent = s.infobar ? s.infobar.content() : '';
+                return {...s, infobarContent};
+            })
             .subscribe(s => this.setState(s)),
         ];
 
@@ -33,6 +38,11 @@ export default class Infobar extends React.Component {
         window.addEventListener('mouseup', this.upHandler);
         window.addEventListener('mousemove', this.moveHandler);
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
+    }
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
 
@@ -85,7 +95,7 @@ export default class Infobar extends React.Component {
     }
 
     render() {
-        const {infobar, infobarType, currentChannel, width} = this.state;
+        const {infobar, infobarType, infobarContent, currentChannel, width} = this.state;
 
         if (!currentChannel || !currentChannel.id || !infobar || !infobar.title || !infobar.content) {
             return <span />;
@@ -113,7 +123,7 @@ export default class Infobar extends React.Component {
                 </header>
                 <div className={`card-content ${styles.cardContent}`}>
                     <div className={`content ${styles.content}`}>
-                        {infobar.content()}
+                        {infobarContent}
                     </div>
                 </div>
             </div>
