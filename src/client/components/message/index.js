@@ -119,7 +119,7 @@ export default class Message extends React.Component {
             const username = path.replace('/users/', '');
             setInfobar({
                 title: `Profile: ${username}`,
-                content: <UserInfo username={username} />,
+                content: () => <UserInfo username={username} />,
             });
             return;
         }

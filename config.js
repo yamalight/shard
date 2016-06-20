@@ -40,9 +40,11 @@ export const webPush = {
 import userTypeahead from './src/extensions/userTypeahead/server';
 import channelTypeahead from './src/extensions/channelTypeahead/server';
 import slashCommands from './src/extensions/slashCommands/server';
+import usersSidebar from './src/extensions/usersSidebar/server';
 
 export const extensions = _.flatten([
     userTypeahead,
     channelTypeahead,
     slashCommands,
+    usersSidebar,
 ]);

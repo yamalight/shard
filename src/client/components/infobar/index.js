@@ -113,7 +113,7 @@ export default class Infobar extends React.Component {
                 </header>
                 <div className={`card-content ${styles.cardContent}`}>
                     <div className={`content ${styles.content}`}>
-                        {infobar.content}
+                        {infobar.content()}
                     </div>
                 </div>
             </div>

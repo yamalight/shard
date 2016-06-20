@@ -1,6 +1,10 @@
 import React from 'react';
 import Portal from 'react-portal';
 import styles from './chatHeader.css';
+import {extensions} from '../../extensions';
+
+// get typeahead extensions
+const sidebarExtensions = extensions.filter(ex => ex.type === 'sidebar');
 
 // components
 import Description from '../description';
@@ -55,12 +59,12 @@ export default class Chat extends React.Component {
         const items = [{
             title: 'Description',
             type: 'sidebar',
-            content: <Description />,
+            content: () => <Description />,
         }, {
             title: 'Notification settings',
             type: 'action',
             content: () => this.setState({showNotifications: true}),
-        }];
+        }].concat(sidebarExtensions);
 
         // if it's private conversation - return
         if (s.currentTeam.id === meTeam.id) {
