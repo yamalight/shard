@@ -4,7 +4,7 @@
   "description": "Shard community platform",
   "main": "index.js",
   "scripts": {
-    "start": "SHARD_MAIL_VALIDATION=0 nodemon --ignore ./src/client index.js",
+    "start": "SHARD_MAIL_VALIDATION=0 nodemon index.js",
     "production": "NODE_ENV=production node index.js",
     "db:start": "docker run -d -p 28015:28015 -p 8090:8080 -v $PWD/sharddb:/data --name sharddb rethinkdb",
     "db:rm": "docker stop sharddb && docker rm sharddb",

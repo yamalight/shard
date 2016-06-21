@@ -5,3 +5,11 @@
 .user {
     cursor: pointer;
 }
+
+.online {
+    color: green;
+}
+
+.offline {
+    opacity: 0.5;
+}

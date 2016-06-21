@@ -10,8 +10,9 @@ export default (app) => {
     const currentExtensions = extensions.map(Ex => {
         const routeString = `/ex/${Ex.extensionName}`;
         const route = app.route(routeString).all(checkAuth);
+        const wsRoute = handler => app.ws(routeString, checkAuth, handler);
         logger.debug(`setting up extensions ${Ex.extensionName} with route: "${routeString}"`);
-        return new Ex({route, db, util});
+        return new Ex({route, wsRoute, db, util});
     });
 
     // save to app to let other parts access them

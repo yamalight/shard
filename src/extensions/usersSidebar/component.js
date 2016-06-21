@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import styles from './component.css';
-import shallowCompare from 'react-addons-shallow-compare';
 
 export default ({React, store$, extension}) => class UsersBar extends React.Component {
     constructor(props) {
@@ -11,6 +11,8 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
             currentChannel: undefined,
             status: 'loading',
         };
+
+        this.dataSubs = [];
     }
 
     componentWillMount() {
@@ -29,10 +31,11 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
+        this.dataSubs.map(sub => sub.dispose());
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return shallowCompare(this, nextProps, nextState);
+    sortUsers(users) {
+        return _.sortBy(users, u => (u.status === 'online' ? -1 : 1), 'username');
     }
 
     getUsers(s) {
@@ -41,21 +44,33 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
             if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
                 return;
             }
-            if (this.sub) {
-                this.sub.dispose();
-            }
+
+            // cleanup subs
+            this.dataSubs.map(sub => sub.dispose());
 
             // construct request
             const params = {
                 team: s.currentTeam.id,
                 channel: s.currentChannel.id,
             };
-            // setup listener
-            this.sub = extension.getUsers(params)
-                .subscribe(({users}) => {
-                    this.sub.dispose();
-                    this.setState({users, status: 'done'});
-                });
+            this.dataSubs = [
+                // init socket for users updates
+                extension
+                .initUsersStream(params)
+                .map(event => JSON.parse(event.data))
+                .map(user => {
+                    const {users} = this.state;
+                    const index = users.findIndex(el => el.id === user.id);
+                    users[index] = user;
+                    return this.sortUsers(users);
+                })
+                .subscribe(users => this.setState({users})),
+                // get initial users data
+                extension
+                .getUsers(params)
+                .map(({users}) => this.sortUsers(users))
+                .subscribe(users => this.setState({users, status: 'done'})),
+            ];
             // set flag to not repeat that
             this.setState({status: 'loading', requestedForChannel: s.currentTeam.id + s.currentChannel.id});
         }
@@ -71,9 +86,9 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
                 Users in current channel:
                 {this.state.users.map(u => (
                     <div className={`card is-fullwidth ${styles.user}`} key={u.id}>
-                        <header className="card-header">
+                        <header className={`card-header ${u.status === 'offline' ? styles.offline : ''}`}>
                             <div className={`card-header-title ${styles.userHeader}`}>
-                                <span className="icon is-small">
+                                <span className={`icon is-small ${u.status === 'online' ? styles.online : ''}`}>
                                     <i className="fa fa-user" />
                                 </span>
                                 <p className="is-flex">{u.username}</p>

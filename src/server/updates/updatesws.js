@@ -26,14 +26,14 @@ export default (app) => {
         const pingInterval = setInterval(() => ws.ping(), socket.pingTime);
 
         // cleanup on socket close
-        const clean = () => {
+        const clean = async () => {
             logger.debug('cleaning up updates socket!');
             teamStream.close();
             tunreadStream.close();
             channelStream.close();
             chunreadStream.close();
-            User.get(ws.userInfo.id).update({status: 'offline'});
             clearInterval(pingInterval);
+            await User.get(ws.userInfo.id).update({status: 'offline'});
         };
         ws.on('error', clean);
         ws.on('close', clean);

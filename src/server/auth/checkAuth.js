@@ -8,7 +8,7 @@ export const requestToToken = (req) => req.body.token ||
     req.query.token || req.headers['x-access-token'] || req.cookies.id_token;
 
 export const checkStringToken = async (token) => {
-    logger.debug('checking token: ', token);
+    logger.silly('checking token: ', token);
     if (!token) {
         logger.error('no auth token provided');
         throw new Error('No auth token provided!');
@@ -25,9 +25,9 @@ export const checkStringToken = async (token) => {
         }
         throw e;
     }
-    logger.debug('decoded: ', decoded);
+    logger.silly('decoded: ', decoded);
     const {id} = decoded;
-    logger.debug('searching for: ', id);
+    logger.silly('searching for: ', id);
     // find user
     let user;
     try {
@@ -38,7 +38,7 @@ export const checkStringToken = async (token) => {
         }
     }
     if (user) {
-        logger.debug('user found!', user);
+        logger.silly('user found!', user);
         return user;
     }
 
@@ -51,7 +51,7 @@ export default async (req, res, next) => {
     const token = requestToToken(reqToCheck);
     try {
         const user = await checkStringToken(token);
-        logger.debug('user found!', user);
+        logger.silly('user found!', user);
         req.userInfo = user; // eslint-disable-line
         return next();
     } catch (e) {

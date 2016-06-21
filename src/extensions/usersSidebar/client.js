@@ -8,6 +8,8 @@ class UsersSidebarClient extends UsersSidebar {
 
     title = 'Users'
 
+    chatSockets = {}
+
     constructor(utils) {
         super();
         this.utils = utils;
@@ -16,6 +18,16 @@ class UsersSidebarClient extends UsersSidebar {
     getUsers({team, channel}) {
         const req = this.utils.sign({team, channel});
         return this.utils.post(`/ex/${this.extensionName}`, req);
+    }
+
+    initUsersStream({team, channel}) {
+        if (this.chatSockets[team + channel] && !this.chatSockets[team + channel].isStopped) {
+            return this.chatSockets[team + channel];
+        }
+
+        const url = `/ex/${this.extensionName}?channel=${channel}`;
+        this.chatSockets[team + channel] = this.utils.socket(url);
+        return this.chatSockets[team + channel];
     }
 
     content() {
