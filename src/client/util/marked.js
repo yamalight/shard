@@ -40,7 +40,7 @@ m.use(container, 'widget', {
 
         if (tokens[idx].nesting === 1) {
             // opening tag
-            return `<iframe class="widget" src="${match[1]}"`;
+            return `<iframe class="widget" src="${match[1]}" scrolling="no" onload="autoResizeWidget(this)"`;
         }
 
         // closing tag
@@ -51,5 +51,16 @@ m.use(container, 'widget', {
 });
 // apply plugins from extensions
 mdExtensions.forEach(p => m.use(p.plugin, p.options));
+
+/* eslint no-param-reassign: 0 */
+// autoresize function for widgets
+window.autoResizeWidget = function(frame) {
+    frame.style.height = 0;
+    try {
+        frame.style.height = `${frame.contentWindow.document.body.scrollHeight}px`;
+    } catch (e) {
+        frame.style.height = '300px';
+    }
+};
 
 export const markdown = (text) => m.render(text);

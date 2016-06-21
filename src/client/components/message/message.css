@@ -21,6 +21,8 @@
 }
 
 .markdown {
+    display: flex;
+    flex-direction: column;
 }
 
 .short {
