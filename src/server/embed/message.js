@@ -46,13 +46,14 @@ export default (app) => {
         const html = `<html>
             <head>
                 <title>Shard: Message by ${user.username} in #${channel.name}</title>
+                <link rel="stylesheet" href="/dist/main.css">
                 <style>${style}</style>
             </head>
             <body>
                 <div class="header">
                     Message from <a href="${teamUrl}">${team.name}</a> in <a href="${chanUrl}">#${channel.name}</a>
                 </div>
-                <article class="media">
+                <article class="media media-embed">
                     <figure class="media-left">
                         <p class="image is-64x64">
                             <img src="//www.gravatar.com/avatar/${hash(user.email)}" alt="${user.username}" />
@@ -60,10 +61,10 @@ export default (app) => {
                     </figure>
                     <div class="media-content">
                         <div class="content message-content">
-                            <div class="message-header">
+                            <div class="message-header-embed">
                                 <strong>${user.username} <small>${formatTime(message.time)}</small></strong>
                             </div>
-                            <p>${markdown(message.message)}</p>
+                            <div class="markdown">${markdown(message.message)}</div>
                         </div>
                     </div>
                 </article>

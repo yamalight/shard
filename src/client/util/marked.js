@@ -40,11 +40,11 @@ m.use(container, 'widget', {
 
         if (tokens[idx].nesting === 1) {
             // opening tag
-            return `<iframe class="widget" src="${match[1]}" scrolling="no" onload="autoResizeWidget(this)"`;
+            return `<iframe class="widget" src="${match[1]}" onload="autoResizeWidget(this)"`;
         }
 
         // closing tag
-        return `/>\n`;
+        return ` style="height: 0;" />\n`;
     },
 
     marker: '%',
@@ -55,9 +55,8 @@ mdExtensions.forEach(p => m.use(p.plugin, p.options));
 /* eslint no-param-reassign: 0 */
 // autoresize function for widgets
 window.autoResizeWidget = function(frame) {
-    frame.style.height = 0;
     try {
-        frame.style.height = `${frame.contentWindow.document.body.scrollHeight}px`;
+        frame.style.height = `${frame.contentDocument.body.scrollHeight}px`;
     } catch (e) {
         frame.style.height = '300px';
     }
