@@ -2,6 +2,8 @@ import _ from 'lodash';
 import shallowCompare from 'react-addons-shallow-compare';
 import styles from './component.css';
 
+const sortUsers = (users) => _.sortBy(users, u => (u.status === 'online' ? -1 : 1), 'username');
+
 export default ({React, store$, extension}) => class UsersBar extends React.Component {
     constructor(props) {
         super(props);
@@ -40,10 +42,6 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
         this.dataSubs.map(sub => sub.dispose());
     }
 
-    sortUsers(users) {
-        return _.sortBy(users, u => (u.status === 'online' ? -1 : 1), 'username');
-    }
-
     getUsers(s) {
         if (s.currentTeam && s.currentTeam.id && s.currentChannel && s.currentChannel.id) {
             // if already requested for this chat - ignore action
@@ -68,13 +66,13 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
                     const {users} = this.state;
                     const index = users.findIndex(el => el.id === user.id);
                     users[index] = user;
-                    return this.sortUsers(users);
+                    return sortUsers(users);
                 })
                 .subscribe(users => this.setState({users})),
                 // get initial users data
                 extension
                 .getUsers(params)
-                .map(({users}) => this.sortUsers(users))
+                .map(({users}) => sortUsers(users))
                 .subscribe(users => this.setState({users, status: 'done'})),
             ];
             // set flag to not repeat that
