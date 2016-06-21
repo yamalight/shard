@@ -1,4 +1,14 @@
 
+0.18.0 / 2016-06-21
+==================
+
+  * add forward functionality
+  * add users sidebar with live updates
+  * prevent unnecessary refreshes of team-, side- and infobars
+  * discard updated messages that are not on screen
+  * remember last selected infobar panel and restore it on page reload
+  * navigate to home during errorless logout using location to reset connections
+
 0.17.0 / 2016-06-17
 ==================
 
