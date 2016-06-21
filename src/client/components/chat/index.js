@@ -98,6 +98,12 @@ export default class Chat extends React.Component {
             .map(s => s.toJS())
             .subscribe(m => {
                 const {allMessages: oldMessages} = this.state;
+                // get oldest message and check if current one is older
+                const oldestMessage = oldMessages[0];
+                // if it's older (i.e. not on screen), just discard it
+                if (oldestMessage.time > m.time) {
+                    return;
+                }
                 // say we need to mark new unread
                 this.unreadSubj.onNext();
                 // if new message is not a reply - just fit it into allMessages
