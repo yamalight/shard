@@ -101,7 +101,7 @@ export default class Chat extends React.Component {
                 // get oldest message and check if current one is older
                 const oldestMessage = oldMessages[0];
                 // if it's older (i.e. not on screen), just discard it
-                if (oldestMessage.time > m.time) {
+                if (oldestMessage && oldestMessage.time > m.time) {
                     return;
                 }
                 // say we need to mark new unread
