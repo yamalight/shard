@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import moment from 'moment';
 import {User} from '../db';
 import {jwtconf} from '../../../config';
 import {logger, hash, asyncRequest} from '../util';
@@ -30,8 +31,11 @@ export default (app) => {
         logger.info('got user: ', user);
         // generate token
         const token = jwt.sign(user, jwtconf.secret, {expiresIn: '1d'});
+        // expiration date
+        const expires = moment().add(1, 'd').toDate();
+        logger.debug('expires:', expires);
         // set cookie
-        res.cookie('id_token', token, {expires: new Date(token.exp), httpOnly: true});
+        res.cookie('id_token', token, {expires, httpOnly: true});
         // send token
         res.status(200).json({token});
     }));
