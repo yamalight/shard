@@ -3,7 +3,7 @@ import path from 'path';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
+// import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {logger} from '../util';
 import config from './webpack.config.js';
@@ -32,7 +32,7 @@ if (!isProduction) {
 } else {
     logger.info('production - adding optimization plugins');
     config.devtool = 'cheap-source-map';
-    config.debug = false;
+    config.debug = true;
     // extract styles into file
     const extractCSS = new ExtractTextPlugin('main.css');
     config.module.loaders = config.module.loaders
@@ -60,12 +60,12 @@ if (!isProduction) {
     config.plugins.push(extractCSS);
     config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
     config.plugins.push(new webpack.optimize.DedupePlugin());
+    // config.plugins.push(new LodashModuleReplacementPlugin({collections: true, paths: true}));
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
         compress: {
             warnings: false,
         },
     }));
-    config.plugins.push(new LodashModuleReplacementPlugin());
 }
 
 // returns a Compiler instance
