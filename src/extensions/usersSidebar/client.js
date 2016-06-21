@@ -6,6 +6,7 @@ class UsersSidebarClient extends UsersSidebar {
     // sidebar extension
     type = 'sidebar'
 
+    id = 'userslist'
     title = 'Users'
 
     chatSockets = {}

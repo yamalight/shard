@@ -42,7 +42,23 @@ export default class Chat extends React.Component {
                 menuItems: this.generateMenuItems(s),
             }))
             // set description sidebar
-            .do(s => s.infobarType === 'sidebar' && s.menuItems[0] && this.handleMenuItem(s.menuItems[0]))
+            .do(s => {
+                if (s.infobarType !== 'sidebar' || s.menuItems.length === 0) {
+                    return;
+                }
+                // try to find last used item
+                const id = localStorage.getItem('shard.infobar');
+                const item = s.menuItems.find(it => it.id === id);
+                // if id or item is not valid - just use first item in list
+                if (!id || !item) {
+                    if (s.menuItems[0]) {
+                        this.handleMenuItem(s.menuItems[0]);
+                    }
+                    return;
+                }
+                // set item
+                this.handleMenuItem(item);
+            })
             // store to state
             .subscribe(s => this.setState(s)),
         ];
@@ -57,6 +73,7 @@ export default class Chat extends React.Component {
         }
 
         const items = [{
+            id: 'description',
             title: 'Description',
             type: 'sidebar',
             content: () => <Description />,
