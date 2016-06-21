@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './sidebar.css';
 
 // components
@@ -90,6 +91,10 @@ export default class Sidebar extends React.Component {
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     componentDidUpdate() {

@@ -1,5 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './teambar.css';
 
 // components
@@ -34,6 +35,10 @@ export default class Teambar extends React.Component {
             .map(s => s.toJS())
             .subscribe(s => this.setState(s)),
         ];
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     componentWillUnmount() {

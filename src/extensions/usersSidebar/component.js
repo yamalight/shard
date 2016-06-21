@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './component.css';
 
 export default ({React, store$, extension}) => class UsersBar extends React.Component {
@@ -29,6 +30,11 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
             .subscribe(s => this.setState(s)),
         ];
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
+    }
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
         this.dataSubs.map(sub => sub.dispose());

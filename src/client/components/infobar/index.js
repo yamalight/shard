@@ -1,3 +1,4 @@
+import {Map} from 'immutable';
 import React from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import styles from './infobar.css';
@@ -22,13 +23,22 @@ export default class Infobar extends React.Component {
     componentWillMount() {
         this.subs = [
             store$
-            .map(s => s.filter((v, key) => ['infobar', 'infobarType', 'currentChannel'].includes(key)))
+            .map(s => s.filter((v, key) => ['infobarType', 'currentChannel'].includes(key)))
             .filter(s => s !== undefined)
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
-            .map(s => {
-                const infobarContent = s.infobar ? s.infobar.content() : '';
-                return {...s, infobarContent};
+            .subscribe(s => this.setState(s)),
+
+            // infobar content sub
+            store$
+            .map(s => s.get('infobar'))
+            .filter(s => s !== undefined)
+            .distinctUntilChanged(it => it.id)
+            // TODO: investigate why extensions are not converted to ImmutableJS
+            .map(s => (Map.isMap(s) ? s.toJS() : s))
+            .map(infobar => {
+                const infobarContent = infobar ? infobar.content() : '';
+                return {infobar, infobarContent};
             })
             .subscribe(s => this.setState(s)),
         ];
