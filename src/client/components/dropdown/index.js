@@ -30,7 +30,11 @@ export default class Dropdown extends React.Component {
         this.props.onHide();
     }
 
-    renderItem(it) {
+    renderItem(it, i) {
+        if (it.type && it.type === 'separator') {
+            return <li key={`separator_${i}`} className={styles.separator} />;
+        }
+
         return <li key={it.title}><a onClick={() => this.handleItemClick(it)}>{it.title}</a></li>;
     }
 
@@ -51,7 +55,7 @@ export default class Dropdown extends React.Component {
                     )}
                     {extItems && (
                         <ul className="menu-list">
-                            {extItems.map(it => this.renderItem(it))}
+                            {extItems.map((it, i) => this.renderItem(it, i))}
                         </ul>
                     )}
                 </div>

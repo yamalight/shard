@@ -3,6 +3,7 @@ import React from 'react';
 import Portal from 'react-portal';
 import {browserHistory} from 'react-router';
 import shallowCompare from 'react-addons-shallow-compare';
+import Mousetrap from 'mousetrap';
 import styles from './sidebar.css';
 
 // components
@@ -42,6 +43,11 @@ export default class Sidebar extends React.Component {
         }, {
             title: 'Edit team',
             action: () => this.setState({showEdit: true}),
+        }, {
+            type: 'separator',
+        }, {
+            title: 'Keyboard shortcuts',
+            action: () => Mousetrap.trigger('ctrl+/'),
         }];
     }
 

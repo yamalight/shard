@@ -12,3 +12,11 @@
 .menu a {
     border-bottom: inherit;
 }
+
+.separator {
+    height: 1px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    background: #2e3136;
+    opacity: 0.1;
+}

@@ -12,10 +12,7 @@ export default class HotkeyHelp extends React.Component {
         super(props);
 
         // bind keys
-        Mousetrap.bind(['command+/', 'ctrl+/'], () => {
-            this.setState({opened: true});
-            setTimeout(() => this._text.focus(), 10);
-        });
+        Mousetrap.bind(['command+/', 'ctrl+/'], () => this.setState({opened: true}));
 
         this.state = {
             opened: false,
