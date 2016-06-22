@@ -1,4 +1,5 @@
 import SlashCommands from './base';
+import {defaultCommands as clientCommands} from './clientCommands';
 
 // slash commands typeahead extension
 class SlashCommandsClient extends SlashCommands {
@@ -26,9 +27,19 @@ class SlashCommandsClient extends SlashCommands {
             currentTeam,
             currentChannel,
         });
+
+        const clientCmds = Object.keys(clientCommands)
+            .filter(key => key.toLowerCase().includes(search.toLowerCase()))
+            .map(key => ({
+                name: clientCommands[key].name,
+                command: key,
+            }));
+
         this.utils
             .post(`/ex/${this.extensionName}`, req)
-            .subscribe(res => this.render(res.commands));
+            .map(res => res.commands)
+            .map(commands => clientCmds.concat(commands).sort((a, b) => a.name - b.name))
+            .subscribe(commands => this.render(commands));
     }
 
     action(cmd) {
@@ -56,4 +67,39 @@ class SlashCommandsClient extends SlashCommands {
     }
 }
 
-export default [SlashCommandsClient];
+// slash commands send intercept extension
+class SlashCommandsSendClient extends SlashCommands {
+    // send intercept extension
+    type = 'clientSend'
+
+    constructor(utils) {
+        super();
+        this.results = new utils.Rx.Subject();
+        this.actions = new utils.Rx.Subject();
+        this.utils = utils;
+    }
+
+    handleMessage(data) {
+        // if doesn't start with / - return self
+        if (!/^\//.test(data.message)) {
+            return data;
+        }
+
+        const re = /^\/(.+?)[\s\n\r]+(.*)/g;
+        const results = re.exec(data.message);
+        // if couldn't parse - return self back
+        if (!results) {
+            return data;
+        }
+
+        const [, command, args] = results;
+        // if no client command found - return self back
+        if (!clientCommands[command]) {
+            return data;
+        }
+
+        return clientCommands[command].execute({message: data, args, utils: this.utils});
+    }
+}
+
+export default [SlashCommandsClient, SlashCommandsSendClient];

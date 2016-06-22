@@ -12,6 +12,11 @@ import {handleCommandPaletteEvent} from '../commandpalette';
 // store and actions
 import store$, {sendChat, resetReply, resetForward, editLastMessage} from '../../store';
 
+// get send extensions
+import {extensions} from '../../extensions';
+const sendExtensions = extensions.filter(ex => ex.type === 'clientSend');
+
+// convert message to reply id
 const messageToReplyId = message => {
     if (!message) {
         return undefined;
@@ -83,8 +88,15 @@ export default class ChatInput extends React.Component {
         const team = this.state.currentTeam.id;
         const channel = this.state.currentChannel.id;
         const replyTo = messageToReplyId(this.state.replyToMessage);
-        // send
-        sendChat({team, channel, message, replyTo});
+        const data = {team, channel, message, replyTo};
+
+        // process with send intercepting extensions
+        const dataToSend = sendExtensions.reduce((sum, el) => el.handleMessage(sum), data);
+
+        // send if returned data is truthy
+        if (dataToSend) {
+            sendChat(dataToSend);
+        }
         // reset value
         this._text.value = '';
     }

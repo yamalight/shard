@@ -4,7 +4,20 @@ import {markdown} from '../../util';
 import styles from './description.css';
 
 // store and actions
-import store$, {updateChannel} from '../../store';
+import store$, {updateChannel, setInfobar} from '../../store';
+
+// listen for global activation requests
+store$
+.map(s => s.get('activateInfobar'))
+.filter(s => s !== undefined)
+.distinctUntilChanged()
+.filter(it => it === 'description')
+.delay(10) // <- this is needed to prevent infobar jumping to previous state
+.subscribe(() => setInfobar({
+    id: 'description',
+    title: 'Description',
+    content: () => <Description />,
+}));
 
 export default class Description extends React.Component {
     constructor(props) {
