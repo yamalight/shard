@@ -288,7 +288,7 @@ export default class Chat extends React.Component {
                     n.scrollTop = n.scrollHeight;
                 }
                 this.setState({scrollToMessage: undefined});
-            }, 0);
+            }, 100);
             return;
         }
 
@@ -298,7 +298,7 @@ export default class Chat extends React.Component {
                 el.scrollIntoView();
             }
             this.setState({scrollToMessage: undefined});
-        }, 0);
+        }, 100);
     }
 
     markUnread() {
