@@ -1,4 +1,18 @@
 
+0.19.0 / 2016-06-22
+==================
+
+  * add hotkeys to team menu
+  * add basic hotkeys help page
+  * add basic markdown cheatsheet
+  * allow executing slash commands on the client side + add /description command
+  * separate extension added to chat menu with a separator
+  * add slight delay before scrolling to message in chat to compensate for widget resizing
+  * better styling for widgets
+  * autosize widgets using js
+  * fix cookie expiration date
+  * fix issue with comparing time while adding first message in chat
+
 0.18.0 / 2016-06-21
 ==================
 
