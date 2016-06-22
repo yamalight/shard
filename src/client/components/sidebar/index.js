@@ -48,6 +48,9 @@ export default class Sidebar extends React.Component {
         }, {
             title: 'Keyboard shortcuts',
             action: () => Mousetrap.trigger('ctrl+/'),
+        }, {
+            title: 'Markdown cheatsheet',
+            action: () => Mousetrap.trigger('ctrl+shift+\\'),
         }];
     }
 

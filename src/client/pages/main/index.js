@@ -12,6 +12,7 @@ import ChatInput from '../../components/chatInput';
 import Infobar from '../../components/infobar';
 import CommandPalette from '../../components/commandpalette';
 import HotkeyHelp from '../../components/hotkeyhelp';
+import MarkdownHelp from '../../components/markdownhelp';
 
 // store and actions
 import store$, {setTeam, getUpdates} from '../../store';
@@ -114,6 +115,8 @@ export default class Main extends React.Component {
                 <CommandPalette />
                 {/* OVERLAY: hotkey help screen */}
                 <HotkeyHelp />
+                {/* OVERLAY: markdown help screen */}
+                <MarkdownHelp />
             </div>
         );
     }

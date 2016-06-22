@@ -56,6 +56,10 @@ export default class HotkeyHelp extends React.Component {
                                     <span className={styles.description}>Dismiss Dialogs:</span>
                                     <kbd>Esc</kbd>
                                 </div>
+                                <div className="column">
+                                    <span className={styles.description}>Markdown cheatsheet:</span>
+                                    <kbd>{ctrlKey}</kbd><kbd>Shift</kbd><kbd>\</kbd>
+                                </div>
                             </div>
                         </div>
                     </div>
