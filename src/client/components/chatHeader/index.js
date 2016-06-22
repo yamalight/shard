@@ -81,11 +81,11 @@ export default class Chat extends React.Component {
             title: 'Notification settings',
             type: 'action',
             content: () => this.setState({showNotifications: true}),
-        }].concat(sidebarExtensions);
+        }];
 
         // if it's private conversation - return
         if (s.currentTeam.id === meTeam.id) {
-            return items;
+            return items.concat([{type: 'separator'}, ...sidebarExtensions]);
         }
 
         // otherwise add edit button
@@ -96,7 +96,7 @@ export default class Chat extends React.Component {
                 type: 'action',
                 content: () => this.setState({showRename: true}),
             },
-        ];
+        ].concat([{type: 'separator'}, ...sidebarExtensions]);
     }
 
     closeRename() {
