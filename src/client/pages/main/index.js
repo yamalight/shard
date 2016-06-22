@@ -11,6 +11,7 @@ import Chat from '../../components/chat';
 import ChatInput from '../../components/chatInput';
 import Infobar from '../../components/infobar';
 import CommandPalette from '../../components/commandpalette';
+import HotkeyHelp from '../../components/hotkeyhelp';
 
 // store and actions
 import store$, {setTeam, getUpdates} from '../../store';
@@ -111,6 +112,8 @@ export default class Main extends React.Component {
                 )}
                 {/* OVERLAY: comman palette */}
                 <CommandPalette />
+                {/* OVERLAY: hotkey help screen */}
+                <HotkeyHelp />
             </div>
         );
     }
