@@ -51,7 +51,8 @@ export default (app) => {
             </head>
             <body>
                 <div class="header">
-                    Message from <a href="${teamUrl}">${team.name}</a> in <a href="${chanUrl}">#${channel.name}</a>
+                    Message from <a href="${teamUrl}" target="_blank">${team.name}</a> in
+                    <a href="${chanUrl}" target="_blank">#${channel.name}</a>
                 </div>
                 <article class="media media-embed">
                     <figure class="media-left">
