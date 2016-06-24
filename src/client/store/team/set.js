@@ -14,7 +14,14 @@ const team$ = setTeam.$
     .do(team => browserHistory.push(`/channels/${_.camelCase(team.name)}`))
     .do(() => resetChannels())
     .do(() => resetHistory())
-    .do(team => { document.title = `Shard: ${team.name === 'me' ? 'Private' : team.me}`; })
+    .do(team => {
+        if (!team.name) {
+            document.title = 'Shard: Communication Redefined';
+            return;
+        }
+
+        document.title = `Shard: ${team.name === 'me' ? 'Private' : team.name}`;
+    })
     .map(currentTeam => ({currentTeam}));
 
 export default team$;
