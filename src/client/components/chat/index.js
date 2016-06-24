@@ -63,7 +63,7 @@ export default class Chat extends React.Component {
                 scrollToMessage: 'end',
                 allMessages: undefined,
             }))
-            .do(s => this.initSocket(s))
+            .map(s => this.initSocket(s))
             // store to state
             .subscribe(s => this.setState(s)),
 
@@ -76,7 +76,7 @@ export default class Chat extends React.Component {
             // map history
             .map(history => ({
                 shouldScroll: true,
-                allMessages: (this.state.allMessages || []).concat(
+                allMessages: (this.resetAllMessages || this.state.allMessages || []).concat(
                     history.filter(s => s !== undefined)
                     .reduce(reduceShortMessages, [])
                     .map(({replies, ...message}) => ({
@@ -236,6 +236,11 @@ export default class Chat extends React.Component {
         );
     }
     componentDidUpdate() {
+        // say we don't need to reset all messages
+        if (this.state.allMessages && this.state.allMessages.length) {
+            this.resetAllMessages = undefined;
+        }
+        // scroll to needed message
         this.scrollToMessage();
     }
     componentWillUnmount() {
@@ -246,7 +251,7 @@ export default class Chat extends React.Component {
         if (s.currentTeam && s.currentTeam.id && s.currentChannel && s.currentChannel.id) {
             // if already opened for this chat - ignore action
             if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
-                return;
+                return s;
             }
 
             // if another socket exists - close it
@@ -265,9 +270,13 @@ export default class Chat extends React.Component {
             getHistory(params);
             // setup listener
             getChat(params);
+            // flag all messages to reset
+            this.resetAllMessages = [];
             // set flag to not repeat that
-            this.setState({requestedForChannel: s.currentTeam.id + s.currentChannel.id});
+            return {...s, requestedForChannel: s.currentTeam.id + s.currentChannel.id};
         }
+
+        return s;
     }
 
     scrollToMessage() {
