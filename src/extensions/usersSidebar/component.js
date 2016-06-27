@@ -82,11 +82,11 @@ export default ({React, store$, extension}) => class UsersBar extends React.Comp
 
     render() {
         if (this.state.status === 'loading') {
-            return <div>Loading users...</div>;
+            return <div className={styles.container}>Loading users...</div>;
         }
 
         return (
-            <div>
+            <div className={styles.container}>
                 Users in current channel:
                 {this.state.users.map(u => (
                     <div className={`card is-fullwidth ${styles.user}`} key={u.id}>
