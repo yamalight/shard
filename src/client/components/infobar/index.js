@@ -33,9 +33,9 @@ export default class Infobar extends React.Component {
             store$
             .map(s => s.get('infobar'))
             .filter(s => s !== undefined)
-            .distinctUntilChanged(it => it.id)
             // TODO: investigate why extensions are not converted to ImmutableJS
             .map(s => (Map.isMap(s) ? s.toJS() : s))
+            .distinctUntilChanged(it => it.id)
             .map(infobar => {
                 const infobarContent = infobar ? infobar.content() : '';
                 return {infobar, infobarContent};

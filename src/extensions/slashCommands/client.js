@@ -1,5 +1,5 @@
 import SlashCommands from './base';
-import {defaultCommands as clientCommands} from './clientCommands';
+import {getClientCommands} from './clientCommands';
 
 // slash commands typeahead extension
 class SlashCommandsClient extends SlashCommands {
@@ -28,6 +28,7 @@ class SlashCommandsClient extends SlashCommands {
             currentChannel,
         });
 
+        const clientCommands = getClientCommands();
         const clientCmds = Object.keys(clientCommands)
             .filter(key => key.toLowerCase().includes(search.toLowerCase()))
             .map(key => ({
@@ -93,6 +94,7 @@ class SlashCommandsSendClient extends SlashCommands {
         }
 
         const [, command, args] = results;
+        const clientCommands = getClientCommands();
         // if no client command found - return self back
         if (!clientCommands[command]) {
             return data;

@@ -6,6 +6,11 @@ import React from 'react';
 // import extensions
 import {extensions as extensionsList} from '../../../config.client';
 
+// create global scope to store shared configs
+window.shardApp = {
+    slashCommands: {},
+};
+
 // load extensions
 export const extensions = extensionsList.map(Ex => new Ex({
     ...util,
