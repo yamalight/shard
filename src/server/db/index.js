@@ -5,7 +5,7 @@ import {thinky, r} from './thinky';
 export default thinky;
 
 // export helpers
-export {r};
+export {thinky, r};
 
 // export models
 export {User} from './user';

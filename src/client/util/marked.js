@@ -4,7 +4,8 @@ import MarkdownIt from 'markdown-it';
 import emoji from 'markdown-it-emoji';
 import fontawesome from 'markdown-it-fontawesome';
 import taskLists from 'markdown-it-task-lists';
-import container from 'markdown-it-container';
+// custom plugins
+import initWidgets from './marked-widget';
 
 // import extensions
 import {extensions} from '../extensions';
@@ -29,26 +30,8 @@ const m = new MarkdownIt(mdOpt);
 m.use(emoji);
 m.use(fontawesome);
 m.use(taskLists);
-// widget support
-m.use(container, 'widget', {
-    validate(params) {
-        return params.trim().match(/^widget=(.*)$/);
-    },
-
-    render(tokens, idx) {
-        const match = tokens[idx].info.trim().match(/^widget=(.*)$/);
-
-        if (tokens[idx].nesting === 1) {
-            // opening tag
-            return `<iframe class="widget" src="${match[1]}"`;
-        }
-
-        // closing tag
-        return `/>\n`;
-    },
-
-    marker: '%',
-});
+// widgets support
+initWidgets(m);
 // apply plugins from extensions
 mdExtensions.forEach(p => m.use(p.plugin, p.options));
 
