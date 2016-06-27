@@ -1,4 +1,14 @@
 
+0.20.0 / 2016-06-27
+==================
+
+* add calendar sidebar extension
+* fix slash commands sorting
+* add way for extensions to add custom client slash commands
+* correctly handle chat history resets on channel switch
+* set correct page titles
+* use fixed widget height, open embedded messages link in new window
+
 0.19.0 / 2016-06-22
 ==================
 
