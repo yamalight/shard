@@ -1,6 +1,6 @@
 export default {
     description: {
-        name: 'Description',
+        name: 'Show channel description',
         execute({utils}) {
             utils.storeActions.activateInfobar('description');
             return false;

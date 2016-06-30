@@ -20,7 +20,6 @@ class UsersSidebarClient extends UsersSidebar {
         .store$
         .map(s => s.get('activateInfobar'))
         .filter(s => s !== undefined)
-        .distinctUntilChanged()
         .filter(it => it === 'users')
         .delay(10) // <- this is needed to prevent infobar jumping to previous state
         .subscribe(() => utils.storeActions.setInfobar({
@@ -31,7 +30,7 @@ class UsersSidebarClient extends UsersSidebar {
 
         // add self to slash commands
         window.shardApp.slashCommands.users = {
-            name: 'Users list',
+            name: 'Show users list',
             execute({utils: execUtils}) {
                 execUtils.storeActions.activateInfobar('users');
                 return false;

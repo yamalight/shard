@@ -39,7 +39,7 @@ class SlashCommandsClient extends SlashCommands {
         this.utils
             .post(`/ex/${this.extensionName}`, req)
             .map(res => res.commands)
-            .map(commands => clientCmds.concat(commands).sort((a, b) => a.name.localeCompare(b.name)))
+            .map(commands => clientCmds.concat(commands).sort((a, b) => a.command.localeCompare(b.command)))
             .subscribe(commands => this.render(commands));
     }
 
