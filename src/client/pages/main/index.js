@@ -25,9 +25,13 @@ export default class Main extends React.Component {
         super(props);
         const {channel, team} = props.params || {};
 
+        const storedWidth = localStorage.getItem('shard.infobar.dock.width');
+        const dockWidth = storedWidth ? parseFloat(storedWidth) : 0.3;
+
         this.state = {
             channel,
             team,
+            dockWidth,
             teams: [],
             channels: [],
             showSidebar: true,
@@ -87,6 +91,11 @@ export default class Main extends React.Component {
         this.setState({showSidebar: !this.state.showSidebar});
     }
 
+    handleDockResize(size) {
+        // persist value for user
+        localStorage.setItem('shard.infobar.dock.width', size);
+    }
+
     render() {
         const {showSidebar, channel, infobarType, infobarShow} = this.state;
 
@@ -107,7 +116,12 @@ export default class Main extends React.Component {
                 </div>
                 {/* OVERLAY: infobar using overlay */}
                 {infobarType === 'dock' && (
-                    <Dock position="right" isVisible={infobarShow}>
+                    <Dock
+                        defaultSize={this.state.dockWidth}
+                        position="right"
+                        isVisible={infobarShow}
+                        onSizeChange={e => this.handleDockResize(e)}
+                    >
                         <Infobar />
                     </Dock>
                 )}
