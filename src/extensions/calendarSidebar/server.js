@@ -35,10 +35,27 @@ class CalendarSidebarServer extends CalendarSidebar {
             const {team, channel, calendar} = req.body;
             logger.debug('got calendar sidebar save req:', {team, channel, calendar});
 
-            const cal = new Calendar({team, channel, calendar});
-            await cal.save();
+            // try to find existing entry
+            const cals = await Calendar
+                .filter({channel, team})
+                .limit(1)
+                .run();
+            const cal = cals[0];
+            logger.debug('found calendar:', cal);
 
-            res.send(cal);
+            // if found - update
+            if (cal) {
+                cal.calendar = calendar;
+                await cal.save();
+                res.send(cal);
+                return;
+            }
+
+            // if not - create new
+            const newCal = new Calendar({team, channel, calendar});
+            await newCal.save();
+
+            res.send(newCal);
         }));
     }
 }
