@@ -6,6 +6,7 @@ import channelTypeahead from './src/extensions/channelTypeahead/client';
 import slashCommands from './src/extensions/slashCommands/client';
 import usersSidebar from './src/extensions/usersSidebar/client';
 import calendarSidebar from './src/extensions/calendarSidebar/client';
+import trelloSidebar from './src/extensions/trelloSidebar/client';
 
 export const extensions = _.flatten([
     userTypeahead,
@@ -13,4 +14,5 @@ export const extensions = _.flatten([
     slashCommands,
     usersSidebar,
     calendarSidebar,
+    trelloSidebar,
 ]);

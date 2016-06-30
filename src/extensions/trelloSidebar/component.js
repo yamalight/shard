@@ -1,12 +1,12 @@
 import shallowCompare from 'react-addons-shallow-compare';
 import styles from './component.css';
 
-export default ({React, store$, extension}) => class CalendarBar extends React.Component {
+export default ({React, store$, extension}) => class TrelloBar extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            calendar: undefined,
+            board: undefined,
             currentTeam: undefined,
             currentChannel: undefined,
             status: 'loading',
@@ -23,7 +23,7 @@ export default ({React, store$, extension}) => class CalendarBar extends React.C
                 a.getIn(['currentChannel', 'id']) === b.getIn(['currentChannel', 'id'])
             )
             .map(s => s.toJS())
-            .do(s => this.getCalendar(s))
+            .do(s => this.getBoard(s))
             .subscribe(s => this.setState(s)),
         ];
     }
@@ -36,7 +36,7 @@ export default ({React, store$, extension}) => class CalendarBar extends React.C
         this.subs.map(s => s.dispose());
     }
 
-    getCalendar(s) {
+    getBoard(s) {
         if (s.currentTeam && s.currentTeam.id && s.currentChannel && s.currentChannel.id) {
             // if already requested for this chat - ignore action
             if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
@@ -52,60 +52,52 @@ export default ({React, store$, extension}) => class CalendarBar extends React.C
             // set flag to not repeat that
             this.setState({status: 'loading', requestedForChannel: s.currentTeam.id + s.currentChannel.id});
 
-            // get calendar data
+            // get board data
             extension
-            .getCalendar(params)
-            .subscribe(calendar => this.setState({calendar, status: 'done'}));
+            .getBoard(params)
+            .subscribe(board => this.setState({board, status: 'done'}));
         }
     }
 
-    saveCalendar() {
-        const calendarLink = this._input.value;
+    saveBoard() {
+        const boardLink = this._input.value;
 
         // construct request
         const params = {
             team: this.state.currentTeam.id,
             channel: this.state.currentChannel.id,
-            calendar: calendarLink,
+            board: boardLink,
         };
 
-        // save calendar data
+        // save board data
         extension
-        .setCalendar(params)
-        .subscribe(calendar => this.setState({calendar, status: 'done'}));
+        .setBoard(params)
+        .subscribe(board => this.setState({board, status: 'done'}));
     }
 
     cancelEdit() {
-        this.setState({calendar: this.state.oldCalendar});
+        this.setState({board: this.state.oldBoard});
     }
 
-    handleLoad(e) {
-        // check for contentwindow length to catch ORIGIN header error
-        // TODO: this feels hacky, is that a correct way? is there a better way?
-        if (e.target.contentWindow.length === 0) {
-            this.setState({status: 'failed'});
-        }
-    }
-
-    renderSetCalendar() {
-        const val = this.state.oldCalendar ? this.state.oldCalendar.calendar : '';
+    renderSetBoard() {
+        const val = this.state.oldBoard ? this.state.oldBoard.board : '';
 
         return (
             <div className={styles.container}>
-                {!this.state.oldCalendar && (
-                    <p>No URL calendar set, please add one now.</p>
+                {!this.state.oldBoard && (
+                    <p>No board URL set, please add one now.</p>
                 )}
                 <p className="control">
                     <input
                         className="input is-medium"
                         type="text"
-                        placeholder="Enter calendar embed URL.."
+                        placeholder="Enter board embed URL.."
                         defaultValue={val}
                         ref={t => { this._input = t; }}
                     />
                 </p>
-                <a className="button is-success" onClick={() => this.saveCalendar()}>Save</a>
-                {this.state.oldCalendar && (
+                <a className="button is-success" onClick={() => this.saveBoard()}>Save</a>
+                {this.state.oldBoard && (
                     <a className="button" onClick={() => this.cancelEdit()}>Cancel</a>
                 )}
             </div>
@@ -114,45 +106,44 @@ export default ({React, store$, extension}) => class CalendarBar extends React.C
 
     render() {
         if (this.state.status === 'loading') {
-            return <div className={styles.container}>Loading calendar...</div>;
+            return <div className={styles.container}>Loading board...</div>;
         }
 
-        const calendar = this.state.calendar || {};
+        const board = this.state.board || {};
 
         if (this.state.status === 'failed') {
             return (
                 <div className={styles.container}>
                     <a
                         className="button is-small is-link"
-                        onClick={() => this.setState({calendar: {}, oldCalendar: calendar, status: 'done'})}
+                        onClick={() => this.setState({board: {}, oldBoard: board, status: 'done'})}
                     >
                         Edit
                     </a>
-                    <p>There was an error loading calendar :(</p>
+                    <p>There was an error loading board :(</p>
                 </div>
             );
         }
 
-        if (!calendar.calendar) {
-            return this.renderSetCalendar();
+        if (!board.board) {
+            return this.renderSetBoard();
         }
 
         return (
             <div className={styles.container}>
                 <a
                     className="button is-small is-link"
-                    onClick={() => this.setState({calendar: {}, oldCalendar: calendar})}
+                    onClick={() => this.setState({board: {}, oldBoard: board})}
                 >
                     Edit
                 </a>
                 <iframe
-                    src={calendar.calendar}
+                    src={board.board}
                     style={{border: 0}}
                     width="100%"
-                    height="600"
+                    height="800"
                     frameBorder="0"
                     scrolling="no"
-                    onLoad={e => this.handleLoad(e)}
                 />
             </div>
         );
