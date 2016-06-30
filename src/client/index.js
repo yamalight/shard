@@ -9,8 +9,8 @@ import {Router, Route, browserHistory} from 'react-router';
 // }
 
 // TODO: is there a better way to do this without global var?
-// init global shared helpers
-window.shardApp = {};
+// global shared helpers
+// window.shardApp = {};
 
 // global styles
 import 'font-awesome/css/font-awesome.min.css';
