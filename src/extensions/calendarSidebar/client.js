@@ -18,13 +18,17 @@ class CalendarSidebarClient extends CalendarSidebar {
         .store$
         .map(s => s.get('activateInfobar'))
         .filter(s => s !== undefined)
+        .distinctUntilChanged()
         .filter(it => it === 'calendar')
         .delay(10) // <- this is needed to prevent infobar jumping to previous state
-        .subscribe(() => utils.storeActions.setInfobar({
-            id: 'calendar',
-            title: 'Calendar',
-            content: () => this.content(),
-        }));
+        .subscribe(() => {
+            utils.storeActions.setInfobar({
+                id: 'calendar',
+                title: 'Calendar',
+                content: () => this.content(),
+            });
+            utils.storeActions.activateInfobar(undefined);
+        });
 
         // add self to slash commands
         window.shardApp.slashCommands.calendar = {

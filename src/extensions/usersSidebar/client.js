@@ -20,13 +20,17 @@ class UsersSidebarClient extends UsersSidebar {
         .store$
         .map(s => s.get('activateInfobar'))
         .filter(s => s !== undefined)
+        .distinctUntilChanged()
         .filter(it => it === 'users')
         .delay(10) // <- this is needed to prevent infobar jumping to previous state
-        .subscribe(() => utils.storeActions.setInfobar({
-            id: 'users',
-            title: 'Users',
-            content: () => this.content(),
-        }));
+        .subscribe(() => {
+            utils.storeActions.setInfobar({
+                id: 'users',
+                title: 'Users',
+                content: () => this.content(),
+            });
+            utils.storeActions.activateInfobar(undefined);
+        });
 
         // add self to slash commands
         window.shardApp.slashCommands.users = {
