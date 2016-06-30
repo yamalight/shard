@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import {fromJS} from 'immutable';
+import {browserHistory} from 'react-router';
 import {meTeam} from '../util';
 
 // sort by title
@@ -21,6 +23,11 @@ const updateTeam = (s, updates) => {
     // check if it's current team
     if (s.getIn(['currentTeam', 'id']) === team.get('id')) {
         ns = ns.set('currentTeam', s.get('currentTeam').merge(team));
+        // update url
+        const oldTeamName = _.camelCase(s.getIn(['currentTeam', 'name']));
+        const newTeamName = _.camelCase(team.get('name'));
+        const newPath = window.location.pathname.replace(`/channels/${oldTeamName}/`, `/channels/${newTeamName}/`);
+        browserHistory.push(newPath);
     }
     // try to find in teams
     const teamsKey = ns.get('teams', fromJS([])).findKey(v => v.get('id') === team.get('id'));
@@ -63,6 +70,11 @@ const updateChannel = (s, updates) => {
     // check if it's current channel
     if (s.getIn(['currentChannel', 'id']) === channel.get('id')) {
         ns = s.set('currentChannel', s.get('currentChannel').merge(channel));
+        // update url
+        const oldChName = _.camelCase(s.getIn(['currentChannel', 'name']));
+        const newChName = _.camelCase(channel.get('name'));
+        const newPath = window.location.pathname.replace(new RegExp(`/${oldChName}$`), `/${newChName}`);
+        browserHistory.push(newPath);
     }
     // try to find in channels
     let chKey = ns.get('channels', fromJS([])).findKey(v => v.get('id') === channel.get('id'));
