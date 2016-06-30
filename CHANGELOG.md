@@ -1,4 +1,14 @@
 
+0.21.0 / 2016-06-30
+==================
+
+  * add simple trello extension
+  * persist undocked infobar size
+  * correctly update calendar instead of just creating new ones every time
+  * update location path upon channel and team name changes
+  * fix showing undocked sidebar when selecting the same view
+  * fix additional slash commands not being added
+
 0.20.0 / 2016-06-27
 ==================
 
