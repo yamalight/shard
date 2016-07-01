@@ -6,9 +6,9 @@ import {logger, hash, asyncRequest} from '../util';
 
 export default (app) => {
     app.post('/api/login', asyncRequest(async (req, res) => {
-        const {username, password: plainPass} = req.body;
+        const {username, remember, password: plainPass} = req.body;
         const password = hash(plainPass);
-        logger.info('searching for: ', username, password);
+        logger.info('searching for: ', {username, password, remember});
         // find user
         const users = await User.filter({username, password})
             .without(['password', 'verifyId', 'subscriptions', 'passwordReset'])
@@ -29,10 +29,11 @@ export default (app) => {
         }
 
         logger.info('got user: ', user);
+        const expireDays = remember ? 90 : 1;
+        const expires = moment().add(expireDays, 'd').toDate();
         // generate token
-        const token = jwt.sign(user, jwtconf.secret, {expiresIn: '1d'});
+        const token = jwt.sign(user, jwtconf.secret, {expiresIn: `${expireDays}d`});
         // expiration date
-        const expires = moment().add(1, 'd').toDate();
         logger.debug('expires:', expires);
         // set cookie
         res.cookie('id_token', token, {expires, httpOnly: true});

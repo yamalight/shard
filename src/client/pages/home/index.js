@@ -101,7 +101,10 @@ export default class Home extends React.Component {
             return;
         }
 
-        loginUser({username, password});
+        // get remeberme checkbox
+        const remember = this.remember.checked;
+
+        loginUser({username, password, remember});
     }
 
     goHome() {
@@ -209,6 +212,13 @@ export default class Home extends React.Component {
                     />
                     <i className="fa fa-lock" />
                 </p>
+                {!this.state.showRegister && (
+                    <p className="control">
+                        <label className="checkbox">
+                            <input type="checkbox" ref={c => { this.remember = c; }} /> Remember me
+                        </label>
+                    </p>
+                )}
                 {this.state.showRegister && (
                     <p className="control has-icon">
                         <input
