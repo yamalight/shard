@@ -1,13 +1,29 @@
 import container from 'markdown-it-container';
 
-// error handling
-const handleWidgetError = (widget) => {
-    // console.log('error in widget:', widget);
+// loading handling
+const handleWidgetLoad = (obj) => {
+    try {
+        // try to access internal body
+        const scrollHeight = obj.contentWindow.document.body.scrollHeight; // eslint-disable-line
+    } catch (e) {
+        // if can't - just return
+        return;
+    }
+
+    // set height to 0 to maximize scoll
+    obj.style.minHeight = 0; // eslint-disable-line
+    obj.style.height = 0; // eslint-disable-line
+    // get scroll height
+    const h = obj.contentWindow.document.body.scrollHeight;
+    const height = `${h}px`;
+    // set new height
+    obj.style.height = height; // eslint-disable-line
+    obj.style.minHeight = height; // eslint-disable-line
 };
 if (window.shardApp) {
-    window.shardApp.handleWidgetError = handleWidgetError;
+    window.shardApp.handleWidgetLoad = handleWidgetLoad;
 } else {
-    window.shardApp = {handleWidgetError};
+    window.shardApp = {handleWidgetLoad};
 }
 
 // plugin attachment
@@ -27,7 +43,7 @@ export default (m) => {
             }
 
             // closing tag
-            return ` onerror="window.shardApp.handleWidgetError(this)" />\n`;
+            return ` frameborder="0" scrolling="no" onload="window.shardApp.handleWidgetLoad(this)" />\n`;
         },
 
         marker: '%',
