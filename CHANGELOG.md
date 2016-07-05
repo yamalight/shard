@@ -1,4 +1,14 @@
 
+0.22.0 / 2016-07-05
+==================
+
+  * add simple system shard bot that can programmatically dispatch messages
+  * add remember me checkbox that extends live of auth token
+  * only build/deploy from master
+  * add auto-deploy via ssh step
+  * align message menu by right side to fix out of bounds drawing when infobar is undocked
+  * autoresize widgets when possible
+
 0.21.0 / 2016-06-30
 ==================
 

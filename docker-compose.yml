@@ -3,7 +3,7 @@ services:
   db:
     image: rethinkdb
     volumes:
-      - ./db:/data
+      - ./sharddb:/data
   shard:
     build: .
     depends_on:
