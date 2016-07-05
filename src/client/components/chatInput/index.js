@@ -75,10 +75,11 @@ export default class ChatInput extends React.Component {
     }
 
     sendMessage() {
+        const txt = this._text.value;
         const forwardMessage = this.state.forwardMessage ?
             `%%% widget=/api/message/${this.state.forwardMessage.id}/embed` :
             '';
-        const message = `${this._text.value}\n${forwardMessage}`;
+        const message = `${txt}\n${forwardMessage}`;
 
         // do not send empty messages
         if (!message || !message.length) {

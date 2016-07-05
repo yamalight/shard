@@ -6,7 +6,7 @@ const messageModel = {
     userId: type.string().required(),
     channel: type.string().required(),
     time: type.date().default(r.now()),
-    readBy: type.array().schema(type.string()),
+    readBy: type.array().schema(type.string()).default([]),
 };
 
 export const Message = thinky.createModel('Message', messageModel);

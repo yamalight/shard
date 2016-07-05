@@ -18,4 +18,7 @@ export const User = thinky.createModel('User', {
         date: type.date().default(0),
         token: type.string().default('-1'),
     }),
+    // bot params
+    type: type.string().enum(['user', 'bot']).default('user'),
+    owner: type.string().default('system'),
 });

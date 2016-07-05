@@ -13,12 +13,14 @@ const handleWidgetLoad = (obj) => {
     // set height to 0 to maximize scoll
     obj.style.minHeight = 0; // eslint-disable-line
     obj.style.height = 0; // eslint-disable-line
-    // get scroll height
-    const h = obj.contentWindow.document.body.scrollHeight;
-    const height = `${h}px`;
-    // set new height
-    obj.style.height = height; // eslint-disable-line
-    obj.style.minHeight = height; // eslint-disable-line
+    setTimeout(() => {
+        // get scroll height
+        const h = obj.contentWindow.document.body.scrollHeight;
+        const height = `${h}px`;
+        // set new height
+        obj.style.height = height; // eslint-disable-line
+        obj.style.minHeight = height; // eslint-disable-line
+    }, 100);
 };
 if (window.shardApp) {
     window.shardApp.handleWidgetLoad = handleWidgetLoad;
