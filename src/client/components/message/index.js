@@ -367,7 +367,17 @@ export default class Message extends React.Component {
                         onMouseLeave={(e) => this.hideMenu(e)}
                     >
                         <div className={styles.header}>
-                            <strong>{m.user.username} <small>{formatTime(m.time)}</small></strong>
+                            {m.user.type === 'bot' && (
+                                <span
+                                    className={`icon hint--right ${styles.botIcon}`}
+                                    data-hint="Blip-blop, I'm a bot!"
+                                >
+                                    <i className="fa fa-code" />
+                                </span>
+                            )}
+                            <strong>
+                                {m.user.username} <small>{formatTime(m.time)}</small>
+                            </strong>
                             {this.renderSelect()}
                             <span className="is-spacer" />
                             {this.createMenu(m)}
