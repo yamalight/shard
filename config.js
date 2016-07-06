@@ -4,6 +4,7 @@ export const db = {
     host: process.env.SHARD_DB_HOST || 'docker.dev',
     db: process.env.SHARD_DB_NAME || 'sharddb',
     timeoutError: process.env.SHARD_DB_TIMEOUT || 1000,
+    pingInterval: process.env.SHARD_DB_PINGINTERVAL || 60,
 };
 
 export const requireEmailValidation = process.env.SHARD_MAIL_VALIDATION ?
