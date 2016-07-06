@@ -22,6 +22,7 @@ const mdOpt = {
     breaks: true,
     linkify: true,
     typographer: true,
+    html: true,
 };
 
 // init parser
