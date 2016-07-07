@@ -79,7 +79,7 @@ export default class ChatInput extends React.Component {
         const forwardMessage = this.state.forwardMessage ?
             `%%% widget=/api/message/${this.state.forwardMessage.id}/embed` :
             '';
-        const message = `${txt}\n${forwardMessage}`;
+        const message = `${txt}${forwardMessage ? '\n' : ''}${forwardMessage}`;
 
         // do not send empty messages
         if (!message || !message.length) {
@@ -100,10 +100,6 @@ export default class ChatInput extends React.Component {
         }
         // reset value
         this._text.value = '';
-    }
-
-    handleKeyUp(e) {
-        this.setState({text: e.target.value});
     }
 
     handleKeyDown(e) {
@@ -212,7 +208,6 @@ export default class ChatInput extends React.Component {
                                 placeholder="Write a message..."
                                 ref={(t) => { this._text = t; }}
                                 onKeyPress={e => this.handleKeyPress(e)}
-                                onKeyUp={e => this.handleKeyUp(e)}
                                 onKeyDown={e => this.handleKeyDown(e)}
                             />
                             <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
