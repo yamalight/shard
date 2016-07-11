@@ -7,7 +7,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {logger} from '../util';
 import config from './webpack.config.js';
-import {webPush} from '../../../config';
+import {manifest} from './manifest';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -84,10 +84,6 @@ const statsConf = {
 // create express
 export default (app) => {
     // generate manifest file
-    const manifest = {
-        name: 'Shard',
-        gcm_sender_id: webPush.gcmId,
-    };
     fs.writeFile(
         path.join(__dirname, '..', '..', 'client', 'manifest.json'),
         JSON.stringify(manifest, null, 2),
