@@ -1,4 +1,14 @@
 
+0.23.0 / 2016-07-20
+==================
+
+  * add some babel-loader optimizations
+  * add icon to manifest for chrome
+  * add icon files + add favicon
+  * only insert linebreak when forward message is present
+  * allow using html tags in markdown
+  * use ping interval for db to make sure connections are alive
+
 0.22.0 / 2016-07-05
 ==================
 
