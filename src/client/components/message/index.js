@@ -107,10 +107,11 @@ export default class Message extends React.Component {
 
     // click handler
     markdownClick(e) {
-        e.preventDefault();
         if (!e.target.href) {
             return;
         }
+
+        e.preventDefault();
 
         const link = new URL(e.target.href);
         const path = link.pathname;

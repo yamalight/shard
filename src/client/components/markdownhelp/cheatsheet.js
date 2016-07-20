@@ -126,4 +126,17 @@ E.g. to insert youtube video you can use the following markup:
 \`\`\`
 %%% widget=https://www.youtube.com/embed/b3ADsUFJ46Y
 \`\`\`
+
+### HTML tags
+
+You can also use all HTML tags in your messages.
+For example, the code below will create expandable details area:
+
+\`\`\`
+<details>
+  <summary>Summary Goes Here</summary>
+  <p>...this is hidden, collapsable content...</p>
+</details>
+\`\`\`
+
 `;

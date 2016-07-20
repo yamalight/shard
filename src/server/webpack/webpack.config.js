@@ -18,6 +18,8 @@ module.exports = {
             'moment',
             'mousetrap',
             'react',
+            'react-addons-shallow-compare',
+            'react-dock',
             'react-dom',
             'react-portal',
             'react-router',
@@ -69,8 +71,9 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: 'babel',
                 query: {
+                    cacheDirectory: true,
                     presets: ['es2015', 'react', 'stage-1'],
-                    plugins: ['lodash'],
+                    plugins: ['lodash', 'transform-runtime'],
                     env: {
                         development: {
                             presets: ['react-hmre'],
