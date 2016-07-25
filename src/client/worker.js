@@ -1,4 +1,4 @@
-const pushWait = 300; // dispatch not more than every 300ms
+const pushWait = 500; // dispatch not more than every 300ms
 let pushTimeout;
 let pushCount = 0;
 let pushBody = '';
