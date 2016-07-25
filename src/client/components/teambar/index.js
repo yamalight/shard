@@ -157,14 +157,15 @@ export default class Teambar extends React.Component {
                 </a>
 
 
-                {/* Sidebar toggle button */}
+                {/* Sidebar toggle button
                 <div className="is-spacer" />
                 <div className={styles.separator} />
-                <a className={styles.iconButton} onClick={() => this.props.toggleSidebar()}>
+                <a className={styles.iconButton} onClick={() => this.toggleSidebar()}>
                     <span className="icon is-large hint--right hint--info" data-hint="Toggle sidebar">
-                        <i className={`fa fa-${this.props.showSidebar ? 'toggle-off' : 'toggle-on'}`} />
+                        <i className={`fa fa-${this.state.showSidebar ? 'toggle-off' : 'toggle-on'}`} />
                     </span>
                 </a>
+                */}
 
                 {/* Modal for team creation */}
                 {this.state.showCreateTeam && (
