@@ -19,6 +19,15 @@ export const getDefaultSettings = (ch) => {
     return {notifications: 'mentions'};
 };
 
+const parseJSON = it => {
+    try {
+        return JSON.parse(it);
+    } catch (e) {
+        logger.debug('failed to parse:', {e, it});
+        return {results: []};
+    }
+};
+
 const sendPush = async ({u, t, channel, notifyMessage}) => {
     // get channel name
     let channelName = channel.name;
@@ -51,7 +60,7 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
 
     // get failed requests
     const failed = res
-        .map(it => JSON.parse(it))
+        .map(parseJSON)
         .map((it, idx) => ({...it, sub: u.subscriptions[idx]}))
         .filter(it => it.results.some(s => s.error))
         .map(it => it.sub);
