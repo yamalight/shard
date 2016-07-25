@@ -1,4 +1,14 @@
 
+0.23.1 / 2016-07-25
+==================
+
+  * use shouldComponentUpdate for redraw optimizations
+  * add 24h ttl for notifications
+  * increase push debounce to 500ms
+  * autosize of forwarded messages
+  * use fixed size widgets
+  * minor bugfixes
+
 0.23.0 / 2016-07-20
 ==================
 
