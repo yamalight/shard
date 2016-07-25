@@ -1,6 +1,7 @@
 import React from 'react';
 import Portal from 'react-portal';
 import Mousetrap from 'mousetrap';
+import shallowCompare from 'react-addons-shallow-compare';
 // import styles from './markdownhelp.css';
 import {markdown} from '../../util';
 
@@ -19,6 +20,10 @@ export default class MarkdownHelp extends React.Component {
         this.state = {
             opened: false,
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     close() {

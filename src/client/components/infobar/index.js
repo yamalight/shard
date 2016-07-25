@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import {Map} from 'immutable';
 import React from 'react';
-import shallowCompare from 'react-addons-shallow-compare';
 import styles from './infobar.css';
 
 import store$, {setInfobarType, setInfobarVisible} from '../../store';
@@ -50,7 +50,7 @@ export default class Infobar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return shallowCompare(this, nextProps, nextState);
+        return _.isEqual(this.state, nextState);
     }
 
     componentWillUnmount() {

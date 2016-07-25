@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {Subject} from 'rx';
 import Mousetrap from 'mousetrap';
 import React from 'react';
@@ -23,7 +24,7 @@ export const handleCommandPaletteEvent = (e) => {
     return false;
 };
 
-export default class ChatInput extends React.Component {
+export default class CommandPalette extends React.Component {
     constructor(props) {
         super(props);
 
@@ -38,8 +39,8 @@ export default class ChatInput extends React.Component {
         this.state = {
             opened: false,
             selectedIndex: 0,
-            currentTeam: {},
-            currentChannel: {},
+            teams: [],
+            channels: [],
         };
     }
 
@@ -47,8 +48,6 @@ export default class ChatInput extends React.Component {
         this.subs = [
             store$
             .map(s => s.filter((v, key) => [
-                'currentTeam',
-                'currentChannel',
                 'teams',
                 'channels',
             ].includes(key)))
@@ -65,6 +64,9 @@ export default class ChatInput extends React.Component {
         if (this._text) {
             this._text.focus();
         }
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return !_.isEqual(this.state, nextState);
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());

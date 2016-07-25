@@ -1,5 +1,6 @@
 import React from 'react';
 import Portal from 'react-portal';
+import shallowCompare from 'react-addons-shallow-compare';
 // import {browserHistory} from 'react-router';
 import styles from './userbar.css';
 
@@ -23,6 +24,10 @@ export default class Userbar extends React.Component {
             showChangelog: false,
             showNotifications: false,
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     render() {

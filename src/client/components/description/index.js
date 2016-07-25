@@ -55,6 +55,11 @@ export default class Description extends React.Component {
             .subscribe(s => this.setState(s)),
         ];
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        const cid = this.state.currentChannel ? this.state.currentChannel.id : undefined;
+        const nid = nextState.currentChannel ? nextState.currentChannel.id : undefined;
+        return cid !== nid;
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     }

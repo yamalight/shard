@@ -1,6 +1,7 @@
 import React from 'react';
 import Mousetrap from 'mousetrap';
 import Portal from 'react-portal';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './hotkeyhelp.css';
 
 // components
@@ -18,6 +19,10 @@ export default class HotkeyHelp extends React.Component {
             opened: false,
             isMac: window.navigator.platform.includes('Mac'),
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     close() {

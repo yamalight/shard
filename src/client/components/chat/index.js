@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {Subject} from 'rx';
 import {DOM} from 'rx-dom';
 import moment from 'moment';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './chat.css';
 
 // components
@@ -234,6 +235,9 @@ export default class Chat extends React.Component {
                 getHistory(params);
             }),
         );
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     }
     componentDidUpdate() {
         // say we don't need to reset all messages

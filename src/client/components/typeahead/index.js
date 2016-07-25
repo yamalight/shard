@@ -66,6 +66,10 @@ export default class Typeahead extends React.Component {
         this.typeaheadSubject.onNext({text, currentTeam, currentChannel});
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
+    }
+
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     }

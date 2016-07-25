@@ -2,8 +2,8 @@ import _ from 'lodash';
 import {Subject} from 'rx';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styles from './chatInput.css';
 import Textarea from 'react-textarea-autosize';
+import styles from './chatInput.css';
 
 // components
 import Message from '../message';
@@ -64,6 +64,9 @@ export default class ChatInput extends React.Component {
             .distinctUntilChanged()
             .subscribe(() => this.focusInput()),
         ];
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return !_.isEqual(this.state, nextState);
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
