@@ -50,7 +50,7 @@ export default class Infobar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return _.isEqual(this.state, nextState);
+        return !_.isEqual(this.state, nextState);
     }
 
     componentWillUnmount() {
