@@ -22,8 +22,14 @@ export default (m) => {
             const match = tokens[idx].info.trim().match(regex);
 
             if (tokens[idx].nesting === 1) {
-                const url = match[1];
-                const {width, height} = urlToSize(url);
+                const widget = match[1];
+                const parts = widget.split(' ');
+                const url = parts[0];
+                const presetWidth = parts[1] ? parts[1].split('=')[1] : undefined;
+                const presetHeight = parts[2] ? parts[2].split('=')[1] : undefined;
+                const computedSize = urlToSize(url);
+                const width = presetWidth || computedSize.width;
+                const height = presetHeight || computedSize.height;
                 // opening tag
                 return `<iframe src="${url}" width="${width}" height="${height}"`;
             }
