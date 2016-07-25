@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import {Subject} from 'rx';
 import React from 'react';
-import styles from './chatInput.css';
+import ReactDOM from 'react-dom';
 import Textarea from 'react-textarea-autosize';
+import styles from './chatInput.css';
 
 // components
 import Message from '../message';
@@ -64,6 +65,9 @@ export default class ChatInput extends React.Component {
             .subscribe(() => this.focusInput()),
         ];
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        return !_.isEqual(this.state, nextState);
+    }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
     }
@@ -76,10 +80,15 @@ export default class ChatInput extends React.Component {
 
     sendMessage() {
         const txt = this._text.value;
-        const forwardMessage = this.state.forwardMessage ?
-            `%%% widget=/api/message/${this.state.forwardMessage.id}/embed` :
-            '';
-        const message = `${txt}${forwardMessage ? '\n' : ''}${forwardMessage}`;
+        let addon = '';
+        if (this.state.forwardMessage) {
+            const fwd = this.state.forwardMessage;
+            const node = ReactDOM.findDOMNode(this._refMessage);
+            const nodeHeight = node.offsetHeight + 10;
+            const height = nodeHeight < 100 ? 100 : nodeHeight;
+            addon = `\n%%% widget=/api/message/${fwd.id}/embed width=100% height=${height}`;
+        }
+        const message = `${txt}${addon}`;
 
         // do not send empty messages
         if (!message || !message.length) {
@@ -161,7 +170,7 @@ export default class ChatInput extends React.Component {
                 <div className={`is-flex ${styles.replyButton}`}>
                     <i className={`fa fa-${icon}`} />
                 </div>
-                <div className={styles.replyPreview}>
+                <div className={styles.replyPreview} ref={m => { this._refMessage = m; }}>
                     <Message
                         layout="plain"
                         hideActions

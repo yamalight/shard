@@ -198,8 +198,11 @@ export default class Message extends React.Component {
     }
 
     openDropdown(e) {
+        const selfHeight = 20 + this.menuItems.length * 20;
+        const y = e.clientY + selfHeight;
+        const top = (y <= window.innerHeight) ? e.clientY : (e.clientY - selfHeight);
         const right = window.innerWidth - e.clientX;
-        this.setState({showDropdown: true, menuStyle: {top: e.clientY, left: 'auto', right}});
+        this.setState({showDropdown: true, menuStyle: {top, right, left: 'auto'}});
     }
     closeDropdown() {
         this.setState({showDropdown: false});

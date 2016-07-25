@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
-import shallowCompare from 'react-addons-shallow-compare';
 import styles from './teambar.css';
 
 // components
@@ -38,7 +38,7 @@ export default class Teambar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return shallowCompare(this, nextProps, nextState);
+        return !_.isEqual(this.state, nextState);
     }
 
     componentWillUnmount() {
@@ -157,28 +157,33 @@ export default class Teambar extends React.Component {
                 </a>
 
 
-                {/* Sidebar toggle button */}
+                {/* Sidebar toggle button
                 <div className="is-spacer" />
                 <div className={styles.separator} />
-                <a className={styles.iconButton} onClick={() => this.props.toggleSidebar()}>
+                <a className={styles.iconButton} onClick={() => this.toggleSidebar()}>
                     <span className="icon is-large hint--right hint--info" data-hint="Toggle sidebar">
-                        <i className={`fa fa-${this.props.showSidebar ? 'toggle-off' : 'toggle-on'}`} />
+                        <i className={`fa fa-${this.state.showSidebar ? 'toggle-off' : 'toggle-on'}`} />
                     </span>
                 </a>
+                */}
 
                 {/* Modal for team creation */}
-                <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened={this.state.showCreateTeam}>
-                    <Modal closeAction={() => this.closeCreateTeam()}>
-                        <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showCreateTeam && (
+                    <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened>
+                        <Modal closeAction={() => this.closeCreateTeam()}>
+                            <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for joining team */}
-                <Portal closeOnEsc onClose={() => this.closeJoinTeam()} isOpened={this.state.showJoinTeam}>
-                    <Modal closeAction={() => this.closeJoinTeam()}>
-                        <JoinTeam close={refetch => this.closeJoinTeam(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showJoinTeam && (
+                    <Portal closeOnEsc onClose={() => this.closeJoinTeam()} isOpened>
+                        <Modal closeAction={() => this.closeJoinTeam()}>
+                            <JoinTeam close={refetch => this.closeJoinTeam(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
             </div>
         );
     }

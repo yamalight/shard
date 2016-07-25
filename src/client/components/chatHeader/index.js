@@ -1,5 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
 import Portal from 'react-portal';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './chatHeader.css';
 import {extensions} from '../../extensions';
 
@@ -19,12 +21,11 @@ import store$, {setInfobar} from '../../store';
 // utils
 import {meTeam} from '../../util';
 
-export default class Chat extends React.Component {
+export default class ChatHeader extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            currentChannel: {},
             showRename: false,
             showNotifications: false,
         };
@@ -38,7 +39,11 @@ export default class Chat extends React.Component {
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
             .map(s => ({
-                ...s,
+                infobarType: s.infobarType,
+                currentTeam: s.currentTeam ? s.currentTeam.id : undefined,
+                currentChannelId: s.currentChannel ? s.currentChannel.id : undefined,
+                currentChannelName: s.currentChannel ? s.currentChannel.name : undefined,
+                currentChannelType: s.currentChannel ? s.currentChannel.type : undefined,
                 menuItems: this.generateMenuItems(s),
             }))
             // set description sidebar
@@ -62,6 +67,9 @@ export default class Chat extends React.Component {
             // store to state
             .subscribe(s => this.setState(s)),
         ];
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare({state: _.omit(this.state, ['menuItems'])}, undefined, _.omit(nextState, ['menuItems']));
     }
     componentWillUnmount() {
         this.subs.map(s => s.dispose());
@@ -121,20 +129,20 @@ export default class Chat extends React.Component {
     }
 
     renderName() {
-        const {currentChannel, currentTeam} = this.state;
+        const {currentChannelName, currentChannelType, currentTeam} = this.state;
 
-        if (currentTeam && currentChannel.name) {
+        if (currentTeam && currentChannelName) {
             return (
                 <span className={`is-flex ${styles.channelName}`}>
                     <span className="icon">
-                        <i className={`fa ${currentChannel.type === 'conversation' ? 'fa-user' : 'fa-hashtag'}`} />
+                        <i className={`fa ${currentChannelType === 'conversation' ? 'fa-user' : 'fa-hashtag'}`} />
                     </span>
-                    {currentChannel.name}
+                    {currentChannelName}
                 </span>
             );
         }
 
-        if (currentTeam && currentTeam.id === meTeam.id) {
+        if (currentTeam && currentTeam === meTeam.id) {
             return 'No conversation selected';
         }
 
@@ -152,7 +160,7 @@ export default class Chat extends React.Component {
 
                 <div className="is-spacer" />
 
-                {this.state.currentChannel.id && (
+                {this.state.currentChannelId && (
                     <div className={`navbar-item is-flex ${styles.navMenu}`}>
                         <a className="card-header-icon" onClick={() => this.showMenu()}>
                             <i className="fa fa-angle-down" />
@@ -171,18 +179,22 @@ export default class Chat extends React.Component {
                 )}
 
                 {/* Modal for channel rename */}
-                <Portal closeOnEsc onClose={() => this.closeRename()} isOpened={this.state.showRename}>
-                    <Modal closeAction={() => this.closeRename()}>
-                        <EditChannel close={ch => this.closeRename(ch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showRename && (
+                    <Portal closeOnEsc onClose={() => this.closeRename()} isOpened>
+                        <Modal closeAction={() => this.closeRename()}>
+                            <EditChannel close={ch => this.closeRename(ch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for channel notification settings */}
-                <Portal closeOnEsc onClose={() => this.closeNotifications()} isOpened={this.state.showNotifications}>
-                    <Modal closeAction={() => this.closeNotifications()}>
-                        <NotifySettings close={() => this.closeNotifications()} />
-                    </Modal>
-                </Portal>
+                {this.state.showNotifications && (
+                    <Portal closeOnEsc onClose={() => this.closeNotifications()} isOpened>
+                        <Modal closeAction={() => this.closeNotifications()}>
+                            <NotifySettings close={() => this.closeNotifications()} />
+                        </Modal>
+                    </Portal>
+                )}
             </nav>
         );
     }

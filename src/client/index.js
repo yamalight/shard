@@ -5,12 +5,8 @@ import {Router, Route, browserHistory} from 'react-router';
 // enable why-did-you-update if not in production
 // if (process.env.NODE_ENV !== 'production') {
     // const whyDidYouUpdate = require('why-did-you-update').whyDidYouUpdate; // eslint-disable-line
-    // whyDidYouUpdate(React);
+    // whyDidYouUpdate(React, {exclude: /^(CommandPalette|Teambar|ChatHeader|ChatInput|Typeahead|Infobar)/});
 // }
-
-// TODO: is there a better way to do this without global var?
-// global shared helpers
-// window.shardApp = {};
 
 // global styles
 import 'font-awesome/css/font-awesome.min.css';

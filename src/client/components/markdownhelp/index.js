@@ -1,6 +1,7 @@
 import React from 'react';
 import Portal from 'react-portal';
 import Mousetrap from 'mousetrap';
+import shallowCompare from 'react-addons-shallow-compare';
 // import styles from './markdownhelp.css';
 import {markdown} from '../../util';
 
@@ -21,6 +22,10 @@ export default class MarkdownHelp extends React.Component {
         };
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
+    }
+
     close() {
         this.setState({opened: false});
     }
@@ -28,8 +33,12 @@ export default class MarkdownHelp extends React.Component {
     render() {
         const {opened} = this.state;
 
+        if (!opened) {
+            return <span />;
+        }
+
         return (
-            <Portal closeOnEsc onClose={() => this.close()} isOpened={opened}>
+            <Portal closeOnEsc onClose={() => this.close()} isOpened>
                 <Modal closeAction={() => this.close()}>
                     <div className="card is-fullwidth">
                         <header className="card-header">

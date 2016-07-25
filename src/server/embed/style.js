@@ -1,4 +1,8 @@
 export const style = `
+html {
+    overflow: auto;
+}
+
 body {
     border-left: solid 5px rgba(0, 0, 0, 0.2);
     padding-bottom: 5px;

@@ -343,11 +343,13 @@ export default class Home extends React.Component {
                 </div>
 
                 {/* Modal for password recovery */}
-                <Portal closeOnEsc onClose={() => this.closePassReset()} isOpened={this.state.showPasswordReset}>
-                    <Modal closeAction={() => this.closePassReset()}>
-                        <ResetPassword close={() => this.closePassReset()} />
-                    </Modal>
-                </Portal>
+                {this.state.showPasswordReset && (
+                    <Portal closeOnEsc isOpened onClose={() => this.closePassReset()}>
+                        <Modal closeAction={() => this.closePassReset()}>
+                            <ResetPassword close={() => this.closePassReset()} />
+                        </Modal>
+                    </Portal>
+                )}
             </section>
         );
     }

@@ -34,7 +34,6 @@ export default class Main extends React.Component {
             dockWidth,
             teams: [],
             channels: [],
-            showSidebar: true,
         };
     }
 
@@ -87,24 +86,20 @@ export default class Main extends React.Component {
         }
     }
 
-    toggleSidebar() {
-        this.setState({showSidebar: !this.state.showSidebar});
-    }
-
     handleDockResize(size) {
         // persist value for user
         localStorage.setItem('shard.infobar.dock.width', size);
     }
 
     render() {
-        const {showSidebar, channel, infobarType, infobarShow} = this.state;
+        const {channel, infobarType, infobarShow} = this.state;
 
         return (
             <div className={styles.app}>
                 {/* COL1: Teambar with teams */}
-                <Teambar toggleSidebar={() => this.toggleSidebar()} showSidebar={showSidebar} />
+                <Teambar />
                 {/* COL2: Sidebar with channels, team menu, user info */}
-                {showSidebar && <Sidebar joinChannel={channel} />}
+                <Sidebar joinChannel={channel} />
                 {/* COL3: Chat header, chat messages, inline infobar and chat input */}
                 <div className={`column is-flex ${styles.mainarea}`}>
                     <ChatHeader />

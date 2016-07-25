@@ -375,39 +375,49 @@ export default class Sidebar extends React.Component {
                 <Userbar />
 
                 {/* Modal for channel creation */}
-                <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened={this.state.showCreateChannel}>
-                    <Modal closeAction={() => this.closeCreateChannel()}>
-                        <NewChannel close={(refetch) => this.closeCreateChannel(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showCreateChannel && (
+                    <Portal closeOnEsc onClose={() => this.closeCreateChannel()} isOpened>
+                        <Modal closeAction={() => this.closeCreateChannel()}>
+                            <NewChannel close={(refetch) => this.closeCreateChannel(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for joining channel */}
-                <Portal closeOnEsc onClose={() => this.closeJoinChannel()} isOpened={this.state.showJoinChannel}>
-                    <Modal closeAction={() => this.closeJoinChannel()}>
-                        <JoinChannel close={(refetch) => this.closeJoinChannel(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showJoinChannel && (
+                    <Portal closeOnEsc onClose={() => this.closeJoinChannel()} isOpened>
+                        <Modal closeAction={() => this.closeJoinChannel()}>
+                            <JoinChannel close={(refetch) => this.closeJoinChannel(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for team invites */}
-                <Portal closeOnEsc onClose={() => this.closeInvite()} isOpened={this.state.showInvite}>
-                    <Modal closeAction={() => this.closeInvite()}>
-                        <Invite close={() => this.closeInvite()} />
-                    </Modal>
-                </Portal>
+                {this.state.showInvite && (
+                    <Portal closeOnEsc onClose={() => this.closeInvite()} isOpened>
+                        <Modal closeAction={() => this.closeInvite()}>
+                            <Invite close={() => this.closeInvite()} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for team edit */}
-                <Portal closeOnEsc onClose={() => this.closeTeamEdit()} isOpened={this.state.showEdit}>
-                    <Modal closeAction={() => this.closeTeamEdit()}>
-                        <EditTeam close={t => this.closeTeamEdit(t)} />
-                    </Modal>
-                </Portal>
+                {this.state.showEdit && (
+                    <Portal closeOnEsc onClose={() => this.closeTeamEdit()} isOpened>
+                        <Modal closeAction={() => this.closeTeamEdit()}>
+                            <EditTeam close={t => this.closeTeamEdit(t)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for user DM creation */}
-                <Portal closeOnEsc onClose={() => this.closeCreateDM()} isOpened={this.state.showCreateDM}>
-                    <Modal closeAction={() => this.closeCreateDM()}>
-                        <NewConversation close={(refetch) => this.closeCreateDM(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showCreateDM && (
+                    <Portal closeOnEsc onClose={() => this.closeCreateDM()} isOpened>
+                        <Modal closeAction={() => this.closeCreateDM()}>
+                            <NewConversation close={(refetch) => this.closeCreateDM(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
             </aside>
         );
     }

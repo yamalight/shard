@@ -1,51 +1,41 @@
 import container from 'markdown-it-container';
 
-// loading handling
-const handleWidgetLoad = (obj) => {
-    try {
-        // try to access internal body
-        const scrollHeight = obj.contentWindow.document.body.scrollHeight; // eslint-disable-line
-    } catch (e) {
-        // if can't - just return
-        return;
+const urlToSize = (url) => {
+    if (url.indexOf('youtube.com') !== -1) {
+        return {width: '560px', height: '315px'};
     }
 
-    // set height to 0 to maximize scoll
-    obj.style.minHeight = 0; // eslint-disable-line
-    obj.style.height = 0; // eslint-disable-line
-    setTimeout(() => {
-        // get scroll height
-        const h = obj.contentWindow.document.body.scrollHeight;
-        const height = `${h}px`;
-        // set new height
-        obj.style.height = height; // eslint-disable-line
-        obj.style.minHeight = height; // eslint-disable-line
-    }, 100);
+    return {width: '100%', height: '100px'};
 };
-if (window.shardApp) {
-    window.shardApp.handleWidgetLoad = handleWidgetLoad;
-} else {
-    window.shardApp = {handleWidgetLoad};
-}
 
 // plugin attachment
 export default (m) => {
+    const regex = /^widget=(.*)$/;
+
     // register widget
     m.use(container, 'widget', {
         validate(params) {
-            return params.trim().match(/^widget=(.*)$/);
+            return params.trim().match(regex);
         },
 
         render(tokens, idx) {
-            const match = tokens[idx].info.trim().match(/^widget=(.*)$/);
+            const match = tokens[idx].info.trim().match(regex);
 
             if (tokens[idx].nesting === 1) {
+                const widget = match[1];
+                const parts = widget.split(' ');
+                const url = parts[0];
+                const presetWidth = parts[1] ? parts[1].split('=')[1] : undefined;
+                const presetHeight = parts[2] ? parts[2].split('=')[1] : undefined;
+                const computedSize = urlToSize(url);
+                const width = presetWidth || computedSize.width;
+                const height = presetHeight || computedSize.height;
                 // opening tag
-                return `<iframe class="widget" src="${match[1]}"`;
+                return `<iframe src="${url}" width="${width}" height="${height}"`;
             }
 
             // closing tag
-            return ` frameborder="0" scrolling="no" onload="window.shardApp.handleWidgetLoad(this)" />\n`;
+            return `></iframe>\n`;
         },
 
         marker: '%',

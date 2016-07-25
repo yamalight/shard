@@ -7,6 +7,9 @@ import {webPush as webPushConfig} from '../../../config';
 // set key
 webPush.setGCMAPIKey(webPushConfig.gcmKey);
 
+// define TTL - 24h
+const TTL = 60 * 60 * 24;
+
 // default notification settings
 export const getDefaultSettings = (ch) => {
     if (ch.type === 'conversation') {
@@ -14,6 +17,15 @@ export const getDefaultSettings = (ch) => {
     }
 
     return {notifications: 'mentions'};
+};
+
+const parseJSON = it => {
+    try {
+        return JSON.parse(it);
+    } catch (e) {
+        logger.debug('failed to parse:', {e, it});
+        return {results: []};
+    }
 };
 
 const sendPush = async ({u, t, channel, notifyMessage}) => {
@@ -39,6 +51,7 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
     const res = await Promise.all(
         u.subscriptions
         .map(sub => webPush.sendNotification(sub.endpoint, {
+            TTL,
             payload: JSON.stringify(payload),
             userPublicKey: sub.key,
             userAuth: sub.authSecret,
@@ -47,7 +60,7 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
 
     // get failed requests
     const failed = res
-        .map(it => JSON.parse(it))
+        .map(parseJSON)
         .map((it, idx) => ({...it, sub: u.subscriptions[idx]}))
         .filter(it => it.results.some(s => s.error))
         .map(it => it.sub);

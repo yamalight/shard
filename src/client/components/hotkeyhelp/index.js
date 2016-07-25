@@ -1,6 +1,7 @@
 import React from 'react';
 import Mousetrap from 'mousetrap';
 import Portal from 'react-portal';
+import shallowCompare from 'react-addons-shallow-compare';
 import styles from './hotkeyhelp.css';
 
 // components
@@ -20,6 +21,10 @@ export default class HotkeyHelp extends React.Component {
         };
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
+    }
+
     close() {
         this.setState({opened: false});
     }
@@ -28,8 +33,12 @@ export default class HotkeyHelp extends React.Component {
         const {opened, isMac} = this.state;
         const ctrlKey = isMac ? 'Cmd' : 'Ctrl';
 
+        if (!opened) {
+            return <span />;
+        }
+
         return (
-            <Portal closeOnEsc onClose={() => this.close()} isOpened={opened}>
+            <Portal closeOnEsc onClose={() => this.close()} isOpened>
                 <Modal closeAction={() => this.close()}>
                     <div className="card is-fullwidth">
                         <header className="card-header">
