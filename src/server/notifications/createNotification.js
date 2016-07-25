@@ -7,6 +7,9 @@ import {webPush as webPushConfig} from '../../../config';
 // set key
 webPush.setGCMAPIKey(webPushConfig.gcmKey);
 
+// define TTL - 24h
+const TTL = 60 * 60 * 24;
+
 // default notification settings
 export const getDefaultSettings = (ch) => {
     if (ch.type === 'conversation') {
@@ -39,6 +42,7 @@ const sendPush = async ({u, t, channel, notifyMessage}) => {
     const res = await Promise.all(
         u.subscriptions
         .map(sub => webPush.sendNotification(sub.endpoint, {
+            TTL,
             payload: JSON.stringify(payload),
             userPublicKey: sub.key,
             userAuth: sub.authSecret,
