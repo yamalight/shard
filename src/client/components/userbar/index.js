@@ -50,26 +50,22 @@ export default class Userbar extends React.Component {
                 </div>
 
                 {/* Modal for team edit */}
-                <Portal
-                    closeOnEsc
-                    onClose={() => this.setState({showChangelog: false})}
-                    isOpened={this.state.showChangelog}
-                >
-                    <Modal closeAction={() => this.setState({showChangelog: false})}>
-                        <Changelog />
-                    </Modal>
-                </Portal>
+                {this.state.showChangelog && (
+                    <Portal closeOnEsc onClose={() => this.setState({showChangelog: false})} isOpened>
+                        <Modal closeAction={() => this.setState({showChangelog: false})}>
+                            <Changelog />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for notifications */}
-                <Portal
-                    closeOnEsc
-                    onClose={() => this.setState({showNotifications: false})}
-                    isOpened={this.state.showNotifications}
-                >
-                    <Modal closeAction={() => this.setState({showNotifications: false})}>
-                        <Notifications />
-                    </Modal>
-                </Portal>
+                {this.state.showNotifications && (
+                    <Portal closeOnEsc onClose={() => this.setState({showNotifications: false})} isOpened>
+                        <Modal closeAction={() => this.setState({showNotifications: false})}>
+                            <Notifications />
+                        </Modal>
+                    </Portal>
+                )}
             </div>
         );
     }

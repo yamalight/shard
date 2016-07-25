@@ -167,18 +167,22 @@ export default class Teambar extends React.Component {
                 </a>
 
                 {/* Modal for team creation */}
-                <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened={this.state.showCreateTeam}>
-                    <Modal closeAction={() => this.closeCreateTeam()}>
-                        <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showCreateTeam && (
+                    <Portal closeOnEsc onClose={() => this.closeCreateTeam()} isOpened>
+                        <Modal closeAction={() => this.closeCreateTeam()}>
+                            <NewTeam close={refetch => this.closeCreateTeam(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for joining team */}
-                <Portal closeOnEsc onClose={() => this.closeJoinTeam()} isOpened={this.state.showJoinTeam}>
-                    <Modal closeAction={() => this.closeJoinTeam()}>
-                        <JoinTeam close={refetch => this.closeJoinTeam(refetch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showJoinTeam && (
+                    <Portal closeOnEsc onClose={() => this.closeJoinTeam()} isOpened>
+                        <Modal closeAction={() => this.closeJoinTeam()}>
+                            <JoinTeam close={refetch => this.closeJoinTeam(refetch)} />
+                        </Modal>
+                    </Portal>
+                )}
             </div>
         );
     }

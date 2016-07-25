@@ -28,8 +28,12 @@ export default class MarkdownHelp extends React.Component {
     render() {
         const {opened} = this.state;
 
+        if (!opened) {
+            return <span />;
+        }
+
         return (
-            <Portal closeOnEsc onClose={() => this.close()} isOpened={opened}>
+            <Portal closeOnEsc onClose={() => this.close()} isOpened>
                 <Modal closeAction={() => this.close()}>
                     <div className="card is-fullwidth">
                         <header className="card-header">

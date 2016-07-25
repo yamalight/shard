@@ -171,18 +171,22 @@ export default class Chat extends React.Component {
                 )}
 
                 {/* Modal for channel rename */}
-                <Portal closeOnEsc onClose={() => this.closeRename()} isOpened={this.state.showRename}>
-                    <Modal closeAction={() => this.closeRename()}>
-                        <EditChannel close={ch => this.closeRename(ch)} />
-                    </Modal>
-                </Portal>
+                {this.state.showRename && (
+                    <Portal closeOnEsc onClose={() => this.closeRename()} isOpened>
+                        <Modal closeAction={() => this.closeRename()}>
+                            <EditChannel close={ch => this.closeRename(ch)} />
+                        </Modal>
+                    </Portal>
+                )}
 
                 {/* Modal for channel notification settings */}
-                <Portal closeOnEsc onClose={() => this.closeNotifications()} isOpened={this.state.showNotifications}>
-                    <Modal closeAction={() => this.closeNotifications()}>
-                        <NotifySettings close={() => this.closeNotifications()} />
-                    </Modal>
-                </Portal>
+                {this.state.showNotifications && (
+                    <Portal closeOnEsc onClose={() => this.closeNotifications()} isOpened>
+                        <Modal closeAction={() => this.closeNotifications()}>
+                            <NotifySettings close={() => this.closeNotifications()} />
+                        </Modal>
+                    </Portal>
+                )}
             </nav>
         );
     }

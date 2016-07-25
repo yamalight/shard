@@ -157,8 +157,12 @@ export default class ChatInput extends React.Component {
     }
 
     render() {
+        if (!this.state.opened) {
+            return <span />;
+        }
+
         return (
-            <Portal closeOnEsc onClose={() => this.close()} isOpened={this.state.opened}>
+            <Portal closeOnEsc onClose={() => this.close()} isOpened>
                 <Modal closeAction={() => this.close()}>
                     <div className={`box ${styles.smallBox}`}>
                         <div className="media-content panel">
