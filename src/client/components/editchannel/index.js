@@ -136,7 +136,9 @@ export default class EditChannel extends React.Component {
                                     defaultValue={this.state.currentChannel.parent}
                                 >
                                     <option value="none">None</option>
-                                    {this.state.channels && this.state.channels.map(channel => (
+                                    {this.state.channels && this.state.channels
+                                    .filter(ch => ch.id !== this.state.currentChannel.id)
+                                    .map(channel => (
                                         <option key={channel.id} value={channel.id}>
                                             {channel.name}
                                         </option>
