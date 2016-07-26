@@ -15,7 +15,7 @@ export const inviteToChannel = async ({channel, user, userInfo}) => {
         logger.debug('got requesting user from channel:', reqUser);
         if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
             logger.error('insufficient rights!');
-            return {status: 401, body: {error: 'insufficient rights!'}};
+            return {status: 403, body: {error: 'insufficient rights!'}};
         }
         // add user to team
         ch.users.push({id: user.id});
@@ -30,7 +30,7 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
     logger.debug('found user:', user);
     if (!user) {
         logger.error('target user not found!');
-        return {status: 401, body: {error: 'user not found!'}};
+        return {status: 406, body: {error: 'user not found!'}};
     }
 
     // get team
@@ -42,7 +42,7 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
         logger.debug('got requesting user from team:', reqUser);
         if (reqUser.access !== 'admin' && reqUser.access !== 'owner') {
             logger.error('insufficient rights!');
-            return {status: 401, body: {error: 'insufficient rights!'}};
+            return {status: 403, body: {error: 'insufficient rights!'}};
         }
         // add user to team
         team.users.push({id: user.id});
