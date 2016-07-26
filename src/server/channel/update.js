@@ -12,6 +12,10 @@ export const updateChannel = async ({id, name, description, team, parent = 'none
     if (!nameRegex.test(name)) {
         return {status: 400, body: {error: 'Channel name must be alpha-numeric with spaces and dashes!'}};
     }
+    // do not update channel if parent is self for any reason
+    if (parent === id) {
+        return {status: 400, body: {error: 'Channel cannot be parent of self!'}};
+    }
     // do not update duplicate channels under same team & parent
     const existing = await Channel
             .filter(row =>
