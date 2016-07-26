@@ -1,4 +1,11 @@
 
+0.23.2 / 2016-07-26
+==================
+
+  * update server widget rendering with new code
+  * use correct http codes to fail invites
+  * disallow setting self as parent channel
+
 0.23.1 / 2016-07-25
 ==================
 
