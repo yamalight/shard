@@ -97,7 +97,7 @@ const notifyUser = async ({message, team, channel, user}) => {
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
-            user: message.user.id,
+            user,
             team,
             channel: channel.id,
         });
@@ -122,7 +122,7 @@ const notifyUser = async ({message, team, channel, user}) => {
 > ${message.message}`;
         const notification = new Notification({
             message: notifyMessage,
-            user: message.user.id,
+            user,
             team,
             channel: channel.id,
         });
