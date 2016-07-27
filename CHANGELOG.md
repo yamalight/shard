@@ -1,4 +1,12 @@
 
+0.24.0 / 2016-07-27
+==================
+
+  * allow extending auth strategies with extensions
+  * add ldap auth extension
+  * fix typeahead triggering
+  * fix generation of in-app notifications
+
 0.23.2 / 2016-07-26
 ==================
 

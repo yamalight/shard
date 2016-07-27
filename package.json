@@ -1,6 +1,6 @@
 {
   "name": "shard",
-  "version": "0.23.2",
+  "version": "0.24.0",
   "description": "Shard community platform",
   "main": "index.js",
   "scripts": {
