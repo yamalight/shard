@@ -4,11 +4,10 @@ import {User} from '../db';
 import {jwtconf} from '../../../config';
 import {logger, hash, asyncRequest} from '../util';
 
-export default (app) => {
-    app.post('/api/login', asyncRequest(async (req, res) => {
-        const {username, remember, password: plainPass} = req.body;
+const basicAuth = {
+    async authenticate({username, password: plainPass}) {
         const password = hash(plainPass);
-        logger.info('searching for: ', {username, password, remember});
+        logger.info('basic auth - searching for: ', {username, password});
         // find user
         const users = await User.filter({username, password})
             .without(['password', 'verifyId', 'subscriptions', 'passwordReset'])
@@ -18,13 +17,42 @@ export default (app) => {
         // check if user was found
         if (!user) {
             logger.error('Incorrect username or password:', username);
-            res.status(401).json({error: 'Incorrect username or password!'});
-            return;
+            return {error: 'Incorrect username or password!'};
         }
 
         if (!user.isEmailValid) {
             logger.error('Email not validated for:', username);
-            res.status(401).json({error: 'You need to validate your email first!'});
+            return {error: 'You need to validate your email first!'};
+        }
+
+        return {user};
+    },
+};
+
+export default (app) => {
+    const currentExtensions = app.get('currentExtensions');
+    const authExtensions = currentExtensions.filter(ex => ex.type === 'auth');
+    const authStrategies = authExtensions.concat([basicAuth]);
+
+    app.post('/api/login', asyncRequest(async (req, res) => {
+        const {username, remember, password: plainPass} = req.body;
+        logger.info('authenticating for: ', {username, remember});
+
+        let user = null;
+        let error = null;
+        for (let i = 0; i < authStrategies.length; i++) {
+            const ex = authStrategies[i];
+            const authRes = await ex.authenticate({username, password: plainPass});
+            user = authRes.user;
+            error = authRes.error;
+            if (user) {
+                error = null;
+                break;
+            }
+        }
+        // if ended with error - throw
+        if (error) {
+            res.status(401).json({error});
             return;
         }
 

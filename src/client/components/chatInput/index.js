@@ -111,6 +111,11 @@ export default class ChatInput extends React.Component {
         this._text.value = '';
     }
 
+    handleKeyUp(e) {
+        // update text
+        this.setState({text: e.target.value});
+    }
+
     handleKeyDown(e) {
         // catch command palette event
         if (handleCommandPaletteEvent(e)) {
@@ -218,6 +223,7 @@ export default class ChatInput extends React.Component {
                                 ref={(t) => { this._text = t; }}
                                 onKeyPress={e => this.handleKeyPress(e)}
                                 onKeyDown={e => this.handleKeyDown(e)}
+                                onKeyUp={e => this.handleKeyUp(e)}
                             />
                             <a className={`button ${styles.sendButton}`} onClick={() => this.sendMessage()}>
                                 <i className="fa fa-paper-plane" />
