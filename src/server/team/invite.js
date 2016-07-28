@@ -23,6 +23,16 @@ export const inviteToChannel = async ({channel, user, userInfo}) => {
     }
 };
 
+export const addToChannel = async ({channelId, userId}) => {
+    const ch = await Channel.get(channelId);
+    // only add if not already in channel
+    if (!ch.users.find(u => u.id === userId)) {
+        // add user to team
+        ch.users.push({id: userId});
+        await ch.save();
+    }
+};
+
 export const inviteToTeam = async ({id, username, channel, userInfo}) => {
     // find user that's getting invited
     const users = await User.filter({username}).limit(1).run();
@@ -56,6 +66,17 @@ export const inviteToTeam = async ({id, username, channel, userInfo}) => {
 
     logger.debug('invited user to team!');
     return {status: 204, body: undefined};
+};
+
+export const addToTeam = async ({teamId, userId}) => {
+    // get team
+    const team = await Team.get(teamId);
+    // add user to team if he's not already there
+    if (!team.users.find(u => u.id === userId)) {
+        // add user to team
+        team.users.push({id: userId});
+        await team.save();
+    }
 };
 
 export default (app) => {

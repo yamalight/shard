@@ -52,6 +52,10 @@ export const ldap = {
         binddn: process.env.SHARD_LDAP_BINDDN || 'dc=org',
         password: process.env.SHARD_LDAP_PASSWORD || 'your-pass',
     },
+    autojoin: {
+        team: process.env.SHARD_LDAP_AUTOJOIN_TEAM || '',
+        channel: process.env.SHARD_LDAP_AUTOJOIN_CHANNEL || '',
+    },
 };
 
 // extensions
