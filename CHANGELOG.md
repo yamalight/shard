@@ -1,4 +1,10 @@
 
+0.24.1 / 2016-07-28
+==================
+
+  * add way to autojoin people to specific team/channel after LDAP auth
+  * correctly install ldap lib in docker
+
 0.24.0 / 2016-07-27
 ==================
 
