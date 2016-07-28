@@ -95,9 +95,22 @@ class LdapAuthServer extends LdapAuth {
                 }
 
                 if (!user) {
-                    this.logger.error('unknown error while creating user during LDAP auth!');
+                    this.logger.error('[LDAP] unknown error while creating user during LDAP auth!');
                     reject(new Error('Error while creating user!'));
                     return;
+                }
+
+                // if autojoin is set - join to team and channel
+                const {team, channel} = this.ldapConfig.autojoin || {};
+
+                if (team && team.length > 0) {
+                    await this.util.api.team.addToTeam({teamId: team, userId: user.id});
+                    this.logger.debug('[LDAP] auto-added user to team');
+                }
+
+                if (channel && channel.length > 0) {
+                    await this.util.api.channel.addToChannel({channelId: channel, userId: user.id});
+                    this.logger.debug('[LDAP] auto-added user to channel');
                 }
 
                 this.logger.info('[LDAP] user created:', user);
