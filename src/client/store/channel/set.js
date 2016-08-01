@@ -7,8 +7,9 @@ export const setChannel = createAction();
 
 // map to request
 const channel$ = setChannel.$
-    .throttle(300)
-    .distinctUntilChanged()
+    .throttle(50)
+    .distinctUntilChanged(c => c, (a, b) => a && b && a.id === b.id)
+    .filter(ch => ch !== undefined)
     // update url
     .do(channel => {
         const team = _.camelCase(channel.team.name);

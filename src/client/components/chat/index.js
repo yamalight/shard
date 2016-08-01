@@ -71,8 +71,8 @@ export default class Chat extends React.Component {
             // listen for history messages
             store$
             .map(s => s.get('history'))
+            .distinctUntilChanged(d => d, (a, b) => a && b && a.equals(b) && a.size !== 0)
             .filter(s => s !== undefined)
-            .distinctUntilChanged(d => d, (a, b) => a.equals(b) && a.size !== 0)
             .map(s => s.toJS())
             // map history
             .map(history => ({
@@ -252,10 +252,17 @@ export default class Chat extends React.Component {
     }
 
     initSocket(s) {
-        if (s.currentTeam && s.currentTeam.id && s.currentChannel && s.currentChannel.id) {
+        if (s.currentTeam && s.currentChannel) {
             // if already opened for this chat - ignore action
             if (this.state.requestedForChannel === (s.currentTeam.id + s.currentChannel.id)) {
                 return s;
+            }
+            // if no ids in channel or team, just update requestedForChannel
+            if (!s.currentTeam.id || !s.currentChannel.id) {
+                return {
+                    ...s,
+                    requestedForChannel: (s.currentTeam.id + s.currentChannel.id),
+                };
             }
 
             // if another socket exists - close it

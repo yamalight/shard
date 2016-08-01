@@ -98,26 +98,22 @@ export default class Sidebar extends React.Component {
             ].includes(key)))
             .distinctUntilChanged(d => d, (a, b) => a.equals(b))
             .map(s => s.toJS())
-            .subscribe(s => this.setState(s)),
+            .subscribe(s => this.setState(s, () => setTimeout(() => {
+                if (this.state.channels.length && this.state.joinChannel) {
+                    const ch = _.flatten(this.state.channels.concat(this.state.channels.map(c => c.subchannels)))
+                        .find(c => _.camelCase(c.name) === this.state.joinChannel);
+                    if (ch) {
+                        this.setChannel(ch);
+                    } else {
+                        this.setState({joinChannel: 'general'});
+                    }
+                }
+            }, 100))),
         ];
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState);
-    }
-
-    componentDidUpdate() {
-        setTimeout(() => {
-            if (this.state.channels.length && this.state.joinChannel) {
-                const ch = _.flatten(this.state.channels.concat(this.state.channels.map(c => c.subchannels)))
-                    .find(c => _.camelCase(c.name) === this.state.joinChannel);
-                if (ch) {
-                    this.setChannel(ch);
-                } else {
-                    this.setState({joinChannel: 'general'});
-                }
-            }
-        }, 10);
     }
 
     componentWillUnmount() {
