@@ -7,8 +7,8 @@ This is a repo for Shard community platform.
 
 To run Shard you'll need:
 
-1. [Node.js](https://nodejs.org/en/) v6.x (I recommend using [nvm](https://github.com/creationix/nvm) to install it)
-2. [Docker](https://docker.com/) v1.11.x
+1. [Node.js](https://nodejs.org/en/) v6.x+ (I recommend using [nvm](https://github.com/creationix/nvm) to install it)
+2. [Docker](https://docker.com/) v1.11.x+
 
 ## Installing and running
 
